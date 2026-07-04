@@ -1,0 +1,44 @@
+services:
+  # 1. PostgreSQL Database Container
+  db:
+    image: postgres:15-alpine
+    container_name: formaflow_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Ahmed@#2003
+      POSTGRES_DB: formaflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # 2. Spring Boot Backend Container
+  backend:
+    build: ./FormaFlow
+    container_name: formaflow_backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/formaflow_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=Ahmed@#2003
+    depends_on:
+      - db
+
+  # 3. React Frontend Container
+  frontend:
+    build: ./FormaFlow-front
+    container_name: formaflow_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      # This line is crucial: it maps your specific React folder for hot-reloading
+      - ./FormaFlow-front:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
