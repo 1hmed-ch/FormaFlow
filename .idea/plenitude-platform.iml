@@ -118,6 +118,9 @@
       <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/tijsverkoyen/css-to-inline-styles" />
       <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/FormaFlow/storage/app" />
+      <excludeFolder url="file://$MODULE_DIR$/FormaFlow/storage/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/laravel/sanctum" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
