@@ -15,6 +15,11 @@
     <option name="highlightLevel" value="WARNING" />
     <option name="transferred" value="true" />
   </component>
+  <component name="PhpCodeSniffer">
+    <phpcs_settings>
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="a87b3196-b95d-4747-ac3e-761ef151edbb" timeout="30000" />
+    </phpcs_settings>
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/FormaFlow/vendor/phpoption/phpoption" />
@@ -127,9 +132,15 @@
       <path value="$PROJECT_DIR$/FormaFlow/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/FormaFlow/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/FormaFlow/vendor/fruitcake/php-cors" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/laravel/sanctum" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />
+  <component name="PhpStan">
+    <PhpStan_settings>
+      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a87b3196-b95d-4747-ac3e-761ef151edbb" timeout="60000" />
+    </PhpStan_settings>
+  </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>
@@ -137,6 +148,11 @@
     <phpunit_settings>
       <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/FormaFlow/phpunit.xml" custom_loader_path="$PROJECT_DIR$/FormaFlow/vendor/autoload.php" use_configuration_file="true" />
     </phpunit_settings>
+  </component>
+  <component name="Psalm">
+    <Psalm_settings>
+      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a87b3196-b95d-4747-ac3e-761ef151edbb" timeout="60000" />
+    </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />
