@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Formateur;
 use App\Http\Requests\StoreFormateurRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateFormateurRequest;
+use App\model\Formateur;
 
 class FormateurController extends Controller
 {
