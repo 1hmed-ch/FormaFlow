@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
@@ -14,7 +14,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     /**
@@ -44,7 +44,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
     }
 
     /**
-     * Gérer les erreurs de validation au format JSON 
+     * Gérer les erreurs de validation au format JSON
      */
     protected function failedValidation(Validator $validator)
     {

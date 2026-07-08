@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\FormateurStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreFormateurRequest extends FormRequest
 {
@@ -25,10 +27,10 @@ class StoreFormateurRequest extends FormRequest
         return [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|unique:formateurs|email|max:255',
             'telephone' => 'nullable|string|max:20',
             'specialite' => 'nullable|string|max:255',
-            'status' => 'required|in:INTERNE,EXTERNE',
+            'statut' => ['required', new Enum(FormateurStatus::class)],
         ];
     }
 }

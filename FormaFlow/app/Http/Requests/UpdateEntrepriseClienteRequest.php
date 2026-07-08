@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
@@ -33,7 +33,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id, 
             'num_cnss'               => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss,' . $id,
             'rc'                    => 'nullable|string|max:50|unique:entreprise_clientes,rc,' . $id,
-            'if'                    => 'sometimes|required|string|max:50|unique:entreprise_clientes,if,' . $id,   
+            'if'                    => 'sometimes|required|string|max:50|unique:entreprise_clientes,if,' . $id,
             'patente'               => 'nullable|string|max:50|unique:entreprise_clientes,patente,' . $id,
             'secteur_activite'       => 'sometimes|required|string|max:255',
             'activite'              => 'nullable|string|max:255',
