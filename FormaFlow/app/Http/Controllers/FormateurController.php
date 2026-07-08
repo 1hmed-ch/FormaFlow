@@ -2,52 +2,133 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFormateurRequest;
 use App\Http\Requests\UpdateFormateurRequest;
-use App\model\Formateur;
+use App\Models\Formateur;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FormateurController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    /* GET /api/formateurs */
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Formateur::latest()->get());
+        try {
+            $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
+            $formateurs = Formateur::latest()->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'data'    => $formateurs->items(),
+                'meta'    => [
+                    'current_page' => $formateurs->currentPage(),
+                    'last_page'    => $formateurs->lastPage(),
+                    'per_page'     => $formateurs->perPage(),
+                    'total'        => $formateurs->total(),
+                ]
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur récupération liste Formateur', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des formateurs.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreFormateurRequest $request)
+    /* POST /api/formateurs */
+    public function store(StoreFormateurRequest $request): JsonResponse
     {
-        $formateur = Formateur::create($request->validated());
-        return response()->json($formateur, 201);
+        try {
+            $formateur = DB::transaction(fn () =>
+            Formateur::create($request->validated())
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_CREATED,
+                'message' => 'Formateur créé avec succès.',
+                'data'    => $formateur
+            ], Response::HTTP_CREATED);
+        } catch (Exception $e) {
+            Log::error('Erreur création Formateur', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création du formateur.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Formateur $formateur)
+    /* GET /api/formateurs/{formateur} */
+    public function show(Formateur $formateur): JsonResponse
     {
-        return response()->json($formateur);
+        return response()->json([
+            'success' => true,
+            'status'  => Response::HTTP_OK,
+            'data'    => $formateur
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateFormateurRequest $request, Formateur $formateur)
+    /* PUT/PATCH /api/formateurs/{formateur} */
+    public function update(UpdateFormateurRequest $request, Formateur $formateur): JsonResponse
     {
-        $formateur->update($request->validated());
-        return response()->json($formateur);
+        try {
+            DB::transaction(fn () =>
+            $formateur->update($request->validated())
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Formateur mis à jour avec succès.',
+                'data'    => $formateur->fresh()
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur mise à jour Formateur', [
+                'id'    => $formateur->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du formateur.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Formateur $formateur)
+    /* DELETE /api/formateurs/{formateur} */
+    public function destroy(Formateur $formateur): JsonResponse
     {
-        $formateur->delete();
-        return response()->json(['message' => 'Formateur supprimé avec succès']);
+        try {
+            $formateur->delete();
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Formateur supprimé avec succès.'
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur suppression Formateur', [
+                'id'    => $formateur->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression du formateur.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
