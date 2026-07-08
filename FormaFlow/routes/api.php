@@ -3,6 +3,7 @@
 use App\Http\Controllers\EntrepriseClienteController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\FormateurController;
+use App\Http\Controllers\FormationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 /*Route::apiResource('/users', 'UserController');*/
-Route::apiResource('entreprise-clientes', EntrepriseClienteController::class);
+Route::apiResource('/entreprise-clientes', EntrepriseClienteController::class);
 Route::apiResource('/formateurs', FormateurController::class);
-Route::apiResource('participants', ParticipantController::class);
+Route::apiResource('/formations', FormationController::class);
+Route::apiResource('/participants', ParticipantController::class);
