@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FormationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,10 @@ class Formation extends Model
         'date_fin',
         'statut',
         'entreprise_id',
+    ];
+
+    protected $casts = [
+        "statut" => FormationStatus::class
     ];
 
     public function entrepriseCliente(): BelongsTo

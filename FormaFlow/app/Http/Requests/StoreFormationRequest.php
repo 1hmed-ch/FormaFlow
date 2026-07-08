@@ -2,13 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\FormationStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreFormationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
     public function rules(): array
     {
@@ -16,7 +18,7 @@ class StoreFormationRequest extends FormRequest
             'intitule' => 'required|string|max:255',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut',
-            'statut' => 'required|string',
+            'statut' => ["required", new Enum(FormationStatus::class)],
             'entreprise_id' => 'required|exists:entreprise_clientes,id',
         ];
     }

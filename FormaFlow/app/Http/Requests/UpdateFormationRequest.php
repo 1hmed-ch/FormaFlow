@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\FormationStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateFormationRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class UpdateFormationRequest extends FormRequest
             'intitule' => 'sometimes|required|string|max:255',
             'date_debut' => 'sometimes|required|date',
             'date_fin' => 'sometimes|required|date|after_or_equal:date_debut',
-            'statut' => 'sometimes|required|string',
+            'statut' => ["required", "sometimes", new Enum(FormationStatus::class)],
             'entreprise_id' => 'sometimes|required|exists:entreprise_clientes,id',
         ];
     }

@@ -16,9 +16,9 @@ return new class extends Migration
         $table->string('intitule');
         $table->date('date_debut');
         $table->date('date_fin');
-        $table->string('statut'); 
+        $table->enum('statut', ['Planifiee', 'En cours', 'Terminee', 'Annulee'])->default('Planifiee');
         $table->foreignId('entreprise_id')->constrained('entreprise_clientes')->onDelete('cascade');
-        
+
         $table->timestamps();
     });
 }
