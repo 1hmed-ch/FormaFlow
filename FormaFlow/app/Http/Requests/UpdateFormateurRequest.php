@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\FormateurStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateFormateurRequest extends FormRequest
 {
@@ -23,12 +25,12 @@ class UpdateFormateurRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'telephone' => 'nullable|string|max:20',
+            'nom'        => 'sometimes|required|string|max:255',
+            'prenom'     => 'sometimes|required|string|max:255',
+            'email'      => 'nullable|email|max:255|unique:formateurs,email,' . $this->formateur->id,
+            'telephone'  => 'nullable|string|max:20',
             'specialite' => 'nullable|string|max:255',
-            'status' => 'required|in:INTERNE,EXTERNE',
+            'statut'     => ['sometimes', 'required', new Enum(FormateurStatus::class)],
         ];
     }
 }

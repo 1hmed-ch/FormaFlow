@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
@@ -30,10 +30,10 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'siegeSocial'           => 'sometimes|required|string|max:255',
             'dateCreation'          => 'nullable|date',
             'statutJuridique'       => 'nullable|string|max:100',
-            'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id, 
+            'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id,
             'numCnss'               => 'nullable|string|max:50|unique:entreprise_clientes,numCnss,' . $id,
             'rc'                    => 'nullable|string|max:50|unique:entreprise_clientes,rc,' . $id,
-            'if'                    => 'sometimes|required|string|max:50|unique:entreprise_clientes,if,' . $id,   
+            'if'                    => 'sometimes|required|string|max:50|unique:entreprise_clientes,if,' . $id,
             'patente'               => 'nullable|string|max:50|unique:entreprise_clientes,patente,' . $id,
             'secteurActivite'       => 'sometimes|required|string|max:255',
             'activite'              => 'nullable|string|max:255',
@@ -41,7 +41,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'effectifTotal'         => 'nullable|string|max:50',
             'telephone'             => 'nullable|string|max:50',
             'fax'                   => 'nullable|string|max:50',
-            'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id, 
+            'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id,
             'contactRef'            => 'nullable|string|max:255',
         ];
     }
