@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EntrepriseCliente;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEntrepriseClienteRequest;
 use App\Http\Requests\UpdateEntrepriseClienteRequest;
+use App\Models\EntrepriseCliente;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class EntrepriseClienteController extends Controller
 {
