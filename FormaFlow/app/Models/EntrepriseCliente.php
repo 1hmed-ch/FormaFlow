@@ -7,26 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class EntrepriseCliente extends Model
 {
     protected $fillable = [
-        'raisonSociale',
-        'siegeSocial',
-        'dateCreation',
-        'statutJuridique',
+        'raison_sociale',
+        'siege_social',
+        'date_creation',
+        'statut_juridique',
         'ice',
-        'numCnss',
+        'num_cnss',
         'rc',
         'if',
         'patente',
-        'secteurActivite',
+        'secteur_activite',
         'activite',
-        'regionAffiliationCnss',
-        'effectifTotal',
+        'region_affiliation_cnss',
+        'effectif_total',
         'telephone',
         'fax',
         'email',
-        'contactRef'
+        'contact_ref'
     ];
 
      protected $casts = [
-        'dateCreation' => 'date:Y-m-d',
+        'date_creation' => 'date:Y-m-d',
     ];
 }

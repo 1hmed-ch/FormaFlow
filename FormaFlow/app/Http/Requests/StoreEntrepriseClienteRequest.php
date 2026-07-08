@@ -23,23 +23,23 @@ class StoreEntrepriseClienteRequest extends FormRequest
    public function rules(): array
     {
         return [
-            'raisonSociale'         => 'required|string|max:255',
-            'siegeSocial'           => 'required|string|max:255',
-            'dateCreation'          => 'nullable|date',
-            'statutJuridique'       => 'nullable|string|max:100',
+            'raison_sociale'         => 'required|string|max:255',
+            'siege_social'           => 'required|string|max:255',
+            'date_creation'          => 'nullable|date',
+            'statut_juridique'       => 'nullable|string|max:100',
             'ice'                   => 'required|string|size:15|unique:entreprise_clientes,ice', // Required & Unique (ICE fih exactly 15 chiffres)
-            'numCnss'               => 'nullable|string|max:50|unique:entreprise_clientes,numCnss',
+            'num_cnss'               => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss',
             'rc'                    => 'nullable|string|max:50|unique:entreprise_clientes,rc',
             'if'                    => 'required|string|max:50|unique:entreprise_clientes,if',   // Required & Unique Strict fiscal
             'patente'               => 'nullable|string|max:50|unique:entreprise_clientes,patente',
-            'secteurActivite'       => 'required|string|max:255',
+            'secteur_activite'       => 'required|string|max:255',
             'activite'              => 'nullable|string|max:255',
-            'regionAffiliationCnss' => 'nullable|string|max:255',
-            'effectifTotal'         => 'nullable|string|max:50',
+            'region_affiliation_cnss' => 'nullable|string|max:255',
+            'effectif_total'         => 'nullable|string|max:50',
             'telephone'             => 'nullable|string|max:50',
             'fax'                   => 'nullable|string|max:50',
             'email'                 => 'required|email|max:255|unique:entreprise_clientes,email', // Required & Unique pour la communication
-            'contactRef'            => 'nullable|string|max:255',
+            'contact_ref'            => 'nullable|string|max:255',
         ];
     }
 
