@@ -14,28 +14,28 @@ return new class extends Migration
         Schema::create('entreprise_clientes', function (Blueprint $table) {
             $table->id(); 
             
-            $table->string('raisonSociale');
-            $table->string('siegeSocial');
-            $table->date('dateCreation')->nullable();
-            $table->string('statutJuridique')->nullable();
+            $table->string('raison_sociale');
+            $table->string('siege_social');
+            $table->date('date_creation')->nullable();
+            $table->string('statut_juridique')->nullable();
             
             $table->string('ice', 15)->unique(); 
             $table->string('if', 50)->unique();  
             
-            $table->string('numCnss', 50)->nullable()->unique();
+            $table->string('num_cnss', 50)->nullable()->unique();
             $table->string('rc', 50)->nullable()->unique();
             $table->string('patente', 50)->nullable()->unique();
             
-            $table->string('secteurActivite');
+            $table->string('secteur_activite');
             $table->string('activite')->nullable();
-            $table->string('regionAffiliationCnss')->nullable();
-            $table->string('effectifTotal')->nullable();
+            $table->string('region_affiliation_cnss')->nullable();
+            $table->integer('effectif_total')->nullable();
 
             $table->string('telephone')->nullable();
             $table->string('fax')->nullable();
             $table->string('email')->unique(); 
             
-            $table->string('contactRef')->nullable();
+            $table->string('contact_ref')->nullable();
 
             $table->timestamps(); 
         });

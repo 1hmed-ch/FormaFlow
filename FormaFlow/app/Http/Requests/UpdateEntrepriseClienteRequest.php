@@ -26,23 +26,23 @@ class UpdateEntrepriseClienteRequest extends FormRequest
         $id = is_object($entrepriseCliente) ? $entrepriseCliente->id : $entrepriseCliente;
 
         return [
-            'raisonSociale'         => 'sometimes|required|string|max:255',
-            'siegeSocial'           => 'sometimes|required|string|max:255',
-            'dateCreation'          => 'nullable|date',
-            'statutJuridique'       => 'nullable|string|max:100',
-            'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id,
-            'numCnss'               => 'nullable|string|max:50|unique:entreprise_clientes,numCnss,' . $id,
+            'raison_sociale'         => 'sometimes|required|string|max:255',
+            'siege_social'           => 'sometimes|required|string|max:255',
+            'date_creation'          => 'nullable|date',
+            'statut_juridique'       => 'nullable|string|max:100',
+            'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id, 
+            'num_cnss'               => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss,' . $id,
             'rc'                    => 'nullable|string|max:50|unique:entreprise_clientes,rc,' . $id,
             'if'                    => 'sometimes|required|string|max:50|unique:entreprise_clientes,if,' . $id,
             'patente'               => 'nullable|string|max:50|unique:entreprise_clientes,patente,' . $id,
-            'secteurActivite'       => 'sometimes|required|string|max:255',
+            'secteur_activite'       => 'sometimes|required|string|max:255',
             'activite'              => 'nullable|string|max:255',
-            'regionAffiliationCnss' => 'nullable|string|max:255',
-            'effectifTotal'         => 'nullable|string|max:50',
+            'region_affiliation_cnss' => 'nullable|string|max:255',
+            'effectif_total'         => 'nullable|string|max:50',
             'telephone'             => 'nullable|string|max:50',
             'fax'                   => 'nullable|string|max:50',
-            'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id,
-            'contactRef'            => 'nullable|string|max:255',
+            'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id, 
+            'contact_ref'            => 'nullable|string|max:255',
         ];
     }
 
