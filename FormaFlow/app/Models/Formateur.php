@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\FormateurStatus;
-use App\Theme;
+use App\Models\Theme;
 use Illuminate\Database\Eloquent\Model;
 
 class Formateur extends Model
