@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('cin')->unique();
             $table->string('email')->unique()->nullable();
-            $table->string('numero_cnss')->unique();
+            $table->string('numero_cnss')->unique()->nullable();
             $table->string('telephone')->nullable();
             $table->string('fonction_occupee')->nullable();
             $table->enum('categorie_sp', ['C', 'E', 'O'])->comment('Categorie SP(socio-professionnelle) : C = Cadre, E = Employé, O = Ouvrier');
