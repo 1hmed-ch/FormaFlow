@@ -4,6 +4,7 @@ use App\Http\Controllers\EntrepriseClienteController;
 use Illuminate\Support\Facades\Route;
 // Routing pour la gestion des entreprises clientes
 use App\Http\Controllers\FormateurController;
+use App\Http\Controllers\FormationController;
 use Illuminate\Http\Request;
 
 Route::get('/user', function (Request $request) {
@@ -13,3 +14,4 @@ Route::get('/user', function (Request $request) {
 /*Route::apiResource('/users', 'UserController');*/
 Route::apiResource('entreprise-clientes', EntrepriseClienteController::class);
 Route::apiResource('/formateurs', FormateurController::class);
+Route::apiResource('formations', FormationController::class);
