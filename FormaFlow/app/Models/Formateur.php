@@ -1,7 +1,8 @@
 <?php
 
-namespace App\model;
+namespace App\Models;
 
+use App\Enums\FormateurStatus;
 use App\Theme;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,8 +17,13 @@ class Formateur extends Model
         'statut'
     ];
 
+    protected $casts = [
+        'statut' => FormateurStatus::class,
+    ];
+
     public function themes()
     {
         return $this->hasMany(Theme::class);
     }
+
 }
