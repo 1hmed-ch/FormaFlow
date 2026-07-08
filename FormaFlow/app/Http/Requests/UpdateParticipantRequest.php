@@ -23,14 +23,15 @@ class UpdateParticipantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'cin' => 'required|string|max:20|unique:participants,cin,' . $this->participant->id,
-            'numero_cnss' => 'nullable|string|max:50',
-            'fonction_occupee' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20',
-            'categorie_sp' => 'required|in:C,E,O',
-            'entreprise_id' => 'required|exists:entreprise_clientes,id',
+            'nom'             => 'sometimes|required|string|max:255',
+            'prenom'          => 'sometimes|required|string|max:255',
+            'cin'             => 'sometimes|required|string|max:20|unique:participants,cin,' . $this->participant->id,
+            'email'           => 'sometimes|nullable|string|email|max:255|unique:participants,email,' . $this->participant->id,
+            'numero_cnss'     => 'nullable|string|max:50',
+            'fonction_occupee'=> 'nullable|string|max:255',
+            'telephone'       => 'nullable|string|max:20',
+            'categorie_sp'    => 'sometimes|required|in:C,E,O',
+            'entreprise_id'   => 'sometimes|required|exists:entreprise_clientes,id',
         ];
     }
 }

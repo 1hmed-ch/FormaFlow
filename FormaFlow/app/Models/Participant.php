@@ -1,8 +1,8 @@
 <?php
 
-namespace App\model;
+namespace App\Models;
 
-use App\EntrepriseCliente;
+use App\Enums\CategorieSP;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +21,10 @@ class Participant extends Model
         'telephone',
         'categorie_sp',
         'entreprise_id',
+    ];
+
+    protected $casts = [
+        'categorie_sp' => CategorieSP::class,
     ];
 
     public function entreprise(): BelongsTo

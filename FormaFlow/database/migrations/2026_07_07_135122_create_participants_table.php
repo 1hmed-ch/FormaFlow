@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('nom');
             $table->string('prenom');
             $table->string('cin')->unique();
-            $table->string('email')->unique();
-            $table->string('nummero_cnss')->unique();
+            $table->string('email')->unique()->nullable();
+            $table->string('numero_cnss')->unique();
             $table->string('telephone')->nullable();
-            $table->string('fonction_occupe')->nullable();
+            $table->string('fonction_occupee')->nullable();
             $table->enum('categorie_sp', ['C', 'E', 'O'])->comment('Categorie SP(socio-professionnelle) : C = Cadre, E = Employé, O = Ouvrier');
 
             $table->foreignId('entreprise_id')->constrained('entreprise_clientes')->onDelete('cascade');

@@ -23,14 +23,15 @@ class StoreParticipantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'cin' => 'required|string|max:20|unique:participants,cin',
-            'numero_cnss' => 'nullable|string|max:50',
+            'nom'              => 'required|string|max:255',
+            'prenom'           => 'required|string|max:255',
+            'cin'              => 'required|string|max:20|unique:participants,cin',
+            'email'            => 'nullable|string|email|max:255|unique:participants,email',
+            'numero_cnss'      => 'nullable|string|max:50',
             'fonction_occupee' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20',
-            'categorie_sp' => 'required|in:C,E,O',
-            'entreprise_id' => 'required|exists:entreprise_clientes,id',
+            'telephone'        => 'nullable|string|max:20',
+            'categorie_sp'     => 'required|in:C,E,O',
+            'entreprise_id'    => 'required|exists:entreprise_clientes,id',
         ];
     }
 }

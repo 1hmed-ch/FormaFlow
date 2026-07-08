@@ -2,52 +2,133 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreParticipantRequest;
 use App\Http\Requests\UpdateParticipantRequest;
-use App\model\Participant;
+use App\Models\Participant;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ParticipantController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    /* GET /api/participants */
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Participant::with('entreprise')->latest()->get());
+        try {
+            $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
+            $participants = Participant::with('entreprise')->latest()->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'data'    => $participants->items(),
+                'meta'    => [
+                    'current_page' => $participants->currentPage(),
+                    'last_page'    => $participants->lastPage(),
+                    'per_page'     => $participants->perPage(),
+                    'total'        => $participants->total(),
+                ]
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur récupération liste Participant', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des participants.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreParticipantRequest $request)
+    /* POST /api/participants */
+    public function store(StoreParticipantRequest $request): JsonResponse
     {
-        $participant = Participant::create($request->validated());
-        return response()->json($participant, 201);
+        try {
+            $participant = DB::transaction(fn () =>
+            Participant::create($request->validated())
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_CREATED,
+                'message' => 'Participant créé avec succès.',
+                'data'    => $participant->load('entreprise')
+            ], Response::HTTP_CREATED);
+        } catch (Exception $e) {
+            Log::error('Erreur création Participant', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création du participant.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Participant $participant)
+    /* GET /api/participants/{participant} */
+    public function show(Participant $participant): JsonResponse
     {
-        return response()->json($participant->load('entreprise'));
+        return response()->json([
+            'success' => true,
+            'status'  => Response::HTTP_OK,
+            'data'    => $participant->load('entreprise')
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateParticipantRequest $request, Participant $participant)
+    /* PUT/PATCH /api/participants/{participant} */
+    public function update(UpdateParticipantRequest $request, Participant $participant): JsonResponse
     {
-        $participant->update($request->validated());
-        return response()->json($participant);
+        try {
+            DB::transaction(fn () =>
+            $participant->update($request->validated())
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Participant mis à jour avec succès.',
+                'data'    => $participant->fresh('entreprise')
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur mise à jour Participant', [
+                'id'    => $participant->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du participant.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Participant $participant)
+    /* DELETE /api/participants/{participant} */
+    public function destroy(Participant $participant): JsonResponse
     {
-        $participant->delete();
-        return response()->json(['message' => 'Participant supprimé avec succès']);
+        try {
+            $participant->delete();
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Participant supprimé avec succès.'
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur suppression Participant', [
+                'id'    => $participant->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression du participant.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
