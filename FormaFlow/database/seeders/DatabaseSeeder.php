@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Admin FormaFlow',
-            'email' => 'admin@formaflow.local',
-            'password' => Hash::make('plenitudeOutsourcingFes'),
+            'email' => env('ADMIN_EMAIL'),
+            'password' => Hash::make(env('ADMIN_PASS')),
         ]);
 
         $this->call([
