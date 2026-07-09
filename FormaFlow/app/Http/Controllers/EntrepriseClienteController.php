@@ -22,7 +22,6 @@ class EntrepriseClienteController extends Controller
         try {
             $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
             
-            // FIX: Re-wllat ligne wa7da n9iya b with('gerant') kima mktoub f Jira
             $entreprises = EntrepriseCliente::with('gerant')->paginate($perPage);
 
             return response()->json([
