@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Formations\Tables;
 
+use App\Models\EntrepriseCliente;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -15,17 +17,29 @@ class FormationsTable
         return $table
             ->columns([
                 TextColumn::make('intitule')
+                    ->limit(40)
                     ->searchable(),
                 TextColumn::make('date_debut')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable(),
                 TextColumn::make('date_fin')
-                    ->date()
-                    ->sortable(),
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('statut')
-                    ->badge(),
-                TextColumn::make('entreprise_id')
-                    ->numeric()
+                    ->label('État d\'avancement')
+                    ->badge()
+                    ->color(fn ($state): string => match ($state->value ?? $state) {
+                        'PLANIFIEE', 'Planifiee' => 'info',
+                        'EN_COURS', 'En cours'   => 'warning',
+                        'TERMINEE', 'Terminee'   => 'success',
+                        'ANNULEE', 'Annulee'     => 'danger',
+                        default                  => 'gray',
+                    }),
+                TextColumn::make('entrepriseCliente.raison_sociale')
+                    ->label('Entreprise Cliente')
+                    ->limit(35)
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -41,6 +55,7 @@ class FormationsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EntrepriseClientes\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -24,19 +25,30 @@ class EntrepriseClientesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('statut_juridique')
+                    /*->color(fn (string $state): string => match ($state) {
+                        'SARL', 'SARL' => 'info',
+                        'SARL AU', 'SARL AU'   => 'warning',
+                        'SA', 'SA'   => 'success',
+                        'SNC', 'SNC'     => 'danger',
+                        default                  => 'gray',
+                    })*/
+                    ->badge()
                     ->searchable(),
                 TextColumn::make('ice')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('if')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('num_cnss')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('rc')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('patente')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('secteur_activite')
                     ->searchable(),
                 TextColumn::make('activite')
@@ -46,7 +58,8 @@ class EntrepriseClientesTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('effectif_total')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('telephone')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -73,6 +86,7 @@ class EntrepriseClientesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make()
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

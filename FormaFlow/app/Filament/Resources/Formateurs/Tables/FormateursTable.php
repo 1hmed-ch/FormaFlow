@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Formateurs\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -18,15 +19,21 @@ class FormateursTable
                     ->searchable(),
                 TextColumn::make('prenom')
                     ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('telephone')
-                    ->searchable(),
                 TextColumn::make('specialite')
                     ->searchable(),
                 TextColumn::make('statut')
-                    ->badge(),
+                    ->label('Statut')
+                    ->badge()
+                    ->color(fn ($state): string => match ($state->value ?? $state) {
+                        'INTERNE', 'INTERNE' => 'info',
+                        'EXTERNE', 'EXTERNE'   => 'success',
+                        default                  => 'gray',
+                    }),
+                TextColumn::make('telephone')
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -41,6 +48,7 @@ class FormateursTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
