@@ -2,52 +2,135 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFormationRequest;
 use App\Http\Requests\UpdateFormationRequest;
 use App\Models\Formation;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FormationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    /* GET /api/formations */
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Formation::with('entrepriseCliente')->latest()->get());
+        try {
+            $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
+            $formations = Formation::with('entrepriseCliente')->latest()->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'data'    => $formations->items(),
+                'meta'    => [
+                    'current_page' => $formations->currentPage(),
+                    'last_page'    => $formations->lastPage(),
+                    'per_page'     => $formations->perPage(),
+                    'total'        => $formations->total(),
+                ]
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur récupération liste Formation', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des formations.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreFormationRequest $request)
+    /* POST /api/formations */
+    public function store(StoreFormationRequest $request): JsonResponse
     {
-        $formation = Formation::create($request->validated());
-        return response()->json($formation, 201);
+        try {
+            $formation = DB::transaction(fn () => 
+                Formation::create($request->validated())
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_CREATED,
+                'message' => 'Formation créée avec succès.',
+                'data'    => $formation->load('entrepriseCliente')
+            ], Response::HTTP_CREATED);
+        } catch (Exception $e) {
+            Log::error('Erreur création Formation', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création de la formation.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Formation $formation)
+    /* GET /api/formations/{formation} */
+    public function show(Formation $formation): JsonResponse
     {
-        return response()->json($formation->load('entrepriseCliente'));
+        return response()->json([
+            'success' => true,
+            'status'  => Response::HTTP_OK,
+            'data'    => $formation->load('entrepriseCliente')
+        ], Response::HTTP_OK);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateFormationRequest $request, Formation $formation)
+    /* PUT/PATCH /api/formations/{formation} */
+    public function update(UpdateFormationRequest $request, Formation $formation): JsonResponse
     {
-        $formation->update($request->validated());
-        return response()->json($formation);
+        try {
+            DB::transaction(fn () => 
+                $formation->update($request->validated())
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Formation mise à jour avec succès.',
+                'data'    => $formation->fresh()->load('entrepriseCliente')
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur mise à jour Formation', [
+                'id'    => $formation->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour de la formation.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Formation $formation)
+    /* DELETE /api/formations/{formation} */
+    public function destroy(Formation $formation): JsonResponse
     {
-        $formation->delete();
-        return response()->json(['message' => 'Formation supprimée avec succès']);
+        try {
+            DB::transaction(fn () => 
+                $formation->delete()
+            );
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Formation supprimée avec succès.'
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Erreur suppression Formation', [
+                'id'    => $formation->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de la formation.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
