@@ -133,6 +133,39 @@
       <path value="$PROJECT_DIR$/FormaFlow/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/FormaFlow/vendor/fruitcake/php-cors" />
       <path value="$PROJECT_DIR$/FormaFlow/vendor/laravel/sanctum" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/scrivo/highlight.php" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/spatie/invade" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/spatie/shiki-php" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/spatie/laravel-package-tools" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/blade-ui-kit/blade-icons" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/blade-ui-kit/blade-heroicons" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/symfony/html-sanitizer" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/chillerlan/php-qrcode" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/chillerlan/php-settings-container" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/danharrin/date-format-converter" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/danharrin/livewire-rate-limiting" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/livewire/livewire" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/pragmarx/google2fa" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/pragmarx/google2fa-qrcode" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/ryangjchandler/blade-capture-directive" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/anourvalar/eloquent-serialize" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/openspout/openspout" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/nette/php-generator" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/ueberdosis/tiptap-php" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/actions" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/filament" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/forms" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/infolists" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/notifications" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/query-builder" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/schemas" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/support" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/tables" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/filament/widgets" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/league/uri-components" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/league/csv" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/kirschbaum-development/eloquent-power-joins" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />
