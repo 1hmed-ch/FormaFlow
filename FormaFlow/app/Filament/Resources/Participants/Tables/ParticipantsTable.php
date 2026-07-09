@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Participants\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -19,19 +20,32 @@ class ParticipantsTable
                 TextColumn::make('prenom')
                     ->searchable(),
                 TextColumn::make('cin')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('numero_cnss')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('telephone')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fonction_occupee')
                     ->searchable(),
                 TextColumn::make('categorie_sp')
+                    ->label('Categorie')
+                    ->color(fn ($state): string => match ($state->value ?? $state) {
+                        'Ouvrier', 'O' => 'info',
+                        'Cadre', 'C'   => 'warning',
+                        'Employe', 'E'   => 'success',
+                        default                  => 'gray',
+                    })
                     ->badge(),
-                TextColumn::make('entreprise.id')
+                TextColumn::make('entreprise.raison_sociale')
+                    ->label('Entreprise Client')
+                    ->limit(35)
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -47,6 +61,7 @@ class ParticipantsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make()
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

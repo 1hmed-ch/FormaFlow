@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Groupes\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -16,19 +17,21 @@ class GroupesTable
             ->columns([
                 TextColumn::make('libelle')
                     ->searchable(),
+                TextColumn::make('theme.intitule')
+                    ->label('Thème')
+                    ->searchable(),
+                TextColumn::make('effectif_max')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('lieu')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_debut')
                     ->date()
                     ->sortable(),
                 TextColumn::make('date_fin')
                     ->date()
                     ->sortable(),
-                TextColumn::make('lieu')
-                    ->searchable(),
-                TextColumn::make('effectif_max')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('theme.id')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -43,6 +46,7 @@ class GroupesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make()
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
