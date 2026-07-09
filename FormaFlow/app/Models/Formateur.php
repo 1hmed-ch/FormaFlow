@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\FormateurStatus;
 use App\Models\Theme;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Formateur extends Model
@@ -20,6 +21,13 @@ class Formateur extends Model
     protected $casts = [
         'statut' => FormateurStatus::class,
     ];
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => "{$attributes['nom']} {$attributes['prenom']}",
+        );
+    }
 
     public function themes()
     {

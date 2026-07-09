@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests;    
 
 use App\Enums\FormationStatus;
 use Illuminate\Foundation\Http\FormRequest;

@@ -1,0 +1,132 @@
+<?php
+
+namespace App\Filament\Resources\EntrepriseClientes\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class EntrepriseClienteForm {
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Informations Générales')
+                    ->description('Identité et activités principales de l\'entreprise')
+                    ->icon('heroicon-o-building-office-2')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('raison_sociale')
+                            ->label('Raison Sociale')
+                            ->required()
+                            ->maxLength(255),
+
+                        Select::make('statut_juridique')
+                            ->label('Statut Juridique')
+                            ->options([
+                                'SARL' => 'SARL',
+                                'SARL AU' => 'SARL AU',
+                                'SA' => 'SA',
+                                'SNC' => 'SNC',
+                                'Auto-entrepreneur' => 'Auto-entrepreneur',
+                            ])
+                            ->searchable(),
+
+                        TextInput::make('siege_social')
+                            ->label('Siège Social')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+
+                        DatePicker::make('date_creation')
+                            ->label('Date de Création')
+                            ->displayFormat('d/m/Y')
+                            ->native(false),
+
+                        TextInput::make('effectif_total')
+                            ->label('Effectif Total')
+                            ->numeric()
+                            ->minValue(1),
+
+                        TextInput::make('secteur_activite')
+                            ->label('Secteur d\'Activité')
+                            ->required()
+                            ->maxLength(255),
+
+                        Textarea::make('activite')
+                            ->label('Activité (Description détaillée)')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Identifiants Légaux & Administratifs')
+                    ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
+                    ->icon('heroicon-o-document-text')
+                    ->columns(2)
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('ice')
+                            ->label('ICE')
+                            ->required()
+                            ->length(15)
+                            ->placeholder('Ex: 123456789012345'),
+
+                        TextInput::make('if')
+                            ->label('Identifiant Fiscal (IF)')
+                            ->required()
+                            ->numeric()
+                            ->maxLength(20),
+
+                        TextInput::make('rc')
+                            ->label('Registre de Commerce (RC)')
+                            ->maxLength(50),
+
+                        TextInput::make('patente')
+                            ->label('Patente')
+                            ->maxLength(50),
+
+                        TextInput::make('num_cnss')
+                            ->label('N° CNSS')
+                            ->numeric()
+                            ->maxLength(20),
+
+                        TextInput::make('region_affiliationCnss')
+                            ->label('Région d\'affiliation CNSS')
+                            ->maxLength(100),
+                    ]),
+
+                Section::make('Coordonnées & Contact')
+                    ->description('Informations pour joindre le référent de l\'entreprise')
+                    ->icon('heroicon-o-phone')
+                    ->columns(2)
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('contact_ref')
+                            ->label('Nom du contact référent')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+
+                        TextInput::make('email')
+                            ->label('Adresse Email')
+                            ->email()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+
+                        TextInput::make('telephone')
+                            ->label('Téléphone')
+                            ->tel()
+                            ->maxLength(20)
+                            ->placeholder('+212 6 00 00 00 00'),
+
+                        TextInput::make('fax')
+                            ->label('Fax')
+                            ->tel()
+                            ->maxLength(20),
+                    ]),
+            ]);
+    }
+}

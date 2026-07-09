@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class EntrepriseCliente extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'gerant_id',
         'raison_sociale',
