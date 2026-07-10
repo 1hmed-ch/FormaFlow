@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\SuppressionBloqueeException;
 
 class FormationController extends Controller
 {
@@ -108,29 +109,37 @@ class FormationController extends Controller
     }
 
     /* DELETE /api/formations/{formation} */
-    public function destroy(Formation $formation): JsonResponse
-    {
-        try {
-            DB::transaction(fn () => 
-                $formation->delete()
-            );
+   
 
-            return response()->json([
-                'success' => true,
-                'status'  => Response::HTTP_OK,
-                'message' => 'Formation supprimée avec succès.'
-            ], Response::HTTP_OK);
-        } catch (Exception $e) {
-            Log::error('Erreur suppression Formation', [
-                'id'    => $formation->id,
-                'error' => $e->getMessage()
-            ]);
+public function destroy(Formation $formation): JsonResponse
+{
+    try {
+        DB::transaction(fn () => 
+            $formation->delete()
+        );
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la suppression de la formation.',
-                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json([
+            'success' => true,
+            'status'  => Response::HTTP_OK,
+            'message' => 'Formation supprimée avec succès.'
+        ], Response::HTTP_OK);
+    } catch (SuppressionBloqueeException $e) {
+        return response()->json([
+            'success' => false,
+            'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
+            'message' => $e->getMessage()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    } catch (Exception $e) {
+        Log::error('Erreur suppression Formation', [
+            'id'    => $formation->id,
+            'error' => $e->getMessage()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression de la formation.',
+            'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
 }
