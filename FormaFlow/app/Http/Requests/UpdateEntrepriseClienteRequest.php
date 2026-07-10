@@ -14,7 +14,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // Requis pour activer la requête via l'API
+        return true; 
     }
 
     /**
@@ -24,6 +24,14 @@ class UpdateEntrepriseClienteRequest extends FormRequest
     {
         $entrepriseCliente = $this->route('entreprise_cliente');
         $id = is_object($entrepriseCliente) ? $entrepriseCliente->id : $entrepriseCliente;
+      
+        $gerantId = null;
+        if (is_object($entrepriseCliente)) {
+            $gerantId = $entrepriseCliente->gerant_id;
+        } elseif ($id) {
+            $entreprise = \App\Models\EntrepriseCliente::find($id);
+            $gerantId = $entreprise ? $entreprise->gerant_id : null;
+        }
 
         return [
             'raison_sociale'         => 'sometimes|required|string|max:255',
@@ -43,6 +51,11 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'fax'                   => 'nullable|string|max:50',
             'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id, 
             'contact_ref'            => 'nullable|string|max:255',
+            
+            'gerant_nom'              => 'sometimes|required|string|max:255',
+            'gerant_prenom'           => 'sometimes|required|string|max:255',
+            'gerant_fonction'         => 'sometimes|required|string|max:255',
+            'gerant_cin'              => 'sometimes|required|string|max:50|unique:gerants,cin,' . $gerantId,
         ];
     }
 

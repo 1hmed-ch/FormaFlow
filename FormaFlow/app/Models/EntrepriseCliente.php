@@ -9,6 +9,7 @@ class EntrepriseCliente extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'gerant_id',
         'raison_sociale',
         'siege_social',
         'date_creation',
@@ -31,4 +32,9 @@ class EntrepriseCliente extends Model
      protected $casts = [
         'date_creation' => 'date:Y-m-d',
     ];
+
+    public function gerant()
+    {
+        return $this->belongsTo(Gerant::class, 'gerant_id');
+    }
 }
