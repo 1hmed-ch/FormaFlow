@@ -38,4 +38,8 @@ class Theme extends Model
     {
         return $this->belongsTo(Formateur::class);
     }
+    public function groupes()
+    {
+        return $this->hasMany(Groupe::class, 'theme_id');
+    }
 }

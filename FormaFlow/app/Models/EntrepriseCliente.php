@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class EntrepriseCliente extends Model
 {
     use HasFactory;
@@ -37,4 +38,24 @@ class EntrepriseCliente extends Model
     {
         return $this->belongsTo(Gerant::class, 'gerant_id');
     }
+    public function formations()
+    {
+        return $this->hasMany(Formation::class, 'entreprise_id');
+    }
+    public function participants()
+    {
+        return $this->hasMany(Participant::class, 'entreprise_id');
+    }
+
+  protected static function booted()
+{
+    static::deleting(function ($entreprise) {
+        // Bloquer s'il y a des formations ou des participants
+        if ($entreprise->formations()->exists() || $entreprise->participants()->exists()) {
+            throw new \App\Exceptions\SuppressionBloqueeException(
+                "Suppression impossible : cette entreprise possède des formations actives ou des participants rattachés."
+            );
+        }
+    });
+}
 }
