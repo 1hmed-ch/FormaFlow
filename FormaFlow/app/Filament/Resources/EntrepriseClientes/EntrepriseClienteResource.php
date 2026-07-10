@@ -32,10 +32,16 @@ class EntrepriseClienteResource extends Resource
         return EntrepriseClientesTable::configure($table);
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with('gerant');
+    }
+
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\FormationsRelationManager::class,
+            RelationManagers\ParticipantsRelationManager::class,
         ];
     }
 

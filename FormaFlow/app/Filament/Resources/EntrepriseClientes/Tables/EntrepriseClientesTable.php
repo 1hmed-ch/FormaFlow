@@ -17,6 +17,16 @@ class EntrepriseClientesTable
             ->columns([
                 TextColumn::make('raison_sociale')
                     ->searchable(),
+                TextColumn::make('gerant.nom')
+                    ->label('Gérant')
+                    ->formatStateUsing(fn ($record) => $record->gerant
+                        ? trim($record->gerant->prenom.' '.$record->gerant->nom)
+                        : '—')
+                    ->searchable(query: fn ($query, string $search) => $query->whereHas(
+                        'gerant',
+                        fn ($q) => $q->where('nom', 'like', "%{$search}%")
+                            ->orWhere('prenom', 'like', "%{$search}%")
+                    )),
                 TextColumn::make('siege_social')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -50,6 +60,7 @@ class EntrepriseClientesTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('secteur_activite')
+                    ->limit(20)
                     ->searchable(),
                 TextColumn::make('activite')
                     ->searchable()
