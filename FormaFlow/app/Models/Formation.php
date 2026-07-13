@@ -34,10 +34,7 @@ class Formation extends Model
     {
         return $this->hasMany(Theme::class, 'formation_id');
     }
-    public function organisme(): BelongsTo
-    {
-        return $this->belongsTo(EntrepriseFormation::class, 'entreprise_formation_id');
-    }
+  
 
     protected static function booted()
 {

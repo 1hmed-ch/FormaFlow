@@ -106,11 +106,5 @@ class EntrepriseFormation extends Model
         return $this->hasMany(Formateur::class, 'entreprise_formation_id');
     }
 
-    /**
-     * Une entreprise de formation dispense plusieurs sessions de formations
-     */
-    public function formations(): HasMany
-    {
-        return $this->hasMany(Formation::class, 'entreprise_formation_id');
-    }
+   
 }
