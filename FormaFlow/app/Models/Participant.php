@@ -28,7 +28,7 @@ class Participant extends Model
         'categorie_sp' => CategorieSP::class,
     ];
 
-    public function entreprise(): BelongsTo
+    public function entrepriseCliente(): BelongsTo
     {
         return $this->belongsTo(EntrepriseCliente::class, 'entreprise_id');
     }
