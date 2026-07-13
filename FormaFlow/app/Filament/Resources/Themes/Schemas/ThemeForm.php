@@ -48,6 +48,7 @@ class ThemeForm
                             ->label('Formation parente')
                             ->relationship('formation', 'intitule')
                             ->searchable()
+                            ->columnSpanFull()
                             ->preload()
                             ->required(),
 
@@ -56,6 +57,7 @@ class ThemeForm
                             ->relationship('formateur', 'nom')
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name)
                             ->searchable(['nom', 'prenom'])
+                            ->columnSpanFull()
                             ->preload()
                             ->required(),
                     ]),

@@ -7,6 +7,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ThemesTable
@@ -42,7 +43,17 @@ class ThemesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('formation_id')
+                    ->label('Formation')
+                    ->relationship('formation', 'intitule')
+                    ->searchable()
+                    ->preload(),
+
+                SelectFilter::make('formateur_id')
+                    ->label('Formateur')
+                    ->relationship('formateur', 'nom')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make(),

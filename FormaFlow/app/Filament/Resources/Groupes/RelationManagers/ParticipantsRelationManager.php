@@ -38,6 +38,10 @@ class ParticipantsRelationManager extends RelationManager
                 AttachAction::make()
                     ->preloadRecordSelect()
                     ->multiple()
+                    // 1. Afficher "Nom Prénom" dans la liste déroulante
+                    ->recordTitle(fn ($record) => "{$record->nom} {$record->prenom}")
+                    // 2. Permettre la recherche par nom OU par prénom
+                    ->recordSelectSearchColumns(['nom', 'prenom'])
                     ->recordSelectOptionsQuery(function (Builder $query) use ($groupe) {
                         return $query
                             ->where('entreprise_id', $groupe->theme->formation->entreprise_id)

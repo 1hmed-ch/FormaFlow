@@ -80,6 +80,7 @@ class EntrepriseClienteForm {
 
                         TextInput::make('fonction')
                             ->label('Fonction')
+                            ->required()
                             ->maxLength(255),
 
                         TextInput::make('cin')

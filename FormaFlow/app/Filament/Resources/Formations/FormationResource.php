@@ -27,6 +27,11 @@ class FormationResource extends Resource
         return FormationForm::configure($schema);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['intitule', 'entrepriseCliente.raison_sociale'];
+    }
+
     public static function table(Table $table): Table
     {
         return FormationsTable::configure($table);

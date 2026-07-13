@@ -27,6 +27,11 @@ class GroupeResource extends Resource
         return GroupeForm::configure($schema);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['libelle', 'lieu', 'theme.intitule'];
+    }
+
     public static function table(Table $table): Table
     {
         return GroupesTable::configure($table);

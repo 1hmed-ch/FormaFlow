@@ -27,6 +27,11 @@ class ThemeResource extends Resource
         return ThemeForm::configure($schema);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['intitule', 'formation.intitule', 'formateur.nom', 'formateur.prenom'];
+    }
+
     public static function table(Table $table): Table
     {
         return ThemesTable::configure($table);

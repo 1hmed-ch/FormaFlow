@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Formations\Tables;
 
+use App\Enums\FormationStatus;
 use App\Models\EntrepriseCliente;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class FormationsTable
@@ -51,7 +53,15 @@ class FormationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('statut')
+                    ->label('État d\'avancement')
+                    ->options(FormationStatus::class),
+
+                SelectFilter::make('entreprise_id')
+                    ->label('Entreprise Cliente')
+                    ->relationship('entrepriseCliente', 'raison_sociale')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make(),

@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Participants\Tables;
 
+use App\Enums\CategorieSP;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ParticipantsTable
@@ -24,6 +26,7 @@ class ParticipantsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
+                    ->limit(30)
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('numero_cnss')
@@ -33,6 +36,7 @@ class ParticipantsTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fonction_occupee')
+                    ->limit(20)
                     ->searchable(),
                 TextColumn::make('categorie_sp')
                     ->label('Categorie')
@@ -57,7 +61,15 @@ class ParticipantsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('categorie_sp')
+                    ->label('Catégorie')
+                    ->options(CategorieSP::class),
+
+                SelectFilter::make('entreprise_id')
+                    ->label('Entreprise Cliente')
+                    ->relationship('entreprise', 'raison_sociale')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make(),
