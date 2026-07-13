@@ -47,7 +47,7 @@ class ParticipantsTable
                         default                  => 'gray',
                     })
                     ->badge(),
-                TextColumn::make('entreprise.raison_sociale')
+                TextColumn::make('entrepriseCliente.raison_sociale')
                     ->label('Entreprise Client')
                     ->limit(35)
                     ->searchable(),
@@ -67,7 +67,7 @@ class ParticipantsTable
 
                 SelectFilter::make('entreprise_id')
                     ->label('Entreprise Cliente')
-                    ->relationship('entreprise', 'raison_sociale')
+                    ->relationship('entrepriseCliente', 'raison_sociale')
                     ->searchable()
                     ->preload(),
             ])

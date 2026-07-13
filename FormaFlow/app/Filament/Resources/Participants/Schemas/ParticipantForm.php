@@ -43,7 +43,7 @@ class ParticipantForm
                     ->schema([
                         Select::make('entreprise_id')
                             ->label('Entreprise Cliente')
-                            ->relationship('entreprise', 'raison_sociale')
+                            ->relationship('entrepriseCliente', 'raison_sociale')
                             ->searchable()
                             ->native(false)
                             ->preload()
