@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class Formation extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'entreprise_formation_id',
         'intitule',
         'date_debut',
         'date_fin',
@@ -33,4 +35,26 @@ class Formation extends Model
     {
         return $this->hasMany(Theme::class, 'formation_id');
     }
+    public function organisme(): BelongsTo
+    {
+        return $this->belongsTo(EntrepriseFormation::class, 'entreprise_formation_id');
+    }
+
+    protected static function booted()
+{
+    static::deleting(function ($formation) {
+        // On cherche s'il existe AU MOINS un groupe rattaché
+        // à AU MOINS un thème de cette formation
+        $aDesGroupesActifs = $formation->themes()
+            ->whereHas('groupes')
+            ->exists();
+
+        if ($aDesGroupesActifs) {
+            throw new \App\Exceptions\SuppressionBloqueeException(
+                "Suppression impossible : cette formation contient des thèmes ayant des groupes actifs."
+            );
+        }
+    });
 }
+}
+

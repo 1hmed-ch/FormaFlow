@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\SuppressionBloqueeException;
 
 class EntrepriseClienteController extends Controller
 {
@@ -139,27 +140,36 @@ class EntrepriseClienteController extends Controller
 }
 
     /* DELETE /api/entreprise-clientes/{entreprise_cliente} */
-    public function destroy(EntrepriseCliente $entreprise_cliente): JsonResponse
-    {
-        try {
-            $entreprise_cliente->delete();
+   
 
-            return response()->json([
-                'success' => true,
-                'status'  => Response::HTTP_OK,
-                'message' => 'Entreprise cliente supprimée avec succès.'
-            ], Response::HTTP_OK);
-        } catch (Exception $e) {
-            Log::error('Erreur suppression EntrepriseCliente', [
-                'id'    => $entreprise_cliente->id,
-                'error' => $e->getMessage()
-            ]);
+public function destroy(EntrepriseCliente $entreprise_cliente): JsonResponse
+{
+    try {
+        $entreprise_cliente->delete();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la suppression de l\'entreprise.',
-                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json([
+            'success' => true,
+            'status'  => Response::HTTP_OK,
+            'message' => 'Entreprise cliente supprimée avec succès.'
+        ], Response::HTTP_OK);
+    } catch (SuppressionBloqueeException $e) {
+        return response()->json([
+            'success' => false,
+            'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
+            'message' => $e->getMessage()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    } catch (Exception $e) {
+        Log::error('Erreur suppression EntrepriseCliente', [
+            'id'    => $entreprise_cliente->id,
+            'error' => $e->getMessage()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression de l\'entreprise.',
+            'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
+
 }

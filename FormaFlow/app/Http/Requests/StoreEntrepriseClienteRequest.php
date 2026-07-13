@@ -35,7 +35,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'secteur_activite'        => 'required|string|max:255',
             'activite'                => 'nullable|string|max:255',
             'region_affiliation_cnss' => 'nullable|string|max:255',
-            'effectif_total'          => 'nullable|integer|max:50',
+            'effectif_total'          => 'nullable|integer|min:1',
             'telephone'               => 'nullable|string|max:50',
             'fax'                     => 'nullable|string|max:50',
             'email'                   => 'required|email|max:255|unique:entreprise_clientes,email', // Required & Unique pour la communication
