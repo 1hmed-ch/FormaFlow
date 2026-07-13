@@ -14,6 +14,7 @@ class Formation extends Model
     use HasFactory;
 
     protected $fillable = [
+        'entreprise_formation_id',
         'intitule',
         'date_debut',
         'date_fin',
@@ -33,6 +34,10 @@ class Formation extends Model
     public function themes(): HasMany
     {
         return $this->hasMany(Theme::class, 'formation_id');
+    }
+    public function organisme(): BelongsTo
+    {
+        return $this->belongsTo(EntrepriseFormation::class, 'entreprise_formation_id');
     }
 
     protected static function booted()
