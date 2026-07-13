@@ -27,6 +27,11 @@ class FormateurResource extends Resource
         return FormateurForm::configure($schema);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nom', 'prenom', 'email', 'specialite'];
+    }
+
     public static function table(Table $table): Table
     {
         return FormateursTable::configure($table);

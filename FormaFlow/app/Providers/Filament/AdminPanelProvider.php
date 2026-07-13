@@ -6,6 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use App\Filament\Widgets\FormaFlowStatsOverview;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -29,7 +30,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::hex("#3ABCF8"),
+                //'primary' => Color::hex("#3ABCF8"),
+                'primary' => Color::Blue,
                 'danger'  => Color::Rose,
                 'gray'    => Color::Slate,
                 'info'    => Color::Blue,
@@ -37,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
             ])
             ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('18rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -44,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
+                FormaFlowStatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

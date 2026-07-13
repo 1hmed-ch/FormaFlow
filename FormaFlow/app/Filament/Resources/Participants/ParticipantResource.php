@@ -27,6 +27,11 @@ class ParticipantResource extends Resource
         return ParticipantForm::configure($schema);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nom', 'prenom', 'cin', 'email', 'entreprise.raison_sociale'];
+    }
+
     public static function table(Table $table): Table
     {
         return ParticipantsTable::configure($table);

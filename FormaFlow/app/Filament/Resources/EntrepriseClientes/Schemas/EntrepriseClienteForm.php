@@ -62,6 +62,34 @@ class EntrepriseClienteForm {
                             ->columnSpanFull(),
                     ]),
 
+                Section::make('Gérant')
+                    ->description('Représentant légal de l\'entreprise')
+                    ->icon('heroicon-o-user')
+                    ->columns(2)
+                    ->relationship('gerant')
+                    ->schema([
+                        TextInput::make('nom')
+                            ->label('Nom')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('prenom')
+                            ->label('Prénom')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('fonction')
+                            ->label('Fonction')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('cin')
+                            ->label('CIN')
+                            ->required()
+                            ->maxLength(20)
+                            ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
+                    ]),
+
                 Section::make('Identifiants Légaux & Administratifs')
                     ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
                     ->icon('heroicon-o-document-text')
@@ -76,6 +104,7 @@ class EntrepriseClienteForm {
 
                         TextInput::make('if')
                             ->label('Identifiant Fiscal (IF)')
+                            ->placeholder('Ex: 23456789')
                             ->required()
                             ->numeric()
                             ->maxLength(20),
@@ -90,10 +119,11 @@ class EntrepriseClienteForm {
 
                         TextInput::make('num_cnss')
                             ->label('N° CNSS')
+                            ->placeholder('Ex: 8253792')
                             ->numeric()
                             ->maxLength(20),
 
-                        TextInput::make('region_affiliationCnss')
+                        TextInput::make('region_affiliation_cnss')
                             ->label('Région d\'affiliation CNSS')
                             ->maxLength(100),
                     ]),
@@ -113,6 +143,7 @@ class EntrepriseClienteForm {
                             ->label('Adresse Email')
                             ->email()
                             ->required()
+                            ->columnSpanFull()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
 
@@ -125,6 +156,7 @@ class EntrepriseClienteForm {
                         TextInput::make('fax')
                             ->label('Fax')
                             ->tel()
+                            ->placeholder('+212 5 00 00 00 00')
                             ->maxLength(20),
                     ]),
             ]);

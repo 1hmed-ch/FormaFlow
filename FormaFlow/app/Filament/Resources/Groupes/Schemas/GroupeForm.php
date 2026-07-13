@@ -25,17 +25,18 @@ class GroupeForm
                             ->required()
                             ->maxLength(255),
 
-                        Select::make('theme_id')
-                            ->label('Thème de formation')
-                            ->relationship('theme', 'intitule')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-
                         TextInput::make('effectif_max')
                             ->label('Effectif maximal')
                             ->numeric()
                             ->minValue(1)
+                            ->required(),
+
+                        Select::make('theme_id')
+                            ->label('Thème de formation')
+                            ->relationship('theme', 'intitule')
+                            ->searchable()
+                            ->columnSpanFull()
+                            ->preload()
                             ->required(),
                     ]),
 

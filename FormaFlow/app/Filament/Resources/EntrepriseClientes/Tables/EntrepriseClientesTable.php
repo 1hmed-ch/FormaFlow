@@ -7,6 +7,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class EntrepriseClientesTable
@@ -17,6 +18,16 @@ class EntrepriseClientesTable
             ->columns([
                 TextColumn::make('raison_sociale')
                     ->searchable(),
+                TextColumn::make('gerant.nom')
+                    ->label('Gérant')
+                    ->formatStateUsing(fn ($record) => $record->gerant
+                        ? trim($record->gerant->prenom.' '.$record->gerant->nom)
+                        : '—')
+                    ->searchable(query: fn ($query, string $search) => $query->whereHas(
+                        'gerant',
+                        fn ($q) => $q->where('nom', 'like', "%{$search}%")
+                            ->orWhere('prenom', 'like', "%{$search}%")
+                    )),
                 TextColumn::make('siege_social')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -50,6 +61,7 @@ class EntrepriseClientesTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('secteur_activite')
+                    ->limit(20)
                     ->searchable(),
                 TextColumn::make('activite')
                     ->searchable()
@@ -82,7 +94,15 @@ class EntrepriseClientesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('statut_juridique')
+                    ->label('Statut Juridique')
+                    ->options([
+                        'SARL' => 'SARL',
+                        'SARL AU' => 'SARL AU',
+                        'SA' => 'SA',
+                        'SNC' => 'SNC',
+                        'Auto-entrepreneur' => 'Auto-entrepreneur',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),

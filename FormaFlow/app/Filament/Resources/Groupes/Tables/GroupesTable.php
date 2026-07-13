@@ -6,8 +6,12 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class GroupesTable
 {
@@ -42,7 +46,30 @@ class GroupesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('theme_id')
+                    ->label('Thème')
+                    ->relationship('theme', 'intitule')
+                    ->searchable()
+                    ->preload(),
+
+                Filter::make('date_debut')
+                    ->schema([
+                        DatePicker::make('debut_from')
+                            ->label('Débute après le'),
+                        DatePicker::make('debut_until')
+                            ->label('Débute avant le'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['debut_from'] ?? null,
+                                fn (Builder $q, $date) => $q->whereDate('date_debut', '>=', $date),
+                            )
+                            ->when(
+                                $data['debut_until'] ?? null,
+                                fn (Builder $q, $date) => $q->whereDate('date_debut', '<=', $date),
+                            );
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),

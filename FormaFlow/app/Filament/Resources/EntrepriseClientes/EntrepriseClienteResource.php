@@ -27,15 +27,26 @@ class EntrepriseClienteResource extends Resource
         return EntrepriseClienteForm::configure($schema);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['raison_sociale', 'ice', 'email', 'gerant.nom', 'gerant.prenom'];
+    }
+
     public static function table(Table $table): Table
     {
         return EntrepriseClientesTable::configure($table);
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with('gerant');
+    }
+
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\FormationsRelationManager::class,
+            RelationManagers\ParticipantsRelationManager::class,
         ];
     }
 
