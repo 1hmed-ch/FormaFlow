@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreThemeRequest;
 use App\Http\Requests\UpdateThemeRequest;
 use App\Models\Theme;
@@ -20,7 +19,7 @@ class ThemeController extends Controller
     {
         try {
             $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
-            
+
             $themes = Theme::with(['formation', 'formateur'])->latest()->paginate($perPage);
 
             return response()->json([

@@ -14,7 +14,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
     {
         $entrepriseCliente = $this->route('entreprise_cliente');
         $id = is_object($entrepriseCliente) ? $entrepriseCliente->id : $entrepriseCliente;
-      
+
         $gerantId = null;
         if (is_object($entrepriseCliente)) {
             $gerantId = $entrepriseCliente->gerant_id;
@@ -38,7 +38,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'siege_social'           => 'sometimes|required|string|max:255',
             'date_creation'          => 'nullable|date',
             'statut_juridique'       => 'nullable|string|max:100',
-            'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id, 
+            'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id,
             'num_cnss'               => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss,' . $id,
             'rc'                    => 'nullable|string|max:50|unique:entreprise_clientes,rc,' . $id,
             'if'                    => 'sometimes|required|string|max:50|unique:entreprise_clientes,if,' . $id,
@@ -49,9 +49,9 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'effectif_total'         => 'nullable|integer|min:1',
             'telephone'             => 'nullable|string|max:50',
             'fax'                   => 'nullable|string|max:50',
-            'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id, 
+            'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id,
             'contact_ref'            => 'nullable|string|max:255',
-            
+
             'gerant_nom'              => 'sometimes|required|string|max:255',
             'gerant_prenom'           => 'sometimes|required|string|max:255',
             'gerant_fonction'         => 'sometimes|required|string|max:255',

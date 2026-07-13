@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class EntrepriseFormation extends Model
 {
   use HasFactory;
@@ -42,7 +41,7 @@ class EntrepriseFormation extends Model
     ];
 
     /**
-     * Casting des attributs JSON en tableaux PHP 
+     * Casting des attributs JSON en tableaux PHP
      */
     protected $casts = [
         'domaines_competence' => 'array',
@@ -67,7 +66,7 @@ class EntrepriseFormation extends Model
             'date_creation'           => now(),
             'statut_juridique'        => 'SARL',
             'activite'                => 'Formation',
-            
+
             // 2. Infos Fiscales & Coordonnées
             'ice'                     => '000000000000000',
             'rc'                      => '00000',
@@ -79,18 +78,18 @@ class EntrepriseFormation extends Model
             'fax'                     => null, // Nullable dans la migration
             'email'                   => 'admin@plenitude.ma',
             'site_web'                => null, // Nullable dans la migration
-            
+
             // 3. Domaines & Moyens (JSON)
             'domaines_competence'     => [],
             'moyens_pedagogiques'     => [],
-            
+
             // 4. Effectifs globaux (Integers)
             'nb_experts_permanents'   => 0,
             'nb_experts_vacataires'   => 0,
             'nb_animateurs_formateurs'=> 0,
             'nb_autres_employes'      => 0,
             'effectif_total'          => 0,
-            
+
             // 5. Représentant Légal & Signature
             'representant_nom'        => 'Nom Représentant',
             'representant_fonction'   => 'Gérant',

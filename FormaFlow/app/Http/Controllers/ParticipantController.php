@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreParticipantRequest;
 use App\Http\Requests\UpdateParticipantRequest;
 use App\Models\Participant;
@@ -20,7 +19,7 @@ class ParticipantController extends Controller
     {
         try {
             $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
-            $participants = Participant::with('entreprise')->latest()->paginate($perPage);
+            $participants = Participant::with('entrepriseCliente')->latest()->paginate($perPage);
 
             return response()->json([
                 'success' => true,
@@ -56,7 +55,7 @@ class ParticipantController extends Controller
                 'success' => true,
                 'status'  => Response::HTTP_CREATED,
                 'message' => 'Participant créé avec succès.',
-                'data'    => $participant->load('entreprise')
+                'data'    => $participant->load('entrepriseCliente')
             ], Response::HTTP_CREATED);
         } catch (Exception $e) {
             Log::error('Erreur création Participant', ['error' => $e->getMessage()]);
@@ -75,7 +74,7 @@ class ParticipantController extends Controller
         return response()->json([
             'success' => true,
             'status'  => Response::HTTP_OK,
-            'data'    => $participant->load('entreprise')
+            'data'    => $participant->load('entrepriseCliente')
         ], Response::HTTP_OK);
     }
 
@@ -91,7 +90,7 @@ class ParticipantController extends Controller
                 'success' => true,
                 'status'  => Response::HTTP_OK,
                 'message' => 'Participant mis à jour avec succès.',
-                'data'    => $participant->fresh('entreprise')
+                'data'    => $participant->fresh('entrepriseCliente')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
             Log::error('Erreur mise à jour Participant', [

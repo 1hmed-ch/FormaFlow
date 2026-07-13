@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Formations\Tables;
 
 use App\Enums\FormationStatus;
-use App\Models\EntrepriseCliente;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;

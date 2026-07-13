@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Exceptions\SuppressionBloqueeException;
 use App\Http\Requests\StoreEntrepriseClienteRequest;
 use App\Http\Requests\UpdateEntrepriseClienteRequest;
 use App\Models\EntrepriseCliente;
@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\SuppressionBloqueeException;
 
 class EntrepriseClienteController extends Controller
 {
@@ -22,7 +21,7 @@ class EntrepriseClienteController extends Controller
     {
         try {
             $perPage = min(max((int) $request->query('per_page', 15), 1), 100);
-            
+
             $entreprises = EntrepriseCliente::with('gerant')->paginate($perPage);
 
             return response()->json([
@@ -75,7 +74,7 @@ class EntrepriseClienteController extends Controller
                 'success' => true,
                 'status'  => Response::HTTP_CREATED,
                 'message' => 'Entreprise cliente et son gérant créés avec succès.',
-                'data'    => $entreprise->load('gerant') 
+                'data'    => $entreprise->load('gerant')
             ], Response::HTTP_CREATED);
 
         } catch (Exception $e) {
@@ -105,7 +104,7 @@ class EntrepriseClienteController extends Controller
 {
     try {
         DB::transaction(function () use ($request, $entreprise_cliente) {
-        
+
             $entreprise_cliente->update($request->validated());
 
             if ($entreprise_cliente->gerant) {
@@ -140,7 +139,7 @@ class EntrepriseClienteController extends Controller
 }
 
     /* DELETE /api/entreprise-clientes/{entreprise_cliente} */
-   
+
 
 public function destroy(EntrepriseCliente $entreprise_cliente): JsonResponse
 {

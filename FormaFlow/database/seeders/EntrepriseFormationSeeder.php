@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\EntrepriseFormation;
+use Illuminate\Database\Seeder;
 
 class EntrepriseFormationSeeder extends Seeder
 {

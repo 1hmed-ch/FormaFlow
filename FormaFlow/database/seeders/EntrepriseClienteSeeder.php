@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\EntrepriseCliente;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EntrepriseClienteSeeder extends Seeder

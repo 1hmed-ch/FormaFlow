@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFormateurRequest;
 use App\Http\Requests\UpdateFormateurRequest;
 use App\Models\Formateur;

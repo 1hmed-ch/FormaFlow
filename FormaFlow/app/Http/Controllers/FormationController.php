@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Exceptions\SuppressionBloqueeException;
 use App\Http\Requests\StoreFormationRequest;
 use App\Http\Requests\UpdateFormationRequest;
 use App\Models\Formation;
@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\SuppressionBloqueeException;
 
 class FormationController extends Controller
 {
@@ -49,7 +48,7 @@ class FormationController extends Controller
     public function store(StoreFormationRequest $request): JsonResponse
     {
         try {
-            $formation = DB::transaction(fn () => 
+            $formation = DB::transaction(fn () =>
                 Formation::create($request->validated())
             );
 
@@ -84,7 +83,7 @@ class FormationController extends Controller
     public function update(UpdateFormationRequest $request, Formation $formation): JsonResponse
     {
         try {
-            DB::transaction(fn () => 
+            DB::transaction(fn () =>
                 $formation->update($request->validated())
             );
 
@@ -109,12 +108,12 @@ class FormationController extends Controller
     }
 
     /* DELETE /api/formations/{formation} */
-   
+
 
 public function destroy(Formation $formation): JsonResponse
 {
     try {
-        DB::transaction(fn () => 
+        DB::transaction(fn () =>
             $formation->delete()
         );
 
