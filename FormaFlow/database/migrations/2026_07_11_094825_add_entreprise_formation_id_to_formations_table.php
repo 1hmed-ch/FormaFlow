@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('formations', function (Blueprint $table) {
             $table->foreignId('entreprise_formation_id')
                   ->after('id')
+                   ->default(1)
                   ->constrained('entreprise_formations')
                   ->restrictOnDelete(); // Bloque la suppression si une formation y est liée
         });
