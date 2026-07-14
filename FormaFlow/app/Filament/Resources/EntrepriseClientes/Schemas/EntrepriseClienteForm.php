@@ -78,16 +78,29 @@ class EntrepriseClienteForm {
                             ->required()
                             ->maxLength(255),
 
-                        TextInput::make('fonction')
-                            ->label('Fonction')
+                         Select::make('genre')
+                            ->label('Genre')
+                            ->options([
+                                'Homme' => 'Homme',
+                                'Femme' => 'Femme',
+                            ])
                             ->required()
-                            ->maxLength(255),
+                            ->native(false),
 
-                        TextInput::make('cin')
+                         TextInput::make('cin')
                             ->label('CIN')
                             ->required()
                             ->maxLength(20)
                             ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
+
+                        TextInput::make('fonction')
+                            ->label('Fonction')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                       
+                       
                     ]),
 
                 Section::make('Identifiants Légaux & Administratifs')
