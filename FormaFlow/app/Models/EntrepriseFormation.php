@@ -37,7 +37,7 @@ class EntrepriseFormation extends Model
         'effectif_total',
         'representant_nom',
         'representant_fonction',
-        'signature'
+      
     ];
 
     /**
@@ -90,10 +90,10 @@ class EntrepriseFormation extends Model
             'nb_autres_employes'      => 0,
             'effectif_total'          => 0,
 
-            // 5. Représentant Légal & Signature
+            // 5. Représentant Légal 
             'representant_nom'        => 'Nom Représentant',
             'representant_fonction'   => 'Gérant',
-            'signature'               => null, // Nullable dans la migration
+          
         ]
     );
 }
