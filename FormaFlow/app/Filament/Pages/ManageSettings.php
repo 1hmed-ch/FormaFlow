@@ -69,7 +69,7 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('siege_social')->label('Siège Social'),
                             ]),
 
-                        // Section Visuels (Logo & Signature)
+                        // Section Visuels (Logo )
                         Section::make('Visuels')
                             ->columnSpan(1)
                             ->schema([
@@ -77,14 +77,7 @@ class ManageSettings extends Page implements HasForms
                                     ->label('Logo Organisme')
                                     ->image()
                                     ->directory('logos')
-                                    ->maxSize(5120),
-
-                                FileUpload::make('signature')
-                                    ->label('Signature Officielle')
-                                    ->image()
-                                    ->directory('signatures')
-                                    ->maxSize(5120)
-                                    ->visibility('private'),
+                                    ->maxSize(5120),      
                         ]),
                 ]),
 
