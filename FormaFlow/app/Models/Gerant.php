@@ -9,6 +9,7 @@ class Gerant extends Model
     protected $fillable = [
         'nom',
         'prenom',
+        'genre',
         'fonction',
         'cin'
     ];
