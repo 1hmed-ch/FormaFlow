@@ -9,7 +9,7 @@
         }
 
         body {
-            font-family: 'DejaVu Sans', sans-serif;
+            font-family: 'Times New Roman',Times, serif;
             font-size: 12px;
             color: #1a1a1a;
             line-height: 1.5;
@@ -52,8 +52,9 @@
             font-weight: bold;
             margin-top: 76px;
         }
-
+        
         .document-title {
+            
             text-align: center;
             font-size: 15px;
             font-weight: bold;
