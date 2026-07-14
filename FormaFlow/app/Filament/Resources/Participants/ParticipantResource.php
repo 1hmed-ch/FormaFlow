@@ -29,7 +29,7 @@ class ParticipantResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['nom', 'prenom', 'cin', 'email', 'entreprise.raison_sociale'];
+        return ['nom', 'prenom', 'cin', 'email', 'entrepriseCliente.raison_sociale'];
     }
 
     public static function table(Table $table): Table

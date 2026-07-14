@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\EntrepriseClientes\Tables;
 
+use App\Exceptions\DocumentGenerationException;
+use App\Models\EntrepriseCliente;
+use App\Services\DocumentGenerationService;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -62,7 +68,8 @@ class EntrepriseClientesTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('secteur_activite')
                     ->limit(20)
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('activite')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -106,6 +113,41 @@ class EntrepriseClientesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('genererModele6')
+                    ->label('Modèle 6')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->form([
+                        TextInput::make('annee')
+                            ->label('Exercice (année)')
+                            ->numeric()
+                            ->required()
+                            ->default(now()->year)
+                            ->minValue(2000)
+                            ->maxValue(now()->year),
+                    ])
+                    ->action(function (EntrepriseCliente $record, array $data, Action $action) {
+                        try {
+                            $document = app(DocumentGenerationService::class)
+                                ->generateModele6($record, (int) $data['annee']);
+
+                            return response()->streamDownload(
+                                function () use ($document) {
+                                    echo $document['content'];
+                                },
+                                $document['filename'],
+                                ['Content-Type' => 'application/pdf']
+                            );
+                        } catch (DocumentGenerationException $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Génération impossible')
+                                ->body($e->getMessage())
+                                ->send();
+
+                            $action->halt();
+                        }
+                    }),
                 DeleteAction::make()
             ])
             ->toolbarActions([

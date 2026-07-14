@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DocumentGenerationException;
+use App\Services\DocumentGenerationService;
 use App\Exceptions\SuppressionBloqueeException;
 use App\Http\Requests\StoreEntrepriseClienteRequest;
 use App\Http\Requests\UpdateEntrepriseClienteRequest;
@@ -171,4 +173,42 @@ public function destroy(EntrepriseCliente $entreprise_cliente): JsonResponse
     }
 }
 
+    /* GET /api/entreprise-clientes/{entreprise_cliente}/documents/modele-6?annee=2026 */
+    public function genererModele6(
+        Request $request,
+        EntrepriseCliente $entreprise_cliente,
+        DocumentGenerationService $documentGenerationService
+    ): Response|JsonResponse {
+        $validated = $request->validate([
+            'annee' => ['required', 'integer', 'digits:4'],
+        ]);
+
+        try {
+            $document = $documentGenerationService->generateModele6(
+                $entreprise_cliente,
+                (int) $validated['annee']
+            );
+
+            return response($document['content'], Response::HTTP_OK)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$document['filename'].'"');
+        } catch (DocumentGenerationException $e) {
+            return response()->json([
+                'success' => false,
+                'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'message' => $e->getMessage(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $e) {
+            Log::error('Erreur génération Modèle 6', [
+                'id'    => $entreprise_cliente->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la génération de l\'attestation.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
