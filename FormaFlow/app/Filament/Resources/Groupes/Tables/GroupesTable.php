@@ -2,11 +2,16 @@
 
 namespace App\Filament\Resources\Groupes\Tables;
 
+use App\Exceptions\DocumentGenerationException;
+use App\Models\Groupe;
+use App\Services\DocumentGenerationService;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -73,6 +78,32 @@ class GroupesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('genererFichePresence')
+                    ->label('Fiche de présence')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->action(function (Groupe $record, Action $action) {
+                        try {
+                            $document = app(DocumentGenerationService::class)
+                                ->generateFichePresence($record);
+
+                            return response()->streamDownload(
+                                function () use ($document) {
+                                    echo $document['content'];
+                                },
+                                $document['filename'],
+                                ['Content-Type' => 'application/pdf']
+                            );
+                        } catch (DocumentGenerationException $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Génération impossible')
+                                ->body($e->getMessage())
+                                ->send();
+
+                            $action->halt();
+                        }
+                    }),
                 DeleteAction::make()
             ])
             ->toolbarActions([

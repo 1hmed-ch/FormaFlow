@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EntrepriseClientes\Schemas;
 
+use App\Enums\gerantGender;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -80,10 +81,7 @@ class EntrepriseClienteForm {
 
                          Select::make('genre')
                             ->label('Genre')
-                            ->options([
-                                'Homme' => 'Homme',
-                                'Femme' => 'Femme',
-                            ])
+                            ->options(gerantGender::class)
                             ->required()
                             ->native(false),
 
@@ -98,9 +96,6 @@ class EntrepriseClienteForm {
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
-
-                       
-                       
                     ]),
 
                 Section::make('Identifiants Légaux & Administratifs')
