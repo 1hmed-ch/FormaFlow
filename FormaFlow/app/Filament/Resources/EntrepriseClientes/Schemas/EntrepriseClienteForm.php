@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EntrepriseClientes\Schemas;
 
 use App\Enums\gerantGender;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -79,13 +80,13 @@ class EntrepriseClienteForm {
                             ->required()
                             ->maxLength(255),
 
-                         Select::make('genre')
+                        Select::make('genre')
                             ->label('Genre')
                             ->options(gerantGender::class)
                             ->required()
                             ->native(false),
 
-                         TextInput::make('cin')
+                        TextInput::make('cin')
                             ->label('CIN')
                             ->required()
                             ->maxLength(20)
@@ -167,6 +168,26 @@ class EntrepriseClienteForm {
                             ->placeholder('+212 5 00 00 00 00')
                             ->maxLength(20),
                     ]),
+
+                Section::make('Visuels pour les documents générés')
+                    ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')
+                    ->icon('heroicon-o-photo')
+                    ->columns(2)
+                    ->collapsible()
+                    ->schema([
+                        FileUpload::make('image_entete')
+                            ->label("Image d'en-tête")
+                            ->image()
+                            ->directory('entreprises/entetes')
+                            ->maxSize(5120),
+
+                        FileUpload::make('image_pied_page')
+                            ->label('Image de pied de page')
+                            ->image()
+                            ->directory('entreprises/pieds-page')
+                            ->maxSize(5120),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 }

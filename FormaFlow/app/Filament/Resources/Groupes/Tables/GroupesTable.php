@@ -6,6 +6,7 @@ use App\Exceptions\DocumentGenerationException;
 use App\Models\Groupe;
 use App\Services\DocumentGenerationService;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -17,11 +18,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Exceptions\DocumentGenerationException;
-use App\Services\DocumentGenerationService;
-use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 
 class GroupesTable
 {
@@ -81,69 +78,76 @@ class GroupesTable
                             );
                     }),
             ])
-            ->recordActions([
-                EditAction::make(),
-                Action::make('genererFichePresence')
-                    ->label('Fiche de présence')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->action(function (Groupe $record, Action $action) {
-                        try {
-                            $document = app(DocumentGenerationService::class)
-                                ->generateFichePresence($record);
+            ->recordActions(actions: [
+                ActionGroup::make(actions: [
+                    EditAction::make(),
 
-                            return response()->streamDownload(
-                                function () use ($document) {
-                                    echo $document['content'];
-                                },
-                                $document['filename'],
-                                ['Content-Type' => 'application/pdf']
-                            );
-                        } catch (DocumentGenerationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Génération impossible')
-                                ->body($e->getMessage())
-                                ->send();
+                    Action::make('genererFichePresence')
+                        ->label('Fiche de présence')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('gray')
+                        ->action(function (Groupe $record, Action $action) {
+                            try {
+                                $document = app(DocumentGenerationService::class)
+                                    ->generateFichePresence($record);
 
-                            $action->halt();
-                        }
-                    }),
-                 Action::make('genererFicheEvaluation')
-                    ->label("Fiche d'évaluation")
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->form([
-                        TextInput::make('ville')
-                            ->label('Ville')
-                            ->required()
-                            ->maxLength(255),
-                    ])
-            ->action(function (\App\Models\Groupe $record, array $data, Action $action) {
-                    try {
-                        $document = app(DocumentGenerationService::class)
-                            ->generateFicheEvaluation($record, $data['ville']);
+                                return response()->streamDownload(
+                                    function () use ($document) {
+                                        echo $document['content'];
+                                    },
+                                    $document['filename'],
+                                    ['Content-Type' => 'application/pdf']
+                                );
+                            } catch (DocumentGenerationException $e) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Génération impossible')
+                                    ->body($e->getMessage())
+                                    ->send();
 
-                        return response()->streamDownload(
-                            function () use ($document) {
-                                echo $document['content'];
-                            },
-                            $document['filename'],
-                            ['Content-Type' => 'application/pdf']
-                        );
-                    } catch (DocumentGenerationException $e) {
-                        Notification::make()
-                            ->danger()
-                            ->title('Génération impossible')
-                            ->body($e->getMessage())
-                            ->send();
+                                $action->halt();
+                            }
+                        }),
 
-                        $action->halt();
-                    }
-                }),
-            DeleteAction::make(),
-        ])
-                    
+                    Action::make('genererFicheEvaluation')
+                        ->label("Fiche d'évaluation")
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('gray')
+                        ->form([
+                            TextInput::make('ville')
+                                ->label('Ville')
+                                ->required()
+                                ->maxLength(255),
+                        ])
+                        ->action(function (Groupe $record, array $data, Action $action) {
+                            try {
+                                $document = app(DocumentGenerationService::class)
+                                    ->generateFicheEvaluation($record, $data['ville']);
+
+                                return response()->streamDownload(
+                                    function () use ($document) {
+                                        echo $document['content'];
+                                    },
+                                    $document['filename'],
+                                    ['Content-Type' => 'application/pdf']
+                                );
+                            } catch (DocumentGenerationException $e) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Génération impossible')
+                                    ->body($e->getMessage())
+                                    ->send();
+
+                                $action->halt();
+                            }
+                        }),
+
+                    DeleteAction::make(),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->tooltip('Actions')
+            ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

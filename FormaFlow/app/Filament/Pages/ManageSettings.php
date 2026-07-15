@@ -42,7 +42,6 @@ class ManageSettings extends Page implements HasForms
             ->components([
                 Grid::make(3)
                     ->schema([
-                        // Section 1: Infos Générales
                         Section::make('Informations Générales')
                             ->columnSpan(2)
                             ->schema([
@@ -77,7 +76,7 @@ class ManageSettings extends Page implements HasForms
                                     ->label('Logo Organisme')
                                     ->image()
                                     ->directory('logos')
-                                    ->maxSize(5120),      
+                                    ->maxSize(5120),
                         ]),
                 ]),
 
@@ -157,7 +156,7 @@ class ManageSettings extends Page implements HasForms
                 ->danger()
                 ->send();
 
-            report($e); 
+            report($e);
 
         } catch (\Throwable $e) {
 

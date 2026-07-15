@@ -25,12 +25,23 @@
             border-bottom: 1px solid #ccc;
             font-size: 10px;
             color: #555;
+            text-align: center;
         }
 
         header .organisme-nom {
             font-size: 12px;
             font-weight: bold;
             color: #1a1a1a;
+        }
+
+        .entete-image {
+            max-height: 60px;
+            max-width: 100%;
+        }
+
+        .pied-page-image {
+            max-height: 40px;
+            max-width: 100%;
         }
 
         footer {
@@ -52,9 +63,9 @@
             font-weight: bold;
             margin-top: 76px;
         }
-        
+
         .document-title {
-            
+
             text-align: center;
             font-size: 15px;
             font-weight: bold;
@@ -111,23 +122,30 @@
             clear: both;
         }
     </style>
-    {{-- Allows a child document (e.g. modele6) to add its own page-specific CSS
-         (title casing, list style, etc.) without touching this shared layout --}}
+
     @stack('styles')
 </head>
 <body>
 <header>
-    <div class="organisme-nom">{{ $organisme->raison_sociale ?? config('app.name') }}</div>
-    @if(!empty($organisme->siege_social ?? null))
-        {{ $organisme->siege_social }}
-    @endif
-    @if(!empty($organisme->ice ?? null))
-        — ICE {{ $organisme->ice }}
+    @if(!empty($enteteImage ?? null))
+        <img src="{{ $enteteImage }}" class="entete-image">
+    @else
+        <div class="organisme-nom">{{ $organisme->raison_sociale ?? config('app.name') }}</div>
+        @if(!empty($organisme->siege_social ?? null))
+            {{ $organisme->siege_social }}
+        @endif
+        @if(!empty($organisme->ice ?? null))
+            — ICE {{ $organisme->ice }}
+        @endif
     @endif
 </header>
 
 <footer>
-    Document généré automatiquement le {{ ($dateEdition ?? now())->format('d/m/Y') }} — FormaFlow
+    @if(!empty($piedPageImage ?? null))
+        <img src="{{ $piedPageImage }}" class="pied-page-image">
+    @else
+        Document généré automatiquement le {{ ($dateEdition ?? now())->format('d/m/Y') }} — Plénitude Groupe
+    @endif
 </footer>
 
 <div class="document-title-block">

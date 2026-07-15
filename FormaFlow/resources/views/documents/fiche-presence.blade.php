@@ -23,6 +23,29 @@
             margin-top: 170px;
         }
 
+        .entreprise-entete {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+
+        .entreprise-entete img {
+            max-height: 100px;
+            max-width: 100%;
+        }
+
+        .entreprise-pied-page {
+            text-align: center;
+            margin-top: 300px;
+        }
+
+        .entreprise-pied-page img {
+            max-height: 60px;
+            max-width: 100%;
+        }
+
         .info-block p {
             margin: 4px 0;
         }
@@ -85,6 +108,12 @@
 </head>
 <body>
 
+@if(!empty($enteteImage ?? null))
+    <div class="entreprise-entete">
+        <img src="{{ $enteteImage }}">
+    </div>
+@endif
+
 <div class="title">Liste de présence par action et par groupe</div>
 
 <div class="info-block">
@@ -140,6 +169,12 @@
         <td class="signature-right">Cachet et signature du responsable<br>de formation de l'entreprise</td>
     </tr>
 </table>
+
+@if(!empty($piedPageImage ?? null))
+    <div class="entreprise-pied-page">
+        <img src="{{ $piedPageImage }}">
+    </div>
+@endif
 
 </body>
 </html>
