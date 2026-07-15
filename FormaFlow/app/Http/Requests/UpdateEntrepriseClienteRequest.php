@@ -6,7 +6,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
-
+use App\Enums\GerantGender; 
+use Illuminate\Validation\Rules\Enum;
 class UpdateEntrepriseClienteRequest extends FormRequest
 {
     /**
@@ -55,6 +56,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'gerant_nom'              => 'sometimes|required|string|max:255',
             'gerant_prenom'           => 'sometimes|required|string|max:255',
             'gerant_fonction'         => 'sometimes|required|string|max:255',
+            'gerant_genre'         => ['sometimes', new Enum(GerantGender::class)],
             'gerant_cin'              => 'sometimes|required|string|max:50|unique:gerants,cin,' . $gerantId,
         ];
     }
