@@ -11,7 +11,6 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Models\Groupe;
 
 /**
  * Point d'entrée unique pour la génération de tous les documents PDF de

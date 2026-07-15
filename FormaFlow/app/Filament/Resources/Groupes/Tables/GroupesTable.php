@@ -17,11 +17,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Exceptions\DocumentGenerationException;
-use App\Services\DocumentGenerationService;
-use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+
 
 class GroupesTable
 {
