@@ -1,3 +1,4 @@
+@php use App\Enums\gerantGender; @endphp
 @extends('documents.layouts.base')
 
 @section('documentTitle', "Attestation certifiant la réalisation des actions")
@@ -28,8 +29,8 @@
 
 @section('content')
     <p class="certification-text">
-        Je soussigné(e) {{ $gerant->prenom }}, en qualité de
-        Gérant(e), certifie par la présente que l'entreprise
+        Je {{$gerant->genre == gerantGender::Homme ? "soussigné M." : "soussignée Mme"}} {{ $gerant->prenom }}, en qualité de
+        {{$gerant->genre == gerantGender::Homme ? "Gérant" : "Gérante"}}, certifie par la présente que l'entreprise
         {{ $entreprise->raison_sociale }} a réalisé, au titre de l'exercice
         {{ $annee }}, les actions de formation citées ci-après dans le cadre des
         Contrats Spéciaux de Formation, et a procédé à la liquidation des dépenses relatives des dites
@@ -44,6 +45,6 @@
 
     <div class="signature-block clearfix">
         <strong>{{ $gerant->prenom }} {{ $gerant->nom }}</strong><br>
-        <strong>Gérant(e)</strong>
+        <strong>{{$gerant->genre == gerantGender::Homme ? "Gérant" : "Gérante"}}</strong>
     </div>
 @endsection

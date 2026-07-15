@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\gerantGender;
 use Illuminate\Database\Eloquent\Model;
 
 class Gerant extends Model
@@ -12,6 +13,10 @@ class Gerant extends Model
         'genre',
         'fonction',
         'cin'
+    ];
+
+    protected $casts = [
+      'genre' => gerantGender::class,
     ];
 
     public function entrepriseCliente()

@@ -6,6 +6,7 @@ use App\Enums\FormationStatus;
 use App\Exceptions\DocumentGenerationException;
 use App\Models\EntrepriseCliente;
 use App\Models\EntrepriseFormation;
+use App\Models\Groupe;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Storage;
@@ -81,6 +82,49 @@ class DocumentGenerationService
         ];
     }
     
+
+    /**
+     * Génère la "Fiche de présence" (Modèle 5) pour un groupe donné.
+     *
+     * Générée par groupe et non par thème : un thème peut être dispensé à
+     * plusieurs groupes (sessions distinctes), chacun avec ses propres
+     * participants, donc sa propre feuille de présence à émarger.
+     *
+     * @throws DocumentGenerationException si le groupe n'a aucun participant.
+     */
+    public function generateFichePresence(Groupe $groupe): array
+    {
+        $groupe->loadMissing(['theme.formation.entrepriseCliente', 'theme.formateur', 'participants']);
+
+        $theme = $groupe->theme;
+        $formation = $theme->formation;
+        $entreprise = $formation->entrepriseCliente;
+
+        if ($groupe->participants->isEmpty()) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la fiche de présence : aucun participant n'est rattaché à ce groupe."
+            );
+        }
+
+        $content = $this->renderFromView('documents.fiche-presence', [
+            'groupe'       => $groupe,
+            'theme'        => $theme,
+            'entreprise'   => $entreprise,
+            'formateur'    => $theme->formateur,
+            'participants' => $groupe->participants,
+            'organisme'    => EntrepriseFormation::current(),
+            'dateEdition'  => now(),
+        ]);
+
+        $filename = sprintf('fiche_presence_%s_%d.pdf', Str::slug($groupe->libelle), $groupe->id);
+
+        $this->persist($entreprise, $filename, $content);
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
+    }
 
     /**
      * Effectue le rendu Blade -> HTML -> PDF via Dompdf.
