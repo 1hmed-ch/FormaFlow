@@ -61,11 +61,12 @@ class EntrepriseClienteController extends Controller
                     'prenom'   => $validated['gerant_prenom'],
                     'fonction' => $validated['gerant_fonction'],
                     'cin'      => $validated['gerant_cin'],
+                    'genre'    => $validated['gerant_genre'],
                 ]);
 
                 // On sépare les champs du gérant pour insérer uniquement ceux de l'entreprise
                 $entrepriseData = collect($validated)
-                    ->except(['gerant_nom', 'gerant_prenom', 'gerant_fonction', 'gerant_cin'])
+                    ->except(['gerant_nom', 'gerant_prenom', 'gerant_fonction', 'gerant_cin','gerant_genre'])
                     ->merge(['gerant_id' => $gerant->id])
                     ->toArray();
 
@@ -115,6 +116,7 @@ class EntrepriseClienteController extends Controller
                     'prenom'   => $request->input('gerant_prenom', $entreprise_cliente->gerant->prenom),
                     'fonction' => $request->input('gerant_fonction', $entreprise_cliente->gerant->fonction),
                     'cin'      => $request->input('gerant_cin', $entreprise_cliente->gerant->cin),
+                    'genre'    => $request->input('gerant_genre', $entreprise_cliente->gerant->genre),
                 ]);
             }
         });
