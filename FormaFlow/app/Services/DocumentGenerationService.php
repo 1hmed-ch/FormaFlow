@@ -11,6 +11,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\Groupe;
 
 /**
  * Point d'entrée unique pour la génération de tous les documents PDF de
@@ -80,6 +81,7 @@ class DocumentGenerationService
             'content'  => $content,
         ];
     }
+    
 
     /**
      * Génère la "Fiche de présence" (Modèle 5) pour un groupe donné.
@@ -151,6 +153,47 @@ class DocumentGenerationService
 
         return $dompdf->output();
     }
+    /**
+     * Génère la "Fiche d'évaluation synthétique par groupe".
+     *
+     * @throws DocumentGenerationException si le groupe ne contient aucun participant.
+     */
+    public function generateFicheEvaluation(Groupe $groupe, string $ville): array
+    {
+        $groupe->loadMissing(['theme.formateur', 'theme.formation.entrepriseCliente', 'participants']);
+
+        $theme = $groupe->theme;
+
+        if ($groupe->participants->isEmpty()) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la fiche : ce groupe ne contient aucun participant."
+            );
+        }
+
+        $entreprise = $theme->formation->entrepriseCliente ?? null;
+        
+
+    
+    $content = $this->renderFromView('documents.fiche_evaluation', [
+        'groupe'             => $groupe,
+        'entreprise'         => $entreprise,
+        'organisme'          => EntrepriseFormation::current(),
+        'theme'              => $theme,
+        'formateur'          => $theme->formateur,
+        'ville'              => $ville,
+        'nombreParticipants' => $groupe->participants->count(),
+        'dateEdition'        => now(),
+    ]);
+    $filename = sprintf('fiche_evaluation_%s.pdf', Str::slug($groupe->libelle));
+
+    $this->persistGroupeDocument($groupe, $filename, $content);
+
+    return [
+        'filename' => $filename,
+        'content'  => $content,
+    ];
+}
+
 
     /**
      * Conserve une copie du document généré sur le disque configuré, afin
@@ -163,6 +206,20 @@ class DocumentGenerationService
             '%s/entreprise-%d/%s',
             config('documents.storage_path', 'documents'),
             $entreprise->id,
+            $filename
+        );
+
+        Storage::disk(config('documents.storage_disk', 'local'))->put($path, $content);
+    }
+    /**
+     * Conserve une copie du document généré, pour un groupe (fiche d'évaluation).
+     */
+    protected function persistGroupeDocument(Groupe $groupe, string $filename, string $content): void
+    {
+        $path = sprintf(
+            '%s/groupe-%d/%s',
+            config('documents.storage_path', 'documents'),
+            $groupe->id,
             $filename
         );
 

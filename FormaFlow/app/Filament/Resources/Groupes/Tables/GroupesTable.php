@@ -17,6 +17,11 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exceptions\DocumentGenerationException;
+use App\Services\DocumentGenerationService;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 
 class GroupesTable
 {
@@ -104,8 +109,41 @@ class GroupesTable
                             $action->halt();
                         }
                     }),
-                DeleteAction::make()
-            ])
+                 Action::make('genererFicheEvaluation')
+                    ->label("Fiche d'évaluation")
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->form([
+                        TextInput::make('ville')
+                            ->label('Ville')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+            ->action(function (\App\Models\Groupe $record, array $data, Action $action) {
+                    try {
+                        $document = app(DocumentGenerationService::class)
+                            ->generateFicheEvaluation($record, $data['ville']);
+
+                        return response()->streamDownload(
+                            function () use ($document) {
+                                echo $document['content'];
+                            },
+                            $document['filename'],
+                            ['Content-Type' => 'application/pdf']
+                        );
+                    } catch (DocumentGenerationException $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Génération impossible')
+                            ->body($e->getMessage())
+                            ->send();
+
+                        $action->halt();
+                    }
+                }),
+            DeleteAction::make(),
+        ])
+                    
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
