@@ -12,16 +12,6 @@ use Dompdf\Options;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-/**
- * Point d'entrée unique pour la génération de tous les documents PDF de
- * FormaFlow (attestations, fiches, récapitulatifs, GIAC, ...).
- *
- * Chaque type de document expose sa propre méthode publique (ex.
- * generateModele6) qui prépare les données métier puis délègue le rendu
- * HTML -> PDF aux méthodes protégées communes ci-dessous. Cela évite de
- * dupliquer la configuration Dompdf, la mise en page, ou la logique de
- * sauvegarde à chaque nouveau document.
- */
 class DocumentGenerationService
 {
     /**
@@ -63,12 +53,14 @@ class DocumentGenerationService
         }
 
         $content = $this->renderFromView('documents.modele6', [
-            'entreprise'  => $entreprise,
-            'gerant'      => $entreprise->gerant,
-            'organisme'   => EntrepriseFormation::current(),
-            'annee'       => $annee,
-            'themes'      => $themes,
-            'dateEdition' => now(),
+            'entreprise'    => $entreprise,
+            'gerant'        => $entreprise->gerant,
+            'organisme'     => EntrepriseFormation::current(),
+            'annee'         => $annee,
+            'themes'        => $themes,
+            'dateEdition'   => now(),
+            'enteteImage'   => $entreprise->getEnteteImageBase64(),
+            'piedPageImage' => $entreprise->getPiedPageImageBase64(),
         ]);
 
         $filename = sprintf('modele6_%s_%d.pdf', Str::slug($entreprise->raison_sociale), $annee);
@@ -80,7 +72,7 @@ class DocumentGenerationService
             'content'  => $content,
         ];
     }
-    
+
 
     /**
      * Génère la "Fiche de présence" (Modèle 5) pour un groupe donné.
@@ -106,13 +98,15 @@ class DocumentGenerationService
         }
 
         $content = $this->renderFromView('documents.fiche-presence', [
-            'groupe'       => $groupe,
-            'theme'        => $theme,
-            'entreprise'   => $entreprise,
-            'formateur'    => $theme->formateur,
-            'participants' => $groupe->participants,
-            'organisme'    => EntrepriseFormation::current(),
-            'dateEdition'  => now(),
+            'groupe'        => $groupe,
+            'theme'         => $theme,
+            'entreprise'    => $entreprise,
+            'formateur'     => $theme->formateur,
+            'participants'  => $groupe->participants,
+            'organisme'     => EntrepriseFormation::current(),
+            'dateEdition'   => now(),
+            'enteteImage'   => $entreprise?->getEnteteImageBase64(),
+            'piedPageImage' => $entreprise?->getPiedPageImageBase64(),
         ]);
 
         $filename = sprintf('fiche_presence_%s_%d.pdf', Str::slug($groupe->libelle), $groupe->id);
@@ -125,12 +119,6 @@ class DocumentGenerationService
         ];
     }
 
-    /**
-     * Effectue le rendu Blade -> HTML -> PDF via Dompdf.
-     *
-     * Méthode générique réutilisable par tous les futurs documents
-     * (fiche entreprise, Modèle 5, GIAC, récapitulatif de thèmes, ...).
-     */
     protected function renderFromView(string $view, array $data = []): string
     {
         $html = view($view, $data)->render();
@@ -170,28 +158,28 @@ class DocumentGenerationService
         }
 
         $entreprise = $theme->formation->entrepriseCliente ?? null;
-        
 
-    
-    $content = $this->renderFromView('documents.fiche_evaluation', [
-        'groupe'             => $groupe,
-        'entreprise'         => $entreprise,
-        'organisme'          => EntrepriseFormation::current(),
-        'theme'              => $theme,
-        'formateur'          => $theme->formateur,
-        'ville'              => $ville,
-        'nombreParticipants' => $groupe->participants->count(),
-        'dateEdition'        => now(),
-    ]);
-    $filename = sprintf('fiche_evaluation_%s.pdf', Str::slug($groupe->libelle));
 
-    $this->persistGroupeDocument($groupe, $filename, $content);
 
-    return [
-        'filename' => $filename,
-        'content'  => $content,
-    ];
-}
+        $content = $this->renderFromView('documents.fiche_evaluation', [
+            'groupe'             => $groupe,
+            'entreprise'         => $entreprise,
+            'organisme'          => EntrepriseFormation::current(),
+            'theme'              => $theme,
+            'formateur'          => $theme->formateur,
+            'ville'              => $ville,
+            'nombreParticipants' => $groupe->participants->count(),
+            'dateEdition'        => now(),
+        ]);
+        $filename = sprintf('fiche_evaluation_%s.pdf', Str::slug($groupe->libelle));
+
+        $this->persistGroupeDocument($groupe, $filename, $content);
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
+    }
 
 
     /**

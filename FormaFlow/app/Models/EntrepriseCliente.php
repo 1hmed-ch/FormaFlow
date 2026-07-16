@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 
 class EntrepriseCliente extends Model
@@ -27,10 +28,12 @@ class EntrepriseCliente extends Model
         'telephone',
         'fax',
         'email',
-        'contact_ref'
+        'contact_ref',
+        'image_entete',
+        'image_pied_page',
     ];
 
-     protected $casts = [
+    protected $casts = [
         'date_creation' => 'date:Y-m-d',
     ];
 
@@ -47,15 +50,43 @@ class EntrepriseCliente extends Model
         return $this->hasMany(Participant::class, 'entreprise_id');
     }
 
-  protected static function booted()
-{
-    static::deleting(function ($entreprise) {
-        // Bloquer s'il y a des formations ou des participants
-        if ($entreprise->formations()->exists() || $entreprise->participants()->exists()) {
-            throw new \App\Exceptions\SuppressionBloqueeException(
-                "Suppression impossible : cette entreprise possède des formations actives ou des participants rattachés."
-            );
+    public function getEnteteImageBase64(): ?string
+    {
+        return $this->fileToBase64DataUri($this->image_entete);
+    }
+
+    public function getPiedPageImageBase64(): ?string
+    {
+        return $this->fileToBase64DataUri($this->image_pied_page);
+    }
+
+    protected function fileToBase64DataUri(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
         }
-    });
-}
+
+        $disk = config('filament.default_filesystem_disk', 'local');
+
+        if (! Storage::disk($disk)->exists($path)) {
+            return null;
+        }
+
+        $mimeType = Storage::disk($disk)->mimeType($path) ?: 'image/png';
+        $contents = Storage::disk($disk)->get($path);
+
+        return 'data:' . $mimeType . ';base64,' . base64_encode($contents);
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($entreprise) {
+            // Bloquer s'il y a des formations ou des participants
+            if ($entreprise->formations()->exists() || $entreprise->participants()->exists()) {
+                throw new \App\Exceptions\SuppressionBloqueeException(
+                    "Suppression impossible : cette entreprise possède des formations actives ou des participants rattachés."
+                );
+            }
+        });
+    }
 }
