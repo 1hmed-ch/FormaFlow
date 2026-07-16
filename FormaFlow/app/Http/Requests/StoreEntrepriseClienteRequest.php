@@ -6,6 +6,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use App\Enums\GerantGender; 
+use Illuminate\Validation\Rules\Enum;
 
 class StoreEntrepriseClienteRequest extends FormRequest
 {
@@ -44,6 +46,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'gerant_prenom'           => 'required|string|max:255',
             'gerant_fonction'         => 'required|string|max:255', 
             'gerant_cin'              => 'required|string|max:20|unique:gerants,cin', 
+            'gerant_genre'            => ['required', new Enum(GerantGender::class)],
         ];
     }
 
