@@ -63,10 +63,12 @@ class ParticipantsTable
             ->filters([
                 SelectFilter::make('categorie_sp')
                     ->label('Catégorie')
+                    ->native(false)
                     ->options(CategorieSP::class),
 
                 SelectFilter::make('entreprise_id')
                     ->label('Entreprise Cliente')
+                    ->native(false)
                     ->relationship('entrepriseCliente', 'raison_sociale')
                     ->searchable()
                     ->preload(),

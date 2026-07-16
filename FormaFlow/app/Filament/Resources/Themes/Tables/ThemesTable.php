@@ -45,12 +45,14 @@ class ThemesTable
             ->filters([
                 SelectFilter::make('formation_id')
                     ->label('Formation')
+                    ->native(false)
                     ->relationship('formation', 'intitule')
                     ->searchable()
                     ->preload(),
 
                 SelectFilter::make('formateur_id')
                     ->label('Formateur')
+                    ->native(false)
                     ->relationship('formateur', 'nom')
                     ->searchable()
                     ->preload(),

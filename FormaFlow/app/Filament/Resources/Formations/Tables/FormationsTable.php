@@ -54,10 +54,12 @@ class FormationsTable
             ->filters([
                 SelectFilter::make('statut')
                     ->label('État d\'avancement')
+                    ->native(false)
                     ->options(FormationStatus::class),
 
                 SelectFilter::make('entreprise_id')
                     ->label('Entreprise Cliente')
+                    ->native(false)
                     ->relationship('entrepriseCliente', 'raison_sociale')
                     ->searchable()
                     ->preload(),

@@ -55,6 +55,7 @@ class GroupesTable
             ->filters([
                 SelectFilter::make('theme_id')
                     ->label('Thème')
+                    ->native(false)
                     ->relationship('theme', 'intitule')
                     ->searchable()
                     ->preload(),
@@ -62,8 +63,10 @@ class GroupesTable
                 Filter::make('date_debut')
                     ->schema([
                         DatePicker::make('debut_from')
+                            ->native(false)
                             ->label('Débute après le'),
                         DatePicker::make('debut_until')
+                            ->native(false)
                             ->label('Débute avant le'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {

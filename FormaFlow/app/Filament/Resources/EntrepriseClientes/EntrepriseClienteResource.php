@@ -17,7 +17,6 @@ use Filament\Tables\Table;
 class EntrepriseClienteResource extends Resource
 {
     protected static ?string $model = EntrepriseCliente::class;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
     protected static ?string $recordTitleAttribute = 'raison_sociale';
