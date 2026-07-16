@@ -12,7 +12,6 @@ use Dompdf\Options;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-
 /**
  * Point d'entrée unique pour la génération de tous les documents PDF de
  * FormaFlow (attestations, fiches, récapitulatifs, GIAC, ...).

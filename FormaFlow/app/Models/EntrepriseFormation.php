@@ -5,10 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class EntrepriseFormation extends Model
+class EntrepriseFormation extends Model implements HasMedia
 {
-  use HasFactory;
+  use HasFactory,InteractsWithMedia;
+    public const PIECES_JOINTES = [
+            'cv_consultants'        => 'CV des consultants',
+            'proposition_intervention' => 'Proposition d\'intervention',
+            'rc_modele_j'            => 'RC Modèle J',
+            'eligibilite_csf'        => 'Éligibilité CSF cabinet',
+            'facture_pro_forma'      => 'Facture pro forma (originale)',
+        ];
+
     protected $fillable = [
         'raison_sociale',
         'logo',
@@ -48,6 +59,50 @@ class EntrepriseFormation extends Model
         'moyens_pedagogiques' => 'array',
         'date_creation' => 'date',
     ];
+
+
+    public function registerMediaCollections(): void
+    {
+        foreach (array_keys(self::PIECES_JOINTES) as $collection) {
+            $this->addMediaCollection($collection)
+                ->singleFile() // un seul fichier actif par type = auto-remplacement à l'upload
+                ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
+        }
+    }
+
+    
+
+    public function getPieceJointeStatut(string $collection): array
+    {
+        $media = $this->getFirstMedia($collection);
+
+        if (!$media) {
+            return [
+                'etat' => 'Manquant',
+                'media' => null,
+                'nom_fichier' => null,
+                'date_ajout' => null,
+                'date_maj' => null,
+                'date_expiration' => null,
+            ];
+        }
+
+        $expiration = $media->getCustomProperty('date_expiration');
+        $etat = 'Valide';
+
+        if ($expiration && \Carbon\Carbon::parse($expiration)->isPast()) {
+            $etat = 'Expiré';
+        }
+
+        return [
+            'etat' => $etat,
+            'media' => $media,
+            'nom_fichier' => $media->file_name,
+            'date_ajout' => $media->created_at,
+            'date_maj' => $media->updated_at,
+            'date_expiration' => $expiration,
+        ];
+    }
 
     /**
      * Accesseur Singleton pour récupérer la configuration unique de Plénitude

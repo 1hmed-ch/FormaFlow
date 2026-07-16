@@ -16,11 +16,14 @@ use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Select;
 
-
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManageSettings extends Page implements HasForms
 {
-    use InteractsWithForms;
+    use InteractsWithForms , InteractsWithActions ;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?int $navigationSort = 100;
@@ -169,5 +172,49 @@ class ManageSettings extends Page implements HasForms
 
             report($e);
         }
+    }
+   public function uploadPieceAction(): Action
+    {
+        return Action::make('uploadPiece')
+            ->label('Ajouter / Modifier')
+            ->modalHeading(fn (array $arguments) => EntrepriseFormation::PIECES_JOINTES[$arguments['collection']])
+            ->fillForm(function (array $arguments) {
+                $data = EntrepriseFormation::current()->getPieceJointeStatut($arguments['collection']);
+                return ['date_expiration' => $data['date_expiration'] ?? null];
+            })
+            ->schema(fn (array $arguments) => [
+                SpatieMediaLibraryFileUpload::make('fichier')
+                    ->label('Fichier')
+                    ->collection($arguments['collection'])
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(10240)
+                    ->visibility('private')
+                    ->model(EntrepriseFormation::current())
+                    ->required(fn () => !EntrepriseFormation::current()->hasMedia($arguments['collection'])),
+                DatePicker::make('date_expiration')
+                    ->label("Date d'expiration (laisser vide si non applicable)")
+                    ->native(false),
+            ])
+            ->action(function (array $data, array $arguments) {
+                $record = EntrepriseFormation::current();
+                $media = $record->getFirstMedia($arguments['collection']);
+
+                if ($media) {
+                    $media->setCustomProperty('date_expiration', $data['date_expiration'] ?? null);
+                    $media->save();
+                }
+
+                Notification::make()->title('Document mis à jour')->success()->send();
+            });
+    }
+
+    public function getPiecesJointesProperty(): array
+    {
+        $record = EntrepriseFormation::current();
+        return collect(EntrepriseFormation::PIECES_JOINTES)
+            ->mapWithKeys(fn ($label, $key) => [
+                $key => array_merge(['label' => $label], $record->getPieceJointeStatut($key)),
+            ])
+            ->toArray();
     }
 }
