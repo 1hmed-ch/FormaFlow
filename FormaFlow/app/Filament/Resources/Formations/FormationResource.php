@@ -22,6 +22,8 @@ class FormationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'intitule';
 
+    protected static string|null|\UnitEnum $navigationGroup = 'Gestion Pédagogique';
+
     public static function form(Schema $schema): Schema
     {
         return FormationForm::configure($schema);

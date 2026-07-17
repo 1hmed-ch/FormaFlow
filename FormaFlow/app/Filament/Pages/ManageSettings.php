@@ -20,15 +20,17 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Support\Icons\Heroicon;
 
 class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms , InteractsWithActions ;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedBuildingLibrary;
     protected static ?int $navigationSort = 100;
-    protected static ?string $title = 'Paramètres de l\'organisme';
-    protected static ?string $navigationLabel = 'Paramètres';
+    protected static ?string $title = 'Organisme de Formation';
+    protected static string|null|\UnitEnum $navigationGroup = 'Paramètres de l\'Organisme';
+    protected static ?string $navigationLabel = 'Organisme de Formation';
     protected string $view = 'filament.pages.manage-settings';
 
     public ?array $data = [];

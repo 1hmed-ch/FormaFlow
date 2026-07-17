@@ -21,6 +21,7 @@ class FormateurResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUser;
 
     protected static ?string $recordTitleAttribute = 'nom';
+    protected static string|null|\UnitEnum $navigationGroup = 'Paramètres de l\'Organisme';
 
     public static function form(Schema $schema): Schema
     {
