@@ -19,22 +19,14 @@ class FormaFlowStatsOverview extends BaseWidget
                 ->icon('heroicon-o-building-office-2')
                 ->color('info'),
 
-            Stat::make('Formations en cours', Formation::where('statut', FormationStatus::EN_COURS)->count())
-                ->description(Formation::count().' formations au total')
+            Stat::make('Nombre de Formations', Formation::count())
+                ->description(Formation::where('statut', FormationStatus::TERMINEE)->count().' formations terminées')
                 ->icon('heroicon-o-academic-cap')
-                ->color('warning'),
+                ->color('success'),
 
             Stat::make('Participants', Participant::count())
                 ->icon('heroicon-o-identification')
                 ->color('success'),
-
-            Stat::make('Groupes à capacité pleine', Groupe::withCount('participants')
-                ->get()
-                ->filter(fn (Groupe $groupe) => $groupe->participants_count >= $groupe->effectif_max)
-                ->count())
-                ->description(Groupe::count().' groupes au total')
-                ->icon('heroicon-o-users')
-                ->color('danger'),
         ];
     }
 }

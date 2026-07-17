@@ -29,12 +29,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->brandName('FormaFlow')
             ->login()
             ->colors([
                 //'primary' => Color::hex("#3ABCF8"),
                 'primary' => Color::Blue,
                 'danger'  => Color::Rose,
-                'gray'    => Color::Slate,
+                'gray'    => Color::Zinc,
                 'info'    => Color::Blue,
                 'success' => Color::Emerald,
                 'warning' => Color::Amber,

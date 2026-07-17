@@ -48,6 +48,7 @@ class FormateursTable
             ->filters([
                 SelectFilter::make('statut')
                     ->label('Statut')
+                    ->native(false)
                     ->options(FormateurStatus::class),
             ])
             ->recordActions([

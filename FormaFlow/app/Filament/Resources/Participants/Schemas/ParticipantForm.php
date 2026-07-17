@@ -17,8 +17,17 @@ class ParticipantForm
                 Section::make('Identité du Participant')
                     ->description('Informations personnelles et identification légale')
                     ->icon('heroicon-o-identification')
+                    ->collapsible()
                     ->columns(2)
                     ->schema([
+                        Select::make('entreprise_id')
+                            ->label('Entreprise Cliente')
+                            ->relationship('entrepriseCliente', 'raison_sociale')
+                            ->searchable()
+                            ->native(false)
+                            ->preload()
+                            ->required()
+                            ->columnSpanFull(),
                         TextInput::make('nom')
                             ->label('Nom')
                             ->required()
@@ -34,30 +43,14 @@ class ParticipantForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(20),
-                    ]),
-
-                Section::make('Rattachement Professionnel')
-                    ->description('Entreprise cliente, poste occupé et statut CNSS')
-                    ->icon('heroicon-o-briefcase')
-                    ->columns(2)
-                    ->schema([
-                        Select::make('entreprise_id')
-                            ->label('Entreprise Cliente')
-                            ->relationship('entrepriseCliente', 'raison_sociale')
-                            ->searchable()
-                            ->native(false)
-                            ->preload()
-                            ->required()
-                            ->columnSpanFull(),
+                        TextInput::make('numero_cnss')
+                            ->label('Numéro CNSS')
+                            ->maxLength(20),
 
                         TextInput::make('fonction_occupee')
                             ->label('Fonction occupée')
+                            ->columnSpanFull()
                             ->maxLength(255),
-
-                        TextInput::make('numero_cnss')
-                            ->label('Numéro CNSS')
-                            ->numeric()
-                            ->maxLength(20),
 
                         Select::make('categorie_sp')
                             ->label('Catégorie Socio-Professionnelle')
@@ -65,7 +58,7 @@ class ParticipantForm
                             ->native(false)
                             ->columnSpanFull()
                             ->required(),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Coordonnées')
                     ->description('Moyens de contact du participant')
@@ -83,7 +76,7 @@ class ParticipantForm
                             ->tel()
                             ->maxLength(20)
                             ->placeholder('+212 6 00 00 00 00'),
-                    ]),
+                    ])->columnSpanFull(),
             ]);
     }
 }
