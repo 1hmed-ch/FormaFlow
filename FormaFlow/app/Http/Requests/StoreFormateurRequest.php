@@ -27,7 +27,7 @@ class StoreFormateurRequest extends FormRequest
         return [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'required|unique:formateurs|email|max:255',
+            'email' => 'unique:formateurs|email|max:255',
             'telephone' => 'nullable|string|max:20',
             'specialite' => 'nullable|string|max:255',
             'statut' => ['required', new Enum(FormateurStatus::class)],

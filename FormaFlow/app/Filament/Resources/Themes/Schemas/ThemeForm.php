@@ -7,6 +7,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\DatePicker;
 
 class ThemeForm
 {
@@ -25,13 +26,17 @@ class ThemeForm
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-
-                        TextInput::make('duree_prevue')
-                            ->label('Durée prévue (en heures)')
-                            ->numeric()
-                            ->minValue(1)
-                            ->required(),
-
+                        DatePicker::make('date_debut')
+                                            ->label('Date de début')
+                                            ->displayFormat('d/m/Y')
+                                            ->native(false)
+                                            ->required(),
+                        DatePicker::make('date_fin')
+                                            ->label('Date de fin')
+                                            ->displayFormat('d/m/Y')
+                                            ->native(false)
+                                            ->afterOrEqual('date_debut')
+                                            ->required(),
                         Textarea::make('objectifs')
                             ->label('Objectifs pédagogiques')
                             ->placeholder('Décrivez les compétences visées par ce thème...')

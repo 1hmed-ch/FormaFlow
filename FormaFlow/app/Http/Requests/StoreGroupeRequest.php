@@ -19,8 +19,6 @@ class StoreGroupeRequest extends FormRequest
     {
         return [
             'libelle'      => 'required|string|max:255',
-            'date_debut'   => 'required|date',
-            'date_fin'     => 'required|date|after_or_equal:date_debut',
             'lieu'         => 'nullable|string|max:255',
             'effectif_max' => 'required|integer|min:1',
             'theme_id'     => 'required|exists:themes,id',
@@ -30,7 +28,12 @@ class StoreGroupeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'date_fin.after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+            'libelle.required'      => 'Le libellé du groupe est obligatoire.',
+            'effectif_max.required' => 'L\'effectif maximum du groupe est obligatoire.',
+            'effectif_max.integer'  => 'L\'effectif maximum doit être un nombre entier.',
+            'effectif_max.min'      => 'L\'effectif maximum doit être au moins de 1.',
+            'theme_id.required'     => 'L\'identifiant du thème est obligatoire.',
+            'theme_id.exists'       => 'Le thème spécifié n\'existe pas.',
         ];
     }
 
@@ -51,17 +54,6 @@ class StoreGroupeRequest extends FormRequest
             $theme = Theme::with('formation')->find($themeId);
             if (!$theme || !$theme->formation) {
                 return;
-            }
-
-            $dateDebut = $this->input('date_debut');
-            $dateFin   = $this->input('date_fin');
-
-            if ($dateDebut < $theme->formation->date_debut || $dateFin > $theme->formation->date_fin) {
-                $validator->errors()->add(
-                    'date_debut',
-                    'Les dates du groupe doivent être comprises dans la période de la formation ('
-                    . $theme->formation->date_debut . ' au ' . $theme->formation->date_fin . ').'
-                );
             }
         });
     }

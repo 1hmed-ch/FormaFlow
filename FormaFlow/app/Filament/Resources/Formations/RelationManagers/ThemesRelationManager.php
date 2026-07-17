@@ -17,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
+
 class ThemesRelationManager extends RelationManager
 {
     protected static string $relationship = 'themes';
@@ -33,21 +34,13 @@ class ThemesRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
-
-                TextInput::make('duree_prevue')
-                    ->label('Durée prévue (en heures)')
-                    ->numeric()
-                    ->minValue(1)
-                    ->required(),
-
                 Select::make('formateur_id')
                     ->label('Formateur assigné')
-                    ->relationship('formateur', 'nom')
+                    ->relationship('formateur','nom')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name)
                     ->searchable(['nom', 'prenom'])
                     ->preload()
                     ->required(),
-
                 Textarea::make('objectifs')
                     ->label('Objectifs pédagogiques')
                     ->placeholder('Décrivez les compétences visées par ce thème...')
@@ -65,12 +58,15 @@ class ThemesRelationManager extends RelationManager
                     ->label('Thème')
                     ->limit(40)
                     ->searchable(),
-
-                TextColumn::make('duree_prevue')
-                    ->label('Durée (H)')
-                    ->numeric()
+                TextColumn::make('date_debut')
+                    ->label('Début')
+                    ->date('d/m/Y')
                     ->sortable(),
 
+                TextColumn::make('date_fin')
+                    ->label('Fin')
+                    ->date('d/m/Y')
+                    ->sortable(),
                 TextColumn::make('formateur.full_name')
                     ->label('Formateur')
                     ->searchable(['nom', 'prenom'])

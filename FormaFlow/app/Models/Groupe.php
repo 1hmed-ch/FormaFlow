@@ -10,17 +10,12 @@ class Groupe extends Model
 {
     protected $fillable = [
         'libelle',
-        'date_debut',
-        'date_fin',
         'lieu',
         'effectif_max',
         'theme_id',
     ];
 
-    protected $casts = [
-        'date_debut' => 'date:Y-m-d',
-        'date_fin'   => 'date:Y-m-d',
-    ];
+   
 
     public function theme(): BelongsTo
     {

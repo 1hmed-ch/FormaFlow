@@ -20,13 +20,6 @@ class FormationsTable
                 TextColumn::make('intitule')
                     ->limit(40)
                     ->searchable(),
-                TextColumn::make('date_debut')
-                    ->date('d/m/Y')
-                    ->sortable(),
-                TextColumn::make('date_fin')
-                    ->date('d/m/Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('statut')
                     ->label('État d\'avancement')
                     ->badge()

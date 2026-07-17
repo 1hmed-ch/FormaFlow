@@ -20,9 +20,14 @@ class ThemesTable
                     ->label('Thème')
                     ->limit(40)
                     ->searchable(),
-                TextColumn::make('duree_prevue')
-                    ->label('Durée (H)')
-                    ->numeric()
+                TextColumn::make('date_debut')
+                    ->label('Début')
+                    ->date('d/m/Y')
+                    ->sortable(),
+
+                TextColumn::make('date_fin')
+                    ->label('Fin')
+                    ->date('d/m/Y')
                     ->sortable(),
                 TextColumn::make('formation.intitule')
                     ->label('Formation')
@@ -56,6 +61,26 @@ class ThemesTable
                     ->relationship('formateur', 'nom')
                     ->searchable()
                     ->preload(),
+                Filter::make('date_debut')
+                    ->schema([
+                        DatePicker::make('debut_from')
+                            ->native(false)
+                            ->label('Débute après le'),
+                        DatePicker::make('debut_until')
+                            ->native(false)
+                            ->label('Débute avant le'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['debut_from'] ?? null,
+                                fn (Builder $q, $date) => $q->whereDate('date_debut', '>=', $date),
+                            )
+                            ->when(
+                                $data['debut_until'] ?? null,
+                                fn (Builder $q, $date) => $q->whereDate('date_debut', '<=', $date),
+                            );
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),

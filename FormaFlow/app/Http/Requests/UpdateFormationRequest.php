@@ -17,8 +17,6 @@ class UpdateFormationRequest extends FormRequest
     {
         return [
             'intitule' => 'sometimes|required|string|max:255',
-            'date_debut' => 'sometimes|required|date',
-            'date_fin' => 'sometimes|required|date|after_or_equal:date_debut',
             'statut' => ["required", "sometimes", new Enum(FormationStatus::class)],
             'entreprise_id' => 'sometimes|required|exists:entreprise_clientes,id',
         ];
@@ -27,7 +25,10 @@ class UpdateFormationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'date_fin.after_or_equal' => 'La date de fin doit être une date postérieure ou égale à la date de début.',
+            'intitule.required' => 'Le titre de la formation est obligatoire.',
+            'statut.required' => 'Le statut de la formation est obligatoire.',
+            'entreprise_id.required' => 'L\'identifiant de l\'entreprise cliente est obligatoire.',
+            'entreprise_id.exists' => 'L\'entreprise cliente spécifiée n\'existe pas.',
         ];
     }
 }
