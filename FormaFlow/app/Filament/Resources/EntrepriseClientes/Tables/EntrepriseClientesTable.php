@@ -104,6 +104,7 @@ class EntrepriseClientesTable
             ->filters([
                 SelectFilter::make('statut_juridique')
                     ->label('Statut Juridique')
+                    ->native(false)
                     ->options([
                         'SARL' => 'SARL',
                         'SARL AU' => 'SARL AU',

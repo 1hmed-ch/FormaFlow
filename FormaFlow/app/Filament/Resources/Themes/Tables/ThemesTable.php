@@ -50,15 +50,37 @@ class ThemesTable
             ->filters([
                 SelectFilter::make('formation_id')
                     ->label('Formation')
+                    ->native(false)
                     ->relationship('formation', 'intitule')
                     ->searchable()
                     ->preload(),
 
                 SelectFilter::make('formateur_id')
                     ->label('Formateur')
+                    ->native(false)
                     ->relationship('formateur', 'nom')
                     ->searchable()
                     ->preload(),
+                Filter::make('date_debut')
+                    ->schema([
+                        DatePicker::make('debut_from')
+                            ->native(false)
+                            ->label('Débute après le'),
+                        DatePicker::make('debut_until')
+                            ->native(false)
+                            ->label('Débute avant le'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['debut_from'] ?? null,
+                                fn (Builder $q, $date) => $q->whereDate('date_debut', '>=', $date),
+                            )
+                            ->when(
+                                $data['debut_until'] ?? null,
+                                fn (Builder $q, $date) => $q->whereDate('date_debut', '<=', $date),
+                            );
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),

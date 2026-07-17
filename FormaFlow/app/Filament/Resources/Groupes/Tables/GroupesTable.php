@@ -18,6 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 
 class GroupesTable
 {
@@ -48,11 +49,12 @@ class GroupesTable
             ->filters([
                 SelectFilter::make('theme_id')
                     ->label('Thème')
+                    ->native(false)
                     ->relationship('theme', 'intitule')
                     ->searchable()
                     ->preload(),
+            ])
 
-             ])
             ->recordActions(actions: [
                 ActionGroup::make(actions: [
                     EditAction::make(),
