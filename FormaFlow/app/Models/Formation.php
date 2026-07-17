@@ -15,8 +15,6 @@ class Formation extends Model
     protected $fillable = [
         'entreprise_formation_id',
         'intitule',
-        'date_debut',
-        'date_fin',
         'statut',
         'entreprise_id',
     ];

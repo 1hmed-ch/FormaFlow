@@ -18,8 +18,6 @@ class UpdateGroupeRequest extends FormRequest
     {
         return [
             'libelle'      => 'sometimes|required|string|max:255',
-            'date_debut'   => 'sometimes|required|date',
-            'date_fin'     => 'sometimes|required|date|after_or_equal:date_debut',
             'lieu'         => 'nullable|string|max:255',
             'effectif_max' => 'sometimes|required|integer|min:1',
             'theme_id'     => 'sometimes|required|exists:themes,id',
@@ -29,7 +27,12 @@ class UpdateGroupeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'date_fin.after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+            'libelle.required'      => 'Le libellé du groupe est obligatoire.',
+            'effectif_max.required' => 'L\'effectif maximum du groupe est obligatoire.',
+            'effectif_max.integer'  => 'L\'effectif maximum doit être un nombre entier.',
+            'effectif_max.min'      => 'L\'effectif maximum doit être au moins de 1.',
+            'theme_id.required'     => 'L\'identifiant du thème est obligatoire.',
+            'theme_id.exists'       => 'Le thème spécifié n\'existe pas.',
         ];
     }
 

@@ -35,32 +35,18 @@ class FormationForm
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('Planification & Statut')
-                    ->description('Dates globales et état d\'avancement')
-                    ->icon('heroicon-o-calendar')
-                    ->columns(2)
-                    ->schema([
-                        DatePicker::make('date_debut')
-                            ->label('Date de début')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->required(),
-
-                        DatePicker::make('date_fin')
-                            ->label('Date de fin')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->afterOrEqual('date_debut')
-                            ->required(),
-
-                        Select::make('statut')
-                            ->label('Statut de la formation')
-                            ->options(FormationStatus::class)
+                Section::make('Statut de la Formation')
+                        ->icon('heroicon-o-arrow-path')
+                        ->schema([
+                         Select::make('statut')
+                             ->label('Statut de la formation')
+                             ->options(FormationStatus::class)
                             ->default('Planifiee')
                             ->native(false)
-                            ->required()
-                            ->columnSpanFull(),
-                    ]),
+                            ->required(),
+        
+                        ]),
+
             ]);
     }
 }

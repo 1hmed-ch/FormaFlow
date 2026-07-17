@@ -17,12 +17,17 @@ class Theme extends Model
      */
     protected $fillable = [
         'intitule',
-        'duree_prevue',
+        'date_debut',
+        'date_fin',
         'objectifs',
         'formation_id',
         'formateur_id'
     ];
 
+     protected $casts = [
+        'date_debut' => 'date:Y-m-d',
+        'date_fin'   => 'date:Y-m-d',
+    ];
     /**
      * Un thème appartient à une Formation.
      */

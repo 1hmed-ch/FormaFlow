@@ -168,7 +168,7 @@
         <tr>
             <td style="width: 46%;">
                 <strong>Thème :</strong> {{ $theme->intitule }}<br>
-                <strong>Date :</strong> Du {{ $groupe->date_debut->format('d/m/Y') }} au {{ $groupe->date_fin->format('d/m/Y') }}<br>
+                <strong>Date :</strong> Du {{ \Carbon\Carbon::parse($theme->date_debut)->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($theme->date_fin)->format('d/m/Y') }}<br>
                 <strong>Animateur :</strong> {{ $formateur->full_name }}
             </td>
             <td style="width: 27%;">

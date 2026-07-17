@@ -20,9 +20,14 @@ class ThemesTable
                     ->label('Thème')
                     ->limit(40)
                     ->searchable(),
-                TextColumn::make('duree_prevue')
-                    ->label('Durée (H)')
-                    ->numeric()
+                TextColumn::make('date_debut')
+                    ->label('Début')
+                    ->date('d/m/Y')
+                    ->sortable(),
+
+                TextColumn::make('date_fin')
+                    ->label('Fin')
+                    ->date('d/m/Y')
                     ->sortable(),
                 TextColumn::make('formation.intitule')
                     ->label('Formation')

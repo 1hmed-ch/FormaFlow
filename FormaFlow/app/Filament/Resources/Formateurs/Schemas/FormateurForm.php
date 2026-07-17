@@ -52,7 +52,6 @@ class FormateurForm
                         TextInput::make('email')
                             ->label('Adresse Email')
                             ->email()
-                            ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
 

@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Filament\Resources\Groupes\Schemas;
-
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -40,24 +38,10 @@ class GroupeForm
                             ->required(),
                     ]),
 
-                Section::make('Planification & Logistique')
-                    ->description('Dates de session et lieu de déroulement')
+                Section::make('Logistique de la Session')
+                    ->description('Lieu de déroulement de la formation')
                     ->icon('heroicon-o-map-pin')
-                    ->columns(2)
                     ->schema([
-                        DatePicker::make('date_debut')
-                            ->label('Date de début')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->required(),
-
-                        DatePicker::make('date_fin')
-                            ->label('Date de fin')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->afterOrEqual('date_debut')
-                            ->required(),
-
                         TextInput::make('lieu')
                             ->label('Lieu de formation')
                             ->placeholder('Ex: Salle de conférence principale, En ligne...')
