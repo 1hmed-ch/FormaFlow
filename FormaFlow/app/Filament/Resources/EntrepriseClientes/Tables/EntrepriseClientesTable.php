@@ -7,6 +7,7 @@ use App\Models\EntrepriseCliente;
 use App\Services\DocumentGenerationService;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Actions\BulkActionGroup;
@@ -115,6 +116,7 @@ class EntrepriseClientesTable
             ])
             ->recordActions(actions :[
                 ActionGroup::make(actions: [
+                    ViewAction::make(),
                     EditAction::make(),
                     Action::make('genererModele6')
                         ->label('Modèle 6')
