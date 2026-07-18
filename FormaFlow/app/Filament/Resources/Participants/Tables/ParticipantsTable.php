@@ -36,10 +36,11 @@ class ParticipantsTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fonction_occupee')
+                    ->label('Fonction occupée')
                     ->limit(20)
                     ->searchable(),
                 TextColumn::make('categorie_sp')
-                    ->label('Categorie')
+                    ->label('Catégorie')
                     ->color(fn ($state): string => match ($state->value ?? $state) {
                         'Ouvrier', 'O' => 'info',
                         'Cadre', 'C'   => 'warning',
@@ -48,7 +49,7 @@ class ParticipantsTable
                     })
                     ->badge(),
                 TextColumn::make('entrepriseCliente.raison_sociale')
-                    ->label('Entreprise Client')
+                    ->label('Entreprise Cliente')
                     ->limit(35)
                     ->searchable(),
                 TextColumn::make('created_at')
