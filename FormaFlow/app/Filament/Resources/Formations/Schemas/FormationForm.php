@@ -6,6 +6,7 @@ use App\Enums\FormationStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -33,20 +34,33 @@ class FormationForm
                             ->preload()
                             ->required()
                             ->columnSpanFull(),
-                    ]),
-
-                Section::make('Statut de la Formation')
-                        ->icon('heroicon-o-arrow-path')
-                        ->schema([
-                         Select::make('statut')
-                             ->label('Statut de la formation')
-                             ->options(FormationStatus::class)
+                        /*Select::make('statut')
+                            ->label('Statut de la formation')
+                            ->options(FormationStatus::class)
                             ->default('Planifiee')
                             ->native(false)
-                            ->required(),
-        
-                        ]),
+                            ->required(),*/
+                        ToggleButtons::make('statut')
+                            ->label('Statut de la formation')
+                            ->options(FormationStatus::class)
+                            ->default(FormationStatus::PLANIFIEE)
+                            ->colors([
+                                FormationStatus::PLANIFIEE->value => 'primary',
+                                FormationStatus::EN_COURS->value => 'warning',
+                                FormationStatus::TERMINEE->value => 'success',
+                                FormationStatus::ANNULEE->value => 'danger',
+                            ])
+                            ->icons([
+                                FormationStatus::PLANIFIEE->value => 'heroicon-o-calendar',
+                                FormationStatus::EN_COURS->value => 'heroicon-o-clock',
+                                FormationStatus::TERMINEE->value => 'heroicon-o-check-circle',
+                                FormationStatus::ANNULEE->value => 'heroicon-o-x-circle',
+                            ])
+                            ->required()
+                            ->inline()
+                            ->columnSpanFull(),
 
-            ]);
+                        ])->columnSpanFull(),
+                    ]);
     }
 }

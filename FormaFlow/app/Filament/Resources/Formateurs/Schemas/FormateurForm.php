@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Formateurs\Schemas;
 use App\Enums\FormateurStatus;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -35,23 +36,27 @@ class FormateurForm
                             ->maxLength(255)
                             ->columnSpanFull(),
 
-                        Select::make('statut')
+                        /*Select::make('statut')
                             ->label('Statut du formateur')
                             ->options(FormateurStatus::class)
                             ->default('INTERNE')
                             ->native(false)
                             ->required()
+                            ->columnSpanFull(),*/
+                        ToggleButtons::make('statut')
+                            ->label('Statut du formateur')
+                            ->options(FormateurStatus::class)
+                            ->default(FormateurStatus::INTERNE->value)
+                            ->colors([
+                                FormateurStatus::INTERNE->value => 'success',
+                                FormateurStatus::EXTERNE->value => 'warning',
+                            ])
+                            ->required()
                             ->columnSpanFull(),
-                    ]),
-
-                Section::make('Coordonnées')
-                    ->description('Moyens de contact directs')
-                    ->icon('heroicon-o-phone')
-                    ->columns(2)
-                    ->schema([
                         TextInput::make('email')
                             ->label('Adresse Email')
                             ->email()
+                            ->placeholder("saisissez l'adresse email")
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
 
@@ -60,7 +65,7 @@ class FormateurForm
                             ->tel()
                             ->maxLength(20)
                             ->placeholder('+212 6 00 00 00 00'),
-                    ]),
+                    ])->columnSpanFull(),
             ]);
     }
 }

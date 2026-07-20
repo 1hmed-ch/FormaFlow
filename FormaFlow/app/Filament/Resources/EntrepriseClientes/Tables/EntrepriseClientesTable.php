@@ -44,13 +44,13 @@ class EntrepriseClientesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('statut_juridique')
-                    /*->color(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'SARL', 'SARL' => 'info',
                         'SARL AU', 'SARL AU'   => 'warning',
                         'SA', 'SA'   => 'success',
                         'SNC', 'SNC'     => 'danger',
                         default                  => 'gray',
-                    })*/
+                    })
                     ->badge()
                     ->searchable(),
                 TextColumn::make('ice')

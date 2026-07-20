@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Participants\Schemas;
 use App\Enums\CategorieSP;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -45,6 +46,7 @@ class ParticipantForm
                             ->maxLength(20),
                         TextInput::make('numero_cnss')
                             ->label('Numéro CNSS')
+                            ->unique(ignoreRecord: true)
                             ->maxLength(20),
 
                         TextInput::make('fonction_occupee')
@@ -52,12 +54,32 @@ class ParticipantForm
                             ->columnSpanFull()
                             ->maxLength(255),
 
-                        Select::make('categorie_sp')
+                        /*Select::make('categorie_sp')
                             ->label('Catégorie Socio-Professionnelle')
                             ->options(CategorieSP::class)
                             ->native(false)
                             ->columnSpanFull()
-                            ->required(),
+                            ->required(),*/
+                        ToggleButtons::make('categorie_sp')
+                            ->label('Catégorie Socio-Professionnelle')
+                            ->options([
+                                CategorieSP::Cadre->value => 'Cadre',
+                                CategorieSP::Employe->value => 'Employé',
+                                CategorieSP::Ouvrier->value => 'Ouvrier',
+                            ])
+                            ->colors([
+                                CategorieSP::Cadre->value => 'primary',
+                                CategorieSP::Employe->value => 'success',
+                                CategorieSP::Ouvrier->value => 'warning',
+                            ])
+                            ->icons([
+                                CategorieSP::Cadre->value => 'heroicon-o-user-circle',
+                                CategorieSP::Employe->value => 'heroicon-o-user-group',
+                                CategorieSP::Ouvrier->value => 'heroicon-o-user',
+                            ])
+                            ->required()
+                            ->inline()
+                            ->columnSpanFull(),
                     ])->columnSpanFull(),
 
                 Section::make('Coordonnées')
@@ -69,6 +91,7 @@ class ParticipantForm
                         TextInput::make('email')
                             ->label('Adresse Email')
                             ->email()
+                            ->placeholder("saisissez l'adresse email")
                             ->maxLength(255),
 
                         TextInput::make('telephone')
