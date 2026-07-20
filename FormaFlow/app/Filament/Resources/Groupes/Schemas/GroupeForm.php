@@ -36,18 +36,12 @@ class GroupeForm
                             ->columnSpanFull()
                             ->preload()
                             ->required(),
-                    ]),
-
-                Section::make('Logistique de la Session')
-                    ->description('Lieu de déroulement de la formation')
-                    ->icon('heroicon-o-map-pin')
-                    ->schema([
                         TextInput::make('lieu')
                             ->label('Lieu de formation')
                             ->placeholder('Ex: Salle de conférence principale, En ligne...')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                    ]),
+                    ])->columnSpanFull(),
             ]);
     }
 }

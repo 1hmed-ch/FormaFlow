@@ -45,12 +45,39 @@ class EntrepriseClienteInfolist
                         TextEntry::make('secteur_activite')
                             ->label('Secteur d\'Activité'),
 
+                        TextEntry::make('ice')
+                            ->label('ICE')
+                            ->copyable()
+                            ->placeholder('—'),
+
+                        TextEntry::make('if')
+                            ->label('Identifiant Fiscal (IF)')
+                            ->copyable()
+                            ->placeholder('—'),
+
+                        TextEntry::make('rc')
+                            ->label('Registre de Commerce (RC)')
+                            ->copyable()
+                            ->placeholder('—'),
+
+                        TextEntry::make('patente')
+                            ->label('Patente')
+                            ->placeholder('—'),
+
+                        TextEntry::make('num_cnss')
+                            ->label('N° CNSS')
+                            ->copyable()
+                            ->placeholder('—'),
+
+                        TextEntry::make('region_affiliation_cnss')
+                            ->label('Région d\'affiliation CNSS')
+                            ->placeholder('—'),
                         TextEntry::make('activite')
                             ->label('Activité (Description détaillée)')
                             ->prose()
                             ->placeholder('—')
                             ->columnSpanFull(),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Gérant')
                     ->description('Représentant légal de l\'entreprise')
@@ -79,42 +106,7 @@ class EntrepriseClienteInfolist
                             ->label('Fonction')
                             ->columnSpanFull()
                             ->placeholder('—'),
-                    ]),
-
-                Section::make('Identifiants Légaux & Administratifs')
-                    ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
-                    ->icon('heroicon-o-document-text')
-                    ->columns(3)
-                    ->collapsible()
-                    ->schema([
-                        TextEntry::make('ice')
-                            ->label('ICE')
-                            ->copyable()
-                            ->placeholder('—'),
-
-                        TextEntry::make('if')
-                            ->label('Identifiant Fiscal (IF)')
-                            ->copyable()
-                            ->placeholder('—'),
-
-                        TextEntry::make('rc')
-                            ->label('Registre de Commerce (RC)')
-                            ->copyable()
-                            ->placeholder('—'),
-
-                        TextEntry::make('patente')
-                            ->label('Patente')
-                            ->placeholder('—'),
-
-                        TextEntry::make('num_cnss')
-                            ->label('N° CNSS')
-                            ->copyable()
-                            ->placeholder('—'),
-
-                        TextEntry::make('region_affiliation_cnss')
-                            ->label('Région d\'affiliation CNSS')
-                            ->placeholder('—'),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Coordonnées & Contact')
                     ->description('Informations pour joindre le référent de l\'entreprise')
@@ -142,7 +134,7 @@ class EntrepriseClienteInfolist
                         TextEntry::make('fax')
                             ->label('Fax')
                             ->placeholder('—'),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Visuels pour les documents générés')
                     ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')

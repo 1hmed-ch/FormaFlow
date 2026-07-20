@@ -62,7 +62,7 @@ class EntrepriseClienteForm {
                             ->label('Activité (Description détaillée)')
                             ->rows(3)
                             ->columnSpanFull(),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Gérant')
                     ->description('Représentant légal de l\'entreprise')
@@ -97,7 +97,7 @@ class EntrepriseClienteForm {
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Identifiants Légaux & Administratifs')
                     ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
@@ -135,7 +135,7 @@ class EntrepriseClienteForm {
                         TextInput::make('region_affiliation_cnss')
                             ->label('Région d\'affiliation CNSS')
                             ->maxLength(100),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Coordonnées & Contact')
                     ->description('Informations pour joindre le référent de l\'entreprise')
@@ -152,6 +152,7 @@ class EntrepriseClienteForm {
                             ->label('Adresse Email')
                             ->email()
                             ->required()
+                            ->placeholder("EX: entreprise@example.com")
                             ->columnSpanFull()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
@@ -167,7 +168,7 @@ class EntrepriseClienteForm {
                             ->tel()
                             ->placeholder('+212 5 00 00 00 00')
                             ->maxLength(20),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Visuels pour les documents générés')
                     ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')
