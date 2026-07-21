@@ -11,7 +11,9 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use App\Models\DossierGiac;
+use App\Enums\StatutDossierGiac;
+use Barryvdh\DomPDF\Facade\Pdf;
 class DocumentGenerationService
 {
     /**
@@ -211,5 +213,149 @@ class DocumentGenerationService
         );
 
         Storage::disk(config('documents.storage_disk', 'local'))->put($path, $content);
+    }
+
+/**
+ * Génère le dossier complet GIAC (les 7 documents officiels B1 -> G) pour une entreprise.
+ *
+ * @param EntrepriseCliente $entreprise
+ * @return array Array d'objets PDF ['filename' => string, 'content' => string]
+ */
+   /**
+     * Génère le dossier complet GIAC (les 7 documents officiels B1 -> G) pour une entreprise.
+     *
+     * @param EntrepriseCliente $entreprise
+     * @return array Array d'objets PDF ['filename' => string, 'content' => string]
+     */
+    public function generateDossierGiac(EntrepriseCliente $entreprise): array
+    {
+        $documents = [
+            'B1' => $this->generateB1BulletinAdhesion($entreprise),
+            'B2' => $this->generateB2BulletinReadhesion($entreprise),
+            'C'  => $this->generateCFicheEntreprise($entreprise),
+            'D'  => $this->generateDFicheTechniqueDiagnostic($entreprise),
+            'E'  => $this->generateEFicheTechniqueIngenierie($entreprise),
+            'F'  => $this->generateFFicheG3($entreprise),
+            'G'  => $this->generateGDeclarationHonneur($entreprise),
+        ];
+
+        // Chemin de persistance : storage/app/documents/entreprise-{id}/giac/
+        $folderPath = sprintf(
+            '%s/entreprise-%d/giac',
+            config('documents.storage_path', 'documents'),
+            $entreprise->id
+        );
+
+        $disk = Storage::disk(config('documents.storage_disk', 'local'));
+
+        // Stocker physiquement les 7 fichiers PDF
+        foreach ($documents as $doc) {
+            $disk->put("{$folderPath}/{$doc['filename']}", $doc['content']);
+        }
+
+        // Créer le dossier GIAC en BDD
+        DossierGiac::create([
+            'entreprise_cliente_id' => $entreprise->id,
+            'statut'                => StatutDossierGiac::EnCours,
+            'date_generation'       => now(),
+            'chemin_stockage'       => $folderPath,
+        ]);
+
+        return $documents;
+    }
+
+    public function generateB1BulletinAdhesion(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.b1_bulletin_adhesion', [
+            'entreprise'  => $entreprise,
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'B1_Bulletin_Adhesion.pdf',
+            'content'  => $content,
+        ];
+    }
+
+    public function generateB2BulletinReadhesion(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.b2_bulletin_readhesion', [
+            'entreprise'  => $entreprise,
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'B2_Bulletin_Readhesion.pdf',
+            'content'  => $content,
+        ];
+    }
+
+    public function generateCFicheEntreprise(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.c_fiche_entreprise', [
+            'entreprise'  => $entreprise,
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'C_Fiche_Entreprise.pdf',
+            'content'  => $content,
+        ];
+    }
+
+    public function generateDFicheTechniqueDiagnostic(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.d_fiche_technique_diagnostic', [
+            'entreprise'  => $entreprise,
+            'organisme'   => EntrepriseFormation::current(),
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'D_Fiche_Technique_Diagnostic_Strategique.pdf',
+            'content'  => $content,
+        ];
+    }
+
+    public function generateEFicheTechniqueIngenierie(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.e_fiche_technique_ingenierie', [
+            'entreprise'  => $entreprise,
+            'organisme'   => EntrepriseFormation::current(),
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'E_Fiche_Technique_Ingenierie_Formation.pdf',
+            'content'  => $content,
+        ];
+    }
+
+    public function generateFFicheG3(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.f_fiche_g3', [
+            'entreprise'  => $entreprise,
+            'organisme'   => EntrepriseFormation::current(),
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'F_Fiche_G3.pdf',
+            'content'  => $content,
+        ];
+    }
+
+    public function generateGDeclarationHonneur(EntrepriseCliente $entreprise): array
+    {
+        $content = $this->renderFromView('documents.giac.g_declaration_honneur', [
+            'entreprise'  => $entreprise,
+            'organisme'   => EntrepriseFormation::current(),
+            'dateEdition' => now(),
+        ]);
+
+        return [
+            'filename' => 'G_Declaration_Honneur.pdf',
+            'content'  => $content,
+        ];
     }
 }

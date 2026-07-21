@@ -11,7 +11,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class EntrepriseClienteForm {
+class EntrepriseClienteForm
+{
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -62,6 +63,43 @@ class EntrepriseClienteForm {
                             ->label('Activité (Description détaillée)')
                             ->rows(3)
                             ->columnSpanFull(),
+                    ])->columnSpanFull(),
+
+                Section::make('Répartition de l\'Effectif (GIAC)')
+                    ->description('Détail des catégories socioprofessionnelles pour les dossiers GIAC')
+                    ->icon('heroicon-o-user-group')
+                    ->columns(3)
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('effectif_cadre')
+                            ->label('Cadres')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+
+                        TextInput::make('effectif_cadre_moyen')
+                            ->label('Cadres Moyens')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+
+                        TextInput::make('effectif_agent_qualifie')
+                            ->label('Agents Qualifiés')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+
+                        TextInput::make('effectif_agent_sans_qualification')
+                            ->label('Agents Sans Qualification')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+
+                        TextInput::make('effectif_agent_occasionnel')
+                            ->label('Agents Occasionnels')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
                     ])->columnSpanFull(),
 
                 Section::make('Gérant')
