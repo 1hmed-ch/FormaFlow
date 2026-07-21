@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('activite')->nullable();
             $table->string('region_affiliation_cnss')->nullable();
             $table->integer('effectif_total')->nullable();
+            
 
             $table->string('telephone')->nullable();
             $table->string('fax')->nullable();

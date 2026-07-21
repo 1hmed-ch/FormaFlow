@@ -25,6 +25,11 @@ class EntrepriseCliente extends Model
         'activite',
         'region_affiliation_cnss',
         'effectif_total',
+        'effectif_cadre',
+        'effectif_cadre_moyen',
+        'effectif_agent_qualifie',
+        'effectif_agent_sans_qualification',
+        'effectif_agent_occasionnel',
         'telephone',
         'fax',
         'email',
@@ -49,7 +54,10 @@ class EntrepriseCliente extends Model
     {
         return $this->hasMany(Participant::class, 'entreprise_id');
     }
-
+    public function dossiersGiac(): HasMany
+    {
+        return $this->hasMany(DossierGiac::class, 'entreprise_cliente_id');
+    }
     public function getEnteteImageBase64(): ?string
     {
         return $this->fileToBase64DataUri($this->image_entete);
