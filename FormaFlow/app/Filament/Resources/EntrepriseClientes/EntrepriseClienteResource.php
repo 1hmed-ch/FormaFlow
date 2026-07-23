@@ -54,6 +54,8 @@ class EntrepriseClienteResource extends Resource
         return [
             RelationManagers\FormationsRelationManager::class,
             RelationManagers\ParticipantsRelationManager::class,
+            RelationManagers\EtudesIngenierieFormationRelationManager::class,
+            RelationManagers\EtudesDiagnosticStrategiqueRelationManager::class,
         ];
     }
 

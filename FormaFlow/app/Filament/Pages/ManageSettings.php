@@ -11,12 +11,13 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schemas\Schema; 
+use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\Action;
 
@@ -36,9 +37,9 @@ class ManageSettings extends Page implements HasForms
     public function mount(): void
     {
         $record = EntrepriseFormation::current();
-        
+
         $initialData = $record->toArray();
-        
+
         foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
             $status = $record->getPieceJointeStatut($collection);
             $initialData['date_expiration_' . $collection] = $status['date_expiration'] ?? null;
@@ -48,63 +49,63 @@ class ManageSettings extends Page implements HasForms
     }
     public function form(Schema $schema): Schema
     {
-    
-  $piecesJointesFields = [];
-    foreach (EntrepriseFormation::PIECES_JOINTES as $key => $label) {
-    $record = EntrepriseFormation::current();
-    $media = $record->getFirstMedia($key);
-    $isUploaded = $media !== null;
 
-    $dateExpiration = $isUploaded
-        ? $media->getCustomProperty('date_expiration')
-        : null;
+        $piecesJointesFields = [];
+        foreach (EntrepriseFormation::PIECES_JOINTES as $key => $label) {
+            $record = EntrepriseFormation::current();
+            $media = $record->getFirstMedia($key);
+            $isUploaded = $media !== null;
 
-    $isExpired = $isUploaded
-        && $dateExpiration
-        && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
+            $dateExpiration = $isUploaded
+                ? $media->getCustomProperty('date_expiration')
+                : null;
 
-    // Détermination du statut (indépendant de la date d'expiration)
-    if (!$isUploaded) {
-        $icon = 'heroicon-o-exclamation-triangle';
-        $color = 'warning';
-        $description = 'Document manquant';
-    } elseif ($isExpired) {
-        $icon = 'heroicon-o-x-circle';
-        $color = 'danger';
-        $description = 'Document expiré';
-    } else {
-        $icon = 'heroicon-o-check-circle';
-        $color = 'success';
-        $description = 'Document fourni';
-    }
+            $isExpired = $isUploaded
+                && $dateExpiration
+                && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
 
-    // Ajout de la date d'ajout si le fichier existe
-    if ($isUploaded) {
-        $description .= ' • Ajouté le ' . $media->created_at->format('d/m/Y');
-    }
+            // Détermination du statut (indépendant de la date d'expiration)
+            if (!$isUploaded) {
+                $icon = 'heroicon-o-exclamation-triangle';
+                $color = 'warning';
+                $description = 'Document manquant';
+            } elseif ($isExpired) {
+                $icon = 'heroicon-o-x-circle';
+                $color = 'danger';
+                $description = 'Document expiré';
+            } else {
+                $icon = 'heroicon-o-check-circle';
+                $color = 'success';
+                $description = 'Document fourni';
+            }
 
-    $piecesJointesFields[] = Section::make($label)
-        ->icon($icon)
-        ->iconColor($color)
-        ->description($description)
-        ->collapsible()
-        ->collapsed(true)
-        ->compact()
-        ->columns(2)
-        ->schema([
-            SpatieMediaLibraryFileUpload::make($key)
-                ->label('Document (PDF / Image)')
-                ->collection($key)
-                ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                ->maxSize(10240)
-                ->visibility('private')
-                ->model($record),
+            // Ajout de la date d'ajout si le fichier existe
+            if ($isUploaded) {
+                $description .= ' • Ajouté le ' . $media->created_at->format('d/m/Y');
+            }
 
-            DatePicker::make('date_expiration_' . $key)
-                ->label("Date d'expiration")
-                ->native(false),
-        ]);
-}
+            $piecesJointesFields[] = Section::make($label)
+                ->icon($icon)
+                ->iconColor($color)
+                ->description($description)
+                ->collapsible()
+                ->collapsed(true)
+                ->compact()
+                ->columns(2)
+                ->schema([
+                    SpatieMediaLibraryFileUpload::make($key)
+                        ->label('Document (PDF / Image)')
+                        ->collection($key)
+                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                        ->maxSize(10240)
+                        ->visibility('private')
+                        ->model($record),
+
+                    DatePicker::make('date_expiration_' . $key)
+                        ->label("Date d'expiration")
+                        ->native(false),
+                ]);
+        }
         return $schema
             ->components([
                 Grid::make(3)
@@ -181,13 +182,31 @@ class ManageSettings extends Page implements HasForms
 
                 // Section 4: RH Effectifs
                 Section::make('Ressources Humaines (Effectifs)')
+                    ->description("Le détail \"dont étrangers\" alimente les fiches G3 (GIAC) et Formulaire F3 (OFPPT).")
                     ->schema([
-                        Grid::make(5)->schema([
-                            TextInput::make('nb_experts_permanents')->label('Exp. Permanents')->numeric()->minValue(0),
-                            TextInput::make('nb_experts_vacataires')->label('Exp. Vacataires')->numeric()->minValue(0),
-                            TextInput::make('nb_animateurs_formateurs')->label('Formateurs')->numeric()->minValue(0),
-                            TextInput::make('nb_autres_employes')->label('Autres Employés')->numeric()->minValue(0),
-                            TextInput::make('effectif_total')->label('Effectif Total')->numeric()->minValue(0),
+                        Grid::make(4)->schema([
+                            Fieldset::make('Experts Permanents')->schema([
+                                TextInput::make('nb_experts_permanents')->label('Effectif')->numeric()->minValue(0)->default(0),
+                                TextInput::make('nb_experts_permanents_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
+                            ]),
+                            Fieldset::make('Experts Vacataires')->schema([
+                                TextInput::make('nb_experts_vacataires')->label('Effectif')->numeric()->minValue(0)->default(0),
+                                TextInput::make('nb_experts_vacataires_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
+                            ]),
+                            Fieldset::make('Animateurs / Formateurs')->schema([
+                                TextInput::make('nb_animateurs_formateurs')->label('Effectif')->numeric()->minValue(0)->default(0),
+                                TextInput::make('nb_animateurs_formateurs_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
+                            ]),
+                            Fieldset::make('Autres Employés')->schema([
+                                TextInput::make('nb_autres_employes')->label('Effectif')->numeric()->minValue(0)->default(0),
+                                TextInput::make('nb_autres_employes_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
+                            ]),
+                        ]),
+                        Grid::make(2)->schema([
+                            TextInput::make('effectif_total')->label('Effectif Total')->numeric()->minValue(0)->default(0),
+                            Toggle::make('appartient_groupe_etranger')
+                                ->label("L'organisme appartient à un groupe étranger")
+                                ->inline(false),
                         ]),
                     ]),
 
@@ -200,7 +219,7 @@ class ManageSettings extends Page implements HasForms
                         ]),
                     ]),
 
-                // Section 6: Pièces Jointes 
+                // Section 6: Pièces Jointes
                 Section::make('Pièces Jointes de l\'organisme')
                     ->description('Veuillez glisser-déposer vos documents administratifs requis.')
                     ->schema([
@@ -210,7 +229,7 @@ class ManageSettings extends Page implements HasForms
             ->statePath('data');
     }
 
-     protected function getFormActions(): array
+    protected function getFormActions(): array
     {
         return [
             Action::make('save')
@@ -224,11 +243,10 @@ class ManageSettings extends Page implements HasForms
     public function save(): void
     {
         $record = EntrepriseFormation::current();
-        $state = $this->form->getState(); 
-    try {
-        $record->update($state);;
-            
+        $state = $this->form->getState();
+        try {
             $record->update($state);
+
             foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
                 $media = $record->getFirstMedia($collection);
                 if ($media) {

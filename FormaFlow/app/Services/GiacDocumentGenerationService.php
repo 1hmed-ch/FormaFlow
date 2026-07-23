@@ -48,11 +48,11 @@ class GiacDocumentGenerationService
      * et archivé par entreprise cliente car il fait partie intégrante de
      * chaque dossier GIAC déposé.
      */
-    public function generateG3FicheOrganismeConseil(EntrepriseCliente $entreprise): array
+    public function generateFicheOrganismeConseil(EntrepriseCliente $entreprise): array
     {
         $organisme = EntrepriseFormation::current();
 
-        $content = $this->renderFromView('documents.giac.g3-fiche-organisme-conseil', [
+        $content = $this->renderFromView('documents.giac.f_fiche_g3', [
             'organisme'   => $organisme,
             'giacLogo'    => $this->giacLogoBase64(),
             'dateEdition' => now(),
@@ -67,13 +67,13 @@ class GiacDocumentGenerationService
      * @throws DocumentGenerationException si l'étude fournie ne concerne
      *         pas l'entreprise donnée.
      */
-    public function generateG4FicheIngenierieFormation(
+    public function generateFicheIngenierieFormation(
         EntrepriseCliente $entreprise,
         EtudeIngenierieFormation $etude
     ): array {
         $this->assertEtudeAppartientAEntreprise($etude->entreprise_id, $entreprise);
 
-        $content = $this->renderFromView('documents.giac.g4-fiche-ingenierie-formation', [
+        $content = $this->renderFromView('documents.giac.e_fiche_technique_ingenierie', [
             'entreprise'  => $entreprise,
             'organisme'   => EntrepriseFormation::current(),
             'etude'       => $etude,
@@ -94,13 +94,13 @@ class GiacDocumentGenerationService
      * @throws DocumentGenerationException si l'étude fournie ne concerne
      *         pas l'entreprise donnée.
      */
-    public function generateG6FicheDiagnosticStrategique(
+    public function generateFicheDiagnosticStrategique(
         EntrepriseCliente $entreprise,
         EtudeDiagnosticStrategique $etude
     ): array {
         $this->assertEtudeAppartientAEntreprise($etude->entreprise_id, $entreprise);
 
-        $content = $this->renderFromView('documents.giac.g6-fiche-diagnostic-strategique', [
+        $content = $this->renderFromView('documents.giac.d_fiche_technique_diagnostic', [
             'entreprise'  => $entreprise,
             'organisme'   => EntrepriseFormation::current(),
             'etude'       => $etude,
@@ -121,7 +121,7 @@ class GiacDocumentGenerationService
      * @throws DocumentGenerationException si le gérant n'est pas renseigné
      *         pour cette entreprise (il doit signer le bulletin).
      */
-    public function generateG7BulletinReadhesion(EntrepriseCliente $entreprise, int $annee): array
+    public function generateBulletinReadhesion(EntrepriseCliente $entreprise, int $annee): array
     {
         $entreprise->loadMissing('gerant');
 
@@ -131,7 +131,7 @@ class GiacDocumentGenerationService
             );
         }
 
-        $content = $this->renderFromView('documents.giac.g7-bulletin-readhesion', [
+        $content = $this->renderFromView('documents.giac.b2_bulletin_readhesion', [
             'entreprise'  => $entreprise,
             'gerant'      => $entreprise->gerant,
             'annee'       => $annee,
@@ -141,7 +141,7 @@ class GiacDocumentGenerationService
 
         return $this->finalize(
             $entreprise,
-            sprintf('giac_g7_bulletin_readhesion_%s_%d', Str::slug($entreprise->raison_sociale), $annee),
+            sprintf('giac_b2_bulletin_readhesion_%s_%d', Str::slug($entreprise->raison_sociale), $annee),
             $content
         );
     }
@@ -162,7 +162,7 @@ class GiacDocumentGenerationService
     {
         $organisme = EntrepriseFormation::current();
 
-        $content = $this->renderFromView('documents.ofppt.f3-fiche-identification-organisme', [
+        $content = $this->renderFromView('documents.giac.f3_fiche_organisme_formation', [
             'organisme'   => $organisme,
             'dateEdition' => now(),
         ]);
@@ -191,6 +191,15 @@ class GiacDocumentGenerationService
     protected function giacLogoBase64(): string
     {
         $path = public_path('images/giac/logo-giac.png');
+
+        // Défensif : tant que l'asset réel n'est pas déposé dans
+        // public/images/giac/logo-giac.png, on évite un warning PHP
+        // (file_get_contents sur un fichier absent) et un PDF corrompu.
+        // Le tag <img src="{{ $giacLogo }}"> se contente de ne rien
+        // afficher si la chaîne est vide.
+        if (! is_file($path)) {
+            return '';
+        }
 
         return 'data:image/png;base64,' . base64_encode(file_get_contents($path));
     }
