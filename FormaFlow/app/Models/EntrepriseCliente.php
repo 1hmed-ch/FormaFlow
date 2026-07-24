@@ -14,6 +14,7 @@ class EntrepriseCliente extends Model
         'gerant_id',
         'raison_sociale',
         'siege_social',
+        'ville',
         'date_creation',
         'statut_juridique',
         'ice',
@@ -96,5 +97,19 @@ class EntrepriseCliente extends Model
                 );
             }
         });
+    }
+    public function anneesFormations(): array
+    {
+        return $this->formations()
+            ->with('themes')
+            ->get()
+            ->flatMap(fn ($formation) => $formation->themes)
+            ->pluck('date_fin')
+            ->filter()
+            ->map(fn ($date) => (int) $date->format('Y'))
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->all();
     }
 }

@@ -44,6 +44,10 @@ class EntrepriseClienteForm
                             ->maxLength(255)
                             ->columnSpanFull(),
 
+                       TextInput::make('ville')
+                            ->label('Ville')
+                            ->required(),
+                            
                         DatePicker::make('date_creation')
                             ->label('Date de Création')
                             ->displayFormat('d/m/Y')
@@ -103,40 +107,48 @@ class EntrepriseClienteForm
                     ])->columnSpanFull(),
 
                 Section::make('Gérant')
-                    ->description('Représentant légal de l\'entreprise')
-                    ->icon('heroicon-o-user')
-                    ->columns(2)
-                    ->relationship('gerant')
-                    ->schema([
-                        TextInput::make('nom')
-                            ->label('Nom')
-                            ->required()
-                            ->maxLength(255),
+                        ->description('Représentant légal de l\'entreprise')
+                        ->icon('heroicon-o-user')
+                        ->relationship('gerant')
+                        ->schema([
+                           
+                            TextInput::make('nom')
+                                ->label('Nom')
+                                ->required()
+                                ->maxLength(255),
 
-                        TextInput::make('prenom')
-                            ->label('Prénom')
-                            ->required()
-                            ->maxLength(255),
+                            TextInput::make('prenom')
+                                ->label('Prénom')
+                                ->required()
+                                ->maxLength(255),
 
-                        Select::make('genre')
-                            ->label('Genre')
-                            ->options(gerantGender::class)
-                            ->required()
-                            ->native(false),
+                            TextInput::make('fonction')
+                                ->label('Fonction / Qualité')
+                                ->placeholder('ex: Gérant, Directeur Général...')
+                                ->required()
+                                ->maxLength(255),
 
-                        TextInput::make('cin')
-                            ->label('CIN')
-                            ->required()
-                            ->maxLength(20)
-                            ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
+                            TextInput::make('cin')
+                                ->label('CIN')
+                                ->required()
+                                ->maxLength(20)
+                                ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
 
-                        TextInput::make('fonction')
-                            ->label('Fonction')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpan(2),
-                    ])->columnSpanFull(),
+                            
+                            TextInput::make('email')
+                                ->label('Adresse E-mail')
+                                ->email()
+                                ->placeholder('ex: gerant@entreprise.ma')
+                                ->maxLength(255),
 
+                            Select::make('genre')
+                                ->label('Genre')
+                                ->options(gerantGender::class)
+                                ->required()
+                                ->native(false),
+                        ])
+                        ->columns(2)
+                        ->columnSpanFull(),
                 Section::make('Identifiants Légaux & Administratifs')
                     ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
                     ->icon('heroicon-o-document-text')

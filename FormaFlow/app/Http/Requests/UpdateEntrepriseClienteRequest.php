@@ -37,6 +37,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
         return [
             'raison_sociale'         => 'sometimes|required|string|max:255',
             'siege_social'           => 'sometimes|required|string|max:255',
+            'ville'                  => 'sometimes|required|string|max:255',
             'date_creation'          => 'nullable|date',
             'statut_juridique'       => 'nullable|string|max:100',
             'ice'                   => 'sometimes|required|string|size:15|unique:entreprise_clientes,ice,' . $id,
@@ -48,6 +49,11 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'activite'              => 'nullable|string|max:255',
             'region_affiliation_cnss' => 'nullable|string|max:255',
             'effectif_total'         => 'nullable|integer|min:1',
+            'effectif_cadre'         => 'nullable|integer|min:0',
+            'effectif_cadre_moyen'    => 'nullable|integer|min:0',
+            'effectif_agent_qualifie' => 'nullable|integer|min:0',
+            'effectif_agent_sans_qualification' => 'nullable|integer|min:0',
+            'effectif_agent_occasionnel' => 'nullable|integer|min:0',
             'telephone'             => 'nullable|string|max:50',
             'fax'                   => 'nullable|string|max:50',
             'email'                 => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id,
@@ -58,6 +64,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'gerant_fonction'         => 'sometimes|required|string|max:255',
             'gerant_genre'         => ['sometimes', new Enum(GerantGender::class)],
             'gerant_cin'              => 'sometimes|required|string|max:50|unique:gerants,cin,' . $gerantId,
+            'gerant_email'            => 'sometimes|required|email|max:255|unique:gerants,email,' . $gerantId,
         ];
     }
 

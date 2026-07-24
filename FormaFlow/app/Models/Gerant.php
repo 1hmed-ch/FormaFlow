@@ -12,7 +12,8 @@ class Gerant extends Model
         'prenom',
         'genre',
         'fonction',
-        'cin'
+        'cin',
+        'email'
     ];
 
     protected $casts = [

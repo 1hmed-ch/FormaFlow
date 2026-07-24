@@ -24,6 +24,7 @@ class EntrepriseFormation extends Model implements HasMedia
         'raison_sociale',
         'logo',
         'siege_social',
+        'ville',
         'gerant_nom',
         'gerant_prenom',
         'date_creation',
@@ -115,7 +116,8 @@ class EntrepriseFormation extends Model implements HasMedia
             // 1. Informations Générales & Administratives
             'raison_sociale'          => 'Plénitude Outsourcing (Test)',
             'logo'                    => null, // Nullable dans la migration
-            'siege_social'            => 'Fès',
+            'siege_social'            => '6ème étage Imm El youbia, Ave Allal Ben Abdellah, Fes 30000',
+            'ville'                   => 'Fes',
             'gerant_nom'              => 'Nom Gérant',
             'gerant_prenom'           => 'Prénom Gérant',
             'date_creation'           => now(),

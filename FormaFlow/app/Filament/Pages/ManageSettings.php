@@ -133,6 +133,7 @@ class ManageSettings extends Page implements HasForms
                                 ]),
                                 TextInput::make('activite')->label('Activité'),
                                 TextInput::make('siege_social')->label('Siège Social'),
+                                TextInput::make('ville')->label('Ville'),            
                             ]),
 
                         // Section Visuels
