@@ -52,6 +52,8 @@ class EntrepriseFormation extends Model implements HasMedia
         'nb_autres_employes_etrangers',
         'effectif_total',
         'appartient_groupe_etranger',
+        'nom_groupe_etranger', 
+        'references',
         'representant_nom',
         'representant_fonction',
 
@@ -159,14 +161,19 @@ class EntrepriseFormation extends Model implements HasMedia
             // 3. Domaines & Moyens (JSON)
             'domaines_competence'     => [],
             'moyens_pedagogiques'     => [],
-
             // 4. Effectifs globaux (Integers)
             'nb_experts_permanents'   => 0,
+            'nb_experts_permanents_etrangers' => 0,
             'nb_experts_vacataires'   => 0,
+            'nb_experts_vacataires_etrangers' => 0,
             'nb_animateurs_formateurs'=> 0,
+            'nb_animateurs_formateurs_etrangers' => 0,
             'nb_autres_employes'      => 0,
+            'nb_autres_employes_etrangers' => 0,
             'effectif_total'          => 0,
-
+            'appartient_groupe_etranger' => false,
+            'nom_groupe_etranger'                => null, 
+            'references'                         => null, 
             // 5. Représentant Légal 
             'representant_nom'        => 'Nom Représentant',
             'representant_fonction'   => 'Gérant',

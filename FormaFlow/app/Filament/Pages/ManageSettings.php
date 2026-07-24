@@ -20,6 +20,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
 
 class ManageSettings extends Page implements HasForms
 {
@@ -179,6 +180,7 @@ class ManageSettings extends Page implements HasForms
                         TagsInput::make('moyens_pedagogiques')
                             ->label('Moyens Pédagogiques')
                             ->placeholder('Ajouter un moyen...'),
+                       
                     ]),
 
                 // Section 4: RH Effectifs
@@ -203,14 +205,31 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('nb_autres_employes_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
                             ]),
                         ]),
-                        Grid::make(2)->schema([
-                            TextInput::make('effectif_total')->label('Effectif Total')->numeric()->minValue(0)->default(0),
-                            Toggle::make('appartient_groupe_etranger')
-                                ->label("L'organisme appartient à un groupe étranger")
-                                ->inline(false),
-                        ]),
-                    ]),
+             Grid::make(2)->schema([
+                TextInput::make('effectif_total')
+                    ->label('Effectif Total')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0),
+                
+                Toggle::make('appartient_groupe_etranger')
+                    ->label("L'organisme appartient à un groupe étranger")
+                    ->inline(false)
+                    ->live(),
+            ]),
 
+                TextInput::make('nom_groupe_etranger')
+                    ->label('Si oui lequel')
+                    ->placeholder('Préciser le nom du groupe...')
+                    ->visible(fn (callable $get) => $get('appartient_groupe_etranger') === true)
+                    ->columnSpanFull(),
+
+                Textarea::make('references')
+                    ->label('Références')
+                    ->placeholder('Saisir les références ici...')
+                    ->rows(3)
+                    ->columnSpanFull(),
+                                    ]),
                 // Section 5: Représentant Légal
                 Section::make('Représentant Légal')
                     ->schema([
