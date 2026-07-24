@@ -15,10 +15,15 @@ class EntrepriseCliente extends Model
         'gerant_id',
         'raison_sociale',
         'siege_social',
+        'ville',
         'date_creation',
         'statut_juridique',
         'ice',
         'num_cnss',
+        'montant_tfp',
+        'deja_depose_giac',
+        'nom_ancien_giac',
+        'date_depot_ancien_giac',
         'rc',
         'if',
         'patente',
@@ -41,6 +46,9 @@ class EntrepriseCliente extends Model
 
     protected $casts = [
         'date_creation' => 'date:Y-m-d',
+        'deja_depose_giac' => 'boolean',
+        'date_depot_ancien_giac' => 'date:Y-m-d',
+        'montant_tfp' => 'decimal:2',
     ];
 
     public function gerant()
@@ -107,5 +115,19 @@ class EntrepriseCliente extends Model
                 );
             }
         });
+    }
+    public function anneesFormations(): array
+    {
+        return $this->formations()
+            ->with('themes')
+            ->get()
+            ->flatMap(fn ($formation) => $formation->themes)
+            ->pluck('date_fin')
+            ->filter()
+            ->map(fn ($date) => (int) $date->format('Y'))
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->all();
     }
 }
