@@ -11,14 +11,14 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EntrepriseFormation extends Model implements HasMedia
 {
-  use HasFactory,InteractsWithMedia;
+    use HasFactory,InteractsWithMedia;
     public const PIECES_JOINTES = [
-            'cv_consultants'        => 'CV des consultants',
-            'proposition_intervention' => 'Proposition d\'intervention',
-            'rc_modele_j'            => 'RC Modèle J',
-            'eligibilite_csf'        => 'Éligibilité CSF cabinet',
-            'facture_pro_forma'      => 'Facture pro forma (originale)',
-        ];
+        'cv_consultants'        => 'CV des consultants',
+        'proposition_intervention' => 'Proposition d\'intervention',
+        'rc_modele_j'            => 'RC Modèle J',
+        'eligibilite_csf'        => 'Éligibilité CSF cabinet',
+        'facture_pro_forma'      => 'Facture pro forma (originale)',
+    ];
 
     protected $fillable = [
         'raison_sociale',
@@ -42,13 +42,18 @@ class EntrepriseFormation extends Model implements HasMedia
         'domaines_competence',
         'moyens_pedagogiques',
         'nb_experts_permanents',
+        'nb_experts_permanents_etrangers',
         'nb_experts_vacataires',
+        'nb_experts_vacataires_etrangers',
         'nb_animateurs_formateurs',
+        'nb_animateurs_formateurs_etrangers',
         'nb_autres_employes',
+        'nb_autres_employes_etrangers',
         'effectif_total',
+        'appartient_groupe_etranger',
         'representant_nom',
         'representant_fonction',
-      
+
     ];
 
     /**
@@ -58,6 +63,7 @@ class EntrepriseFormation extends Model implements HasMedia
         'domaines_competence' => 'array',
         'moyens_pedagogiques' => 'array',
         'date_creation' => 'date',
+        'appartient_groupe_etranger' => 'boolean',
     ];
 
 
@@ -70,7 +76,7 @@ class EntrepriseFormation extends Model implements HasMedia
         }
     }
 
-    
+
 
     public function getPieceJointeStatut(string $collection): array
     {
@@ -105,53 +111,71 @@ class EntrepriseFormation extends Model implements HasMedia
     }
 
     /**
+     * Effectif total des étrangers, toutes fonctions confondues (calculé,
+     * non stocké) — utilisé par G3 (GIAC) et le Formulaire F3 (OFPPT) dans
+     * la ligne "Total" du tableau Moyens humains.
+     */
+    public function getEffectifTotalEtrangersAttribute(): int
+    {
+        return $this->nb_experts_permanents_etrangers
+            + $this->nb_experts_vacataires_etrangers
+            + $this->nb_animateurs_formateurs_etrangers
+            + $this->nb_autres_employes_etrangers;
+    }
+
+    /**
      * Accesseur Singleton pour récupérer la configuration unique de Plénitude
      */
     public static function current(): self
-{
-    return self::firstOrCreate(
-        ['id' => 1], // Force l'ID 1 pour garantir la fiche unique
-        [
-            // 1. Informations Générales & Administratives
-            'raison_sociale'          => 'Plénitude Outsourcing (Test)',
-            'logo'                    => null, // Nullable dans la migration
-            'siege_social'            => 'Fès',
-            'gerant_nom'              => 'Nom Gérant',
-            'gerant_prenom'           => 'Prénom Gérant',
-            'date_creation'           => now(),
-            'statut_juridique'        => 'SARL',
-            'activite'                => 'Formation',
+    {
+        return self::firstOrCreate(
+            ['id' => 1], // Force l'ID 1 pour garantir la fiche unique
+            [
+                // 1. Informations Générales & Administratives
+                'raison_sociale'          => 'Plénitude Outsourcing (Test)',
+                'logo'                    => null, // Nullable dans la migration
+                'siege_social'            => 'Fès',
+                'gerant_nom'              => 'Nom Gérant',
+                'gerant_prenom'           => 'Prénom Gérant',
+                'date_creation'           => now(),
+                'statut_juridique'        => 'SARL',
+                'activite'                => 'Formation',
 
-            // 2. Infos Fiscales & Coordonnées
-            'ice'                     => '000000000000000',
-            'rc'                      => '00000',
-            'if'                      => '00000000',
-            'patente'                 => '00000000',
-            'cnss'                    => null, // Nullable dans la migration
-            'capital_social'          => null, // Nullable dans la migration
-            'telephone'               => '0500000000',
-            'fax'                     => null, // Nullable dans la migration
-            'email'                   => 'admin@plenitude.ma',
-            'site_web'                => null, // Nullable dans la migration
+                // 2. Infos Fiscales & Coordonnées
+                'ice'                     => '000000000000000',
+                'rc'                      => '00000',
+                'if'                      => '00000000',
+                'patente'                 => '00000000',
+                'cnss'                    => null, // Nullable dans la migration
+                'capital_social'          => null, // Nullable dans la migration
+                'telephone'               => '0500000000',
+                'fax'                     => null, // Nullable dans la migration
+                'email'                   => 'admin@plenitude.ma',
+                'site_web'                => null, // Nullable dans la migration
 
-            // 3. Domaines & Moyens (JSON)
-            'domaines_competence'     => [],
-            'moyens_pedagogiques'     => [],
+                // 3. Domaines & Moyens (JSON)
+                'domaines_competence'     => [],
+                'moyens_pedagogiques'     => [],
 
-            // 4. Effectifs globaux (Integers)
-            'nb_experts_permanents'   => 0,
-            'nb_experts_vacataires'   => 0,
-            'nb_animateurs_formateurs'=> 0,
-            'nb_autres_employes'      => 0,
-            'effectif_total'          => 0,
+                // 4. Effectifs globaux (Integers)
+                'nb_experts_permanents'   => 0,
+                'nb_experts_permanents_etrangers' => 0,
+                'nb_experts_vacataires'   => 0,
+                'nb_experts_vacataires_etrangers' => 0,
+                'nb_animateurs_formateurs'=> 0,
+                'nb_animateurs_formateurs_etrangers' => 0,
+                'nb_autres_employes'      => 0,
+                'nb_autres_employes_etrangers' => 0,
+                'effectif_total'          => 0,
+                'appartient_groupe_etranger' => false,
 
-            // 5. Représentant Légal 
-            'representant_nom'        => 'Nom Représentant',
-            'representant_fonction'   => 'Gérant',
-          
-        ]
-    );
-}
+                // 5. Représentant Légal
+                'representant_nom'        => 'Nom Représentant',
+                'representant_fonction'   => 'Gérant',
+
+            ]
+        );
+    }
 
     /**
      * Une entreprise de formation possède plusieurs formateurs rattachés
@@ -161,5 +185,5 @@ class EntrepriseFormation extends Model implements HasMedia
         return $this->hasMany(Formateur::class, 'entreprise_formation_id');
     }
 
-   
+
 }
