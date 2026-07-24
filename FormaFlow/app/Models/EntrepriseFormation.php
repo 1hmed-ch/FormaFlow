@@ -24,6 +24,7 @@ class EntrepriseFormation extends Model implements HasMedia
         'raison_sociale',
         'logo',
         'siege_social',
+        'ville',
         'gerant_nom',
         'gerant_prenom',
         'date_creation',
@@ -51,6 +52,8 @@ class EntrepriseFormation extends Model implements HasMedia
         'nb_autres_employes_etrangers',
         'effectif_total',
         'appartient_groupe_etranger',
+        'nom_groupe_etranger', 
+        'references',
         'representant_nom',
         'representant_fonction',
 
@@ -127,55 +130,59 @@ class EntrepriseFormation extends Model implements HasMedia
      * Accesseur Singleton pour récupérer la configuration unique de Plénitude
      */
     public static function current(): self
-    {
-        return self::firstOrCreate(
-            ['id' => 1], // Force l'ID 1 pour garantir la fiche unique
-            [
-                // 1. Informations Générales & Administratives
-                'raison_sociale'          => 'Plénitude Outsourcing (Test)',
-                'logo'                    => null, // Nullable dans la migration
-                'siege_social'            => 'Fès',
-                'gerant_nom'              => 'Nom Gérant',
-                'gerant_prenom'           => 'Prénom Gérant',
-                'date_creation'           => now(),
-                'statut_juridique'        => 'SARL',
-                'activite'                => 'Formation',
+ 
+{
+    return self::firstOrCreate(
+        ['id' => 1], // Force l'ID 1 pour garantir la fiche unique
+        [
+            // 1. Informations Générales & Administratives
+            'raison_sociale'          => 'Plénitude Outsourcing (Test)',
+            'logo'                    => null, // Nullable dans la migration
+            'siege_social'            => '6ème étage Imm El youbia, Ave Allal Ben Abdellah, Fes 30000',
+            'ville'                   => 'Fes',
+            'gerant_nom'              => 'Nom Gérant',
+            'gerant_prenom'           => 'Prénom Gérant',
+            'date_creation'           => now(),
+            'statut_juridique'        => 'SARL',
+            'activite'                => 'Formation',
 
-                // 2. Infos Fiscales & Coordonnées
-                'ice'                     => '000000000000000',
-                'rc'                      => '00000',
-                'if'                      => '00000000',
-                'patente'                 => '00000000',
-                'cnss'                    => null, // Nullable dans la migration
-                'capital_social'          => null, // Nullable dans la migration
-                'telephone'               => '0500000000',
-                'fax'                     => null, // Nullable dans la migration
-                'email'                   => 'admin@plenitude.ma',
-                'site_web'                => null, // Nullable dans la migration
+            // 2. Infos Fiscales & Coordonnées
+            'ice'                     => '000000000000000',
+            'rc'                      => '00000',
+            'if'                      => '00000000',
+            'patente'                 => '00000000',
+            'cnss'                    => null, // Nullable dans la migration
+            'capital_social'          => null, // Nullable dans la migration
+            'telephone'               => '0500000000',
+            'fax'                     => null, // Nullable dans la migration
+            'email'                   => 'admin@plenitude.ma',
+            'site_web'                => null, // Nullable dans la migration
 
-                // 3. Domaines & Moyens (JSON)
-                'domaines_competence'     => [],
-                'moyens_pedagogiques'     => [],
+            // 3. Domaines & Moyens (JSON)
+            'domaines_competence'     => [],
+            'moyens_pedagogiques'     => [],
+            // 4. Effectifs globaux (Integers)
+            'nb_experts_permanents'   => 0,
+            'nb_experts_permanents_etrangers' => 0,
+            'nb_experts_vacataires'   => 0,
+            'nb_experts_vacataires_etrangers' => 0,
+            'nb_animateurs_formateurs'=> 0,
+            'nb_animateurs_formateurs_etrangers' => 0,
+            'nb_autres_employes'      => 0,
+            'nb_autres_employes_etrangers' => 0,
+            'effectif_total'          => 0,
+            'appartient_groupe_etranger' => false,
+            'nom_groupe_etranger'                => null, 
+            'references'                         => null, 
+            // 5. Représentant Légal 
+            'representant_nom'        => 'Nom Représentant',
+            'representant_fonction'   => 'Gérant',
+          
+        ]
+    );
+}
 
-                // 4. Effectifs globaux (Integers)
-                'nb_experts_permanents'   => 0,
-                'nb_experts_permanents_etrangers' => 0,
-                'nb_experts_vacataires'   => 0,
-                'nb_experts_vacataires_etrangers' => 0,
-                'nb_animateurs_formateurs'=> 0,
-                'nb_animateurs_formateurs_etrangers' => 0,
-                'nb_autres_employes'      => 0,
-                'nb_autres_employes_etrangers' => 0,
-                'effectif_total'          => 0,
-                'appartient_groupe_etranger' => false,
-
-                // 5. Représentant Légal
-                'representant_nom'        => 'Nom Représentant',
-                'representant_fonction'   => 'Gérant',
-
-            ]
-        );
-    }
+   
 
     /**
      * Une entreprise de formation possède plusieurs formateurs rattachés

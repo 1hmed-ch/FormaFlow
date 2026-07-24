@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use App\Enums\TypeFormation;
 
 class FormationForm
 {
@@ -34,6 +35,12 @@ class FormationForm
                             ->preload()
                             ->required()
                             ->columnSpanFull(),
+                        Select::make('type_formation')
+                            ->label('Type d\'Étude / Formation')
+                            ->options(TypeFormation::class)
+                            ->required()
+                            ->native(false)
+                            ->searchable(),
                         /*Select::make('statut')
                             ->label('Statut de la formation')
                             ->options(FormationStatus::class)

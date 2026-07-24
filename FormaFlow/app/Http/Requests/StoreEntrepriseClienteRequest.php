@@ -27,10 +27,15 @@ class StoreEntrepriseClienteRequest extends FormRequest
         return [
             'raison_sociale'          => 'required|string|max:255',
             'siege_social'            => 'required|string|max:255',
+            'ville'                   => 'required|string|max:255',
             'date_creation'           => 'nullable|date',
             'statut_juridique'        => 'nullable|string|max:100',
             'ice'                     => 'required|string|size:15|unique:entreprise_clientes,ice', // Required & Unique 
             'num_cnss'                => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss',
+            'montant_tfp'             => 'nullable|numeric|min:0',
+            'deja_depose_giac'        => 'nullable|boolean',
+            'nom_ancien_giac'         => 'nullable|string|max:255',
+            'date_depot_ancien_giac'  => 'nullable|date:Y-m-d',
             'rc'                      => 'nullable|string|max:50|unique:entreprise_clientes,rc',
             'if'                      => 'required|string|max:50|unique:entreprise_clientes,if',   // Required & Unique Strict fiscal
             'patente'                 => 'nullable|string|max:50|unique:entreprise_clientes,patente',
@@ -38,6 +43,11 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'activite'                => 'nullable|string|max:255',
             'region_affiliation_cnss' => 'nullable|string|max:255',
             'effectif_total'          => 'nullable|integer|min:1',
+            'effectif_cadre'          => 'nullable|integer|min:0',
+            'effectif_cadre_moyen'    => 'nullable|integer|min:0',
+            'effectif_agent_qualifie' => 'nullable|integer|min:0',
+            'effectif_agent_sans_qualification' => 'nullable|integer|min:0',
+            'effectif_agent_occasionnel' => 'nullable|integer|min:0',
             'telephone'               => 'nullable|string|max:50',
             'fax'                     => 'nullable|string|max:50',
             'email'                   => 'required|email|max:255|unique:entreprise_clientes,email', // Required & Unique pour la communication
@@ -45,8 +55,10 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'gerant_nom'              => 'required|string|max:255',
             'gerant_prenom'           => 'required|string|max:255',
             'gerant_fonction'         => 'required|string|max:255', 
-            'gerant_cin'              => 'required|string|max:20|unique:gerants,cin', 
+            'gerant_cin'              => 'required|string|max:20|unique:gerants,cin',
+            'gerant_email'            => 'required|email|max:255|unique:gerants,email',
             'gerant_genre'            => ['required', new Enum(GerantGender::class)],
+
         ];
     }
 

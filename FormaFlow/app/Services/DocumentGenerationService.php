@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use App\Models\DossierGiac;
 use App\Enums\StatutDossierGiac;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Enums\TypeFormation;
 class DocumentGenerationService
 {
     /**
@@ -219,12 +220,7 @@ class DocumentGenerationService
  * @param EntrepriseCliente $entreprise
  * @return array Array d'objets PDF ['filename' => string, 'content' => string]
  */
-   /**
-     * Génère le dossier complet GIAC (les 7 documents officiels B1 -> G) pour une entreprise.
-     *
-     * @param EntrepriseCliente $entreprise
-     * @return array Array d'objets PDF ['filename' => string, 'content' => string]
-     */
+   
     public function generateDossierGiac(EntrepriseCliente $entreprise): array
     {
         $documents = [
@@ -262,18 +258,38 @@ class DocumentGenerationService
         return $documents;
     }
 
-    public function generateB1BulletinAdhesion(EntrepriseCliente $entreprise): array
-    {
-        $content = $this->renderFromView('documents.giac.b1_bulletin_adhesion', [
-            'entreprise'  => $entreprise,
-            'dateEdition' => now(),
-        ]);
+    public function generateB1BulletinAdhesion(EntrepriseCliente $entreprise, ?Groupe $groupe = null): array
+{
+    $entreprise->loadMissing(['gerant', 'formations.themes.groupes']);
 
-        return [
-            'filename' => 'B1_Bulletin_Adhesion.pdf',
-            'content'  => $content,
-        ];
+    if (! $entreprise->gerant) {
+        throw new DocumentGenerationException(
+            "Impossible de générer le Bulletin d'Adhésion (G1) : aucun gérant n'est renseigné pour l'entreprise {$entreprise->raison_sociale}."
+        );
     }
+
+    $theme = $groupe?->theme ?? $entreprise->formations
+        ->flatMap(fn ($f) => $f->themes)
+        ->first();
+
+    $dateDemande = $theme?->date_debut ?? $theme?->date_fin ?? now();
+    $annee       = $dateDemande->year;
+    $villeFinale = $groupe?->lieu ?? $entreprise->ville ?? 'Fès';
+
+    $content = $this->renderFromView('documents.giac.b1_bulletin_adhesion', [
+        'entreprise'  => $entreprise,
+        'gerant'      => $entreprise->gerant,
+        'annee'       => $annee,
+        'ville'       => $villeFinale,
+        'dateEdition' => $dateDemande, 
+    ]);
+
+    return [
+        'filename' => 'G1_Bulletin_Adhesion.pdf',
+        'content'  => $content,
+    ];
+}
+
 
     public function generateB2BulletinReadhesion(EntrepriseCliente $entreprise): array
     {
@@ -288,19 +304,33 @@ class DocumentGenerationService
         ];
     }
 
-    public function generateCFicheEntreprise(EntrepriseCliente $entreprise): array
+   public function generateCFicheEntreprise(EntrepriseCliente $entreprise): array
     {
+        $entreprise->loadMissing('gerant');
+
+        if (! $entreprise->gerant) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la Fiche d'Information (G2) : aucun gérant n'est renseigné pour l'entreprise {$entreprise->raison_sociale}."
+            );
+        }
+
+        if ($entreprise->effectif_total === null || $entreprise->effectif_total <= 0) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la Fiche d'Information (G2) : l'effectif total de l'entreprise {$entreprise->raison_sociale} doit être renseigné."
+            );
+        }
+
         $content = $this->renderFromView('documents.giac.c_fiche_entreprise', [
             'entreprise'  => $entreprise,
+            'gerant'      => $entreprise->gerant,
             'dateEdition' => now(),
         ]);
 
         return [
-            'filename' => 'C_Fiche_Entreprise.pdf',
+            'filename' => 'G2_Fiche_Entreprise.pdf',
             'content'  => $content,
         ];
-    }
-
+    }   
     public function generateDFicheTechniqueDiagnostic(EntrepriseCliente $entreprise): array
     {
         $content = $this->renderFromView('documents.giac.d_fiche_technique_diagnostic', [
@@ -328,7 +358,7 @@ class DocumentGenerationService
             'content'  => $content,
         ];
     }
-
+    
     public function generateFFicheG3(EntrepriseCliente $entreprise): array
     {
         $content = $this->renderFromView('documents.giac.f_fiche_g3', [
@@ -343,16 +373,62 @@ class DocumentGenerationService
         ];
     }
 
+ protected function determinerTypeFormation(EntrepriseCliente $entreprise, int $annee): TypeFormation
+    {
+        $types = $entreprise->formations()
+            ->whereHas('themes', fn ($q) => $q->whereYear('date_fin', $annee))
+            ->pluck('type_formation')
+            ->unique();
+
+        if ($types->isEmpty()) {
+            throw new DocumentGenerationException(
+                "Aucune formation trouvée pour l'entreprise {$entreprise->raison_sociale} sur l'année {$annee}."
+            );
+        }
+
+        return $types->count() > 1 ? TypeFormation::LES_DEUX : $types->first();
+    }
+
     public function generateGDeclarationHonneur(EntrepriseCliente $entreprise): array
     {
+        $entreprise->loadMissing('gerant');
+
+        if (! $entreprise->gerant) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la Déclaration sur l'Honneur  : aucun gérant n'est renseigné pour l'entreprise {$entreprise->raison_sociale}."
+            );
+        }
+
+        if (empty($entreprise->ville)) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la Déclaration sur l'Honneur : la ville de l'entreprise {$entreprise->raison_sociale} n'est pas renseignée."
+            );
+        }
+
+        $annees = $entreprise->anneesFormations();
+
+        if (empty($annees)) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la Déclaration sur l'Honneur : aucune formation trouvée pour l'entreprise {$entreprise->raison_sociale}."
+            );
+        }
+
+        $annee         = $annees[0];
+        $typeFormation = $this->determinerTypeFormation($entreprise, $annee);
+
         $content = $this->renderFromView('documents.giac.g_declaration_honneur', [
-            'entreprise'  => $entreprise,
-            'organisme'   => EntrepriseFormation::current(),
-            'dateEdition' => now(),
+            'entreprise'    => $entreprise,
+            'gerant'        => $entreprise->gerant,
+            'typeFormation' => $typeFormation,
+            'annee'         => $annee,
+            'ville'         => $entreprise->ville,
+            'dateEdition'   => now(),
+            'enteteImage'   => $entreprise->getEnteteImageBase64(),
+            'piedPageImage' => $entreprise->getPiedPageImageBase64(),
         ]);
 
         return [
-            'filename' => 'G_Declaration_Honneur.pdf',
+            'filename' => 'G5_Declaration_Honneur.pdf',
             'content'  => $content,
         ];
     }

@@ -10,6 +10,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\Toggle;
 
 class EntrepriseClienteForm
 {
@@ -44,6 +46,10 @@ class EntrepriseClienteForm
                             ->maxLength(255)
                             ->columnSpanFull(),
 
+                       TextInput::make('ville')
+                            ->label('Ville')
+                            ->required(),
+                            
                         DatePicker::make('date_creation')
                             ->label('Date de Création')
                             ->displayFormat('d/m/Y')
@@ -65,7 +71,7 @@ class EntrepriseClienteForm
                             ->columnSpanFull(),
                     ])->columnSpanFull(),
 
-                Section::make('Répartition de l\'Effectif (GIAC)')
+                Section::make('Répartition de l\'Effectif')
                     ->description('Détail des catégories socioprofessionnelles pour les dossiers GIAC')
                     ->icon('heroicon-o-user-group')
                     ->columns(3)
@@ -103,40 +109,48 @@ class EntrepriseClienteForm
                     ])->columnSpanFull(),
 
                 Section::make('Gérant')
-                    ->description('Représentant légal de l\'entreprise')
-                    ->icon('heroicon-o-user')
-                    ->columns(2)
-                    ->relationship('gerant')
-                    ->schema([
-                        TextInput::make('nom')
-                            ->label('Nom')
-                            ->required()
-                            ->maxLength(255),
+                        ->description('Représentant légal de l\'entreprise')
+                        ->icon('heroicon-o-user')
+                        ->relationship('gerant')
+                        ->schema([
+                           
+                            TextInput::make('nom')
+                                ->label('Nom')
+                                ->required()
+                                ->maxLength(255),
 
-                        TextInput::make('prenom')
-                            ->label('Prénom')
-                            ->required()
-                            ->maxLength(255),
+                            TextInput::make('prenom')
+                                ->label('Prénom')
+                                ->required()
+                                ->maxLength(255),
 
-                        Select::make('genre')
-                            ->label('Genre')
-                            ->options(gerantGender::class)
-                            ->required()
-                            ->native(false),
+                            TextInput::make('fonction')
+                                ->label('Fonction / Qualité')
+                                ->placeholder('ex: Gérant, Directeur Général...')
+                                ->required()
+                                ->maxLength(255),
 
-                        TextInput::make('cin')
-                            ->label('CIN')
-                            ->required()
-                            ->maxLength(20)
-                            ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
+                            TextInput::make('cin')
+                                ->label('CIN')
+                                ->required()
+                                ->maxLength(20)
+                                ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
 
-                        TextInput::make('fonction')
-                            ->label('Fonction')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpan(2),
-                    ])->columnSpanFull(),
+                            
+                            TextInput::make('email')
+                                ->label('Adresse E-mail')
+                                ->email()
+                                ->placeholder('ex: gerant@entreprise.ma')
+                                ->maxLength(255),
 
+                            Select::make('genre')
+                                ->label('Genre')
+                                ->options(gerantGender::class)
+                                ->required()
+                                ->native(false),
+                        ])
+                        ->columns(2)
+                        ->columnSpanFull(),
                 Section::make('Identifiants Légaux & Administratifs')
                     ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
                     ->icon('heroicon-o-document-text')
@@ -174,7 +188,44 @@ class EntrepriseClienteForm
                             ->label('Région d\'affiliation CNSS')
                             ->maxLength(100),
                     ])->columnSpanFull(),
+                Section::make('Informations Financières & Historique GIAC')
+                    ->description('Renseignements complémentaires nécessaires pour la Fiche C du dossier GIAC')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->collapsible()
+                    ->columnSpanFull()
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('montant_tfp')
+                                    ->label('Montant de la Taxe versée l\'année précédente')
+                                    ->numeric()
+                                    ->prefix('DH')
+                                    ->placeholder('Ex: 15000.00'),
 
+                                Toggle::make('deja_depose_giac')
+                                    ->label('Avez-vous déjà déposé une demande auprès d\'un GIAC ?')
+                                    ->inline(false)
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state === false) {
+                                            $set('nom_ancien_giac', null);
+                                            $set('date_depot_ancien_giac', null);
+                                        }
+                                    }),
+                            ]),
+
+                        Grid::make(2)
+                            ->visible(fn (callable $get) => $get('deja_depose_giac') === true)
+                            ->schema([
+                                TextInput::make('nom_ancien_giac')
+                                    ->label('Quel GIAC ?')
+                                    ->placeholder('Ex: GIAC Technologies...'),
+                                DatePicker::make('date_depot_ancien_giac')
+                                    ->label('Date de dépôt de ce dossier')
+                                    ->displayFormat('d/m/Y')
+                                    ->native(false),
+                            ]),
+                    ]),
                 Section::make('Coordonnées & Contact')
                     ->description('Informations pour joindre le référent de l\'entreprise')
                     ->icon('heroicon-o-phone')

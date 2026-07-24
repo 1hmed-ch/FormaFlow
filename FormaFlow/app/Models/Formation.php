@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\TypeFormation;
 
 class Formation extends Model
 {
@@ -15,12 +16,14 @@ class Formation extends Model
     protected $fillable = [
         'entreprise_formation_id',
         'intitule',
+        'type_formation',
         'statut',
         'entreprise_id',
     ];
 
     protected $casts = [
-        "statut" => FormationStatus::class
+        "statut" => FormationStatus::class,
+        'type_formation' => TypeFormation::class
     ];
 
     public function entrepriseCliente(): BelongsTo
