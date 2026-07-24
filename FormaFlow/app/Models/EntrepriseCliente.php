@@ -19,6 +19,10 @@ class EntrepriseCliente extends Model
         'statut_juridique',
         'ice',
         'num_cnss',
+        'montant_tfp',
+        'deja_depose_giac',
+        'nom_ancien_giac',
+        'date_depot_ancien_giac',
         'rc',
         'if',
         'patente',
@@ -41,6 +45,9 @@ class EntrepriseCliente extends Model
 
     protected $casts = [
         'date_creation' => 'date:Y-m-d',
+        'deja_depose_giac' => 'boolean',
+        'date_depot_ancien_giac' => 'date:Y-m-d',
+        'montant_tfp' => 'decimal:2',
     ];
 
     public function gerant()

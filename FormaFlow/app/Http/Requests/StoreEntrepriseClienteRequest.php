@@ -32,6 +32,10 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'statut_juridique'        => 'nullable|string|max:100',
             'ice'                     => 'required|string|size:15|unique:entreprise_clientes,ice', // Required & Unique 
             'num_cnss'                => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss',
+            'montant_tfp'             => 'nullable|numeric|min:0',
+            'deja_depose_giac'        => 'nullable|boolean',
+            'nom_ancien_giac'         => 'nullable|string|max:255',
+            'date_depot_ancien_giac'  => 'nullable|date:Y-m-d',
             'rc'                      => 'nullable|string|max:50|unique:entreprise_clientes,rc',
             'if'                      => 'required|string|max:50|unique:entreprise_clientes,if',   // Required & Unique Strict fiscal
             'patente'                 => 'nullable|string|max:50|unique:entreprise_clientes,patente',

@@ -10,6 +10,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\Toggle;
 
 class EntrepriseClienteForm
 {
@@ -69,7 +71,7 @@ class EntrepriseClienteForm
                             ->columnSpanFull(),
                     ])->columnSpanFull(),
 
-                Section::make('Répartition de l\'Effectif (GIAC)')
+                Section::make('Répartition de l\'Effectif')
                     ->description('Détail des catégories socioprofessionnelles pour les dossiers GIAC')
                     ->icon('heroicon-o-user-group')
                     ->columns(3)
@@ -186,7 +188,44 @@ class EntrepriseClienteForm
                             ->label('Région d\'affiliation CNSS')
                             ->maxLength(100),
                     ])->columnSpanFull(),
+                Section::make('Informations Financières & Historique GIAC')
+                    ->description('Renseignements complémentaires nécessaires pour la Fiche C du dossier GIAC')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->collapsible()
+                    ->columnSpanFull()
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('montant_tfp')
+                                    ->label('Montant de la Taxe versée l\'année précédente')
+                                    ->numeric()
+                                    ->prefix('DH')
+                                    ->placeholder('Ex: 15000.00'),
 
+                                Toggle::make('deja_depose_giac')
+                                    ->label('Avez-vous déjà déposé une demande auprès d\'un GIAC ?')
+                                    ->inline(false)
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state === false) {
+                                            $set('nom_ancien_giac', null);
+                                            $set('date_depot_ancien_giac', null);
+                                        }
+                                    }),
+                            ]),
+
+                        Grid::make(2)
+                            ->visible(fn (callable $get) => $get('deja_depose_giac') === true)
+                            ->schema([
+                                TextInput::make('nom_ancien_giac')
+                                    ->label('Quel GIAC ?')
+                                    ->placeholder('Ex: GIAC Technologies...'),
+                                DatePicker::make('date_depot_ancien_giac')
+                                    ->label('Date de dépôt de ce dossier')
+                                    ->displayFormat('d/m/Y')
+                                    ->native(false),
+                            ]),
+                    ]),
                 Section::make('Coordonnées & Contact')
                     ->description('Informations pour joindre le référent de l\'entreprise')
                     ->icon('heroicon-o-phone')

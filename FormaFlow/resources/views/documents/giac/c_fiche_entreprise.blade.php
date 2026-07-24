@@ -217,40 +217,49 @@
 
 <table class="section-box">
     <tr>
-        <td style="padding: 4px 6px;">
+        <td style="padding: 2px 4px;">
             <table class="inner-table">
                 <tr>
                     <td style="width: 50%;">
-                        <i><strong>N° d'Affiliation à la C.N.S.S. :</strong></i> &nbsp; {{ !empty($entreprise->num_cnss) ? $entreprise->num_cnss : '....................' }}
+                        <i><strong>N° d'Affiliation à la C.N.S.S. :</strong></i> &nbsp; {{ $entreprise->num_cnss ?? '....................' }}
                     </td>
                     <td style="width: 50%; text-align: right;">
-                        <i><strong>Montant de la Taxe Versée * :</strong></i> &nbsp; ....................
+                        <i><strong>Montant de la Taxe Versée * :</strong></i> &nbsp; 
+                        <strong>{{ !empty($entreprise->montant_tfp) ? number_format($entreprise->montant_tfp, 2, ',', ' ') . ' DH' : '....................' }}</strong>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="font-size: 8pt; font-style: italic; padding-bottom: 2px;">
+                    <td colspan="2" style="font-size: 7.5pt; font-style: italic; padding-bottom: 1px;">
                         * à l'année précédant l'actuelle demande de Financement.
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <i><strong>N° R.C. Entreprise :</strong></i> &nbsp; {{ !empty($entreprise->rc) ? $entreprise->rc : '........................' }}
+                        <i><strong>N° R.C. Entreprise :</strong></i> &nbsp; {{ $entreprise->rc ?? '........................' }}
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 </table>
+        </td>
+    </tr>
+</table>
 
 <table class="section-box">
     <tr>
-        <td style="padding: 6px 8px;">
-            <p style="margin: 0 0 4px 0; font-style: italic; font-size: 9pt;">
-                <strong>Avant l'actuelle demande de Financement, avez-vous déjà déposé une demande similaire auprès d'un GIAC, en vue d'identifier vos besoins en Compétence :</strong> .........
-            </p>
-            <p style="margin: 0; font-style: italic; font-size: 9pt;">
-                <strong>Si oui, quel GIAC :</strong> ............................ &nbsp;&nbsp;&nbsp;&nbsp; <strong>Date de dépôt de ce Dossier :</strong> ............................
-            </p>
+        <td style="padding: 3px 6px;">
+            <div style="margin-bottom: 2px; font-style: italic; font-size: 8.5pt; line-height: 1.1;">
+                <strong>Avant l'actuelle demande de Financement, avez-vous déjà déposé une demande similaire auprès d'un GIAC, en vue d'identifier vos besoins en Compétence :</strong> 
+                &nbsp; <strong>{{ isset($entreprise->deja_depose_giac) ? ($entreprise->deja_depose_giac ? 'OUI' : 'NON') : '.........' }}</strong>
+            </div>
+            <div style="font-style: italic; font-size: 8.5pt; line-height: 1.1;">
+                <strong>Si oui, quel GIAC :</strong> 
+                <strong>{{ $entreprise->nom_ancien_giac ?? '............................' }}</strong> 
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                <strong>Date de dépôt de ce Dossier :</strong> 
+                <strong>{{ !empty($entreprise->date_depot_ancien_giac) ? \Carbon\Carbon::parse($entreprise->date_depot_ancien_giac)->format('d/m/Y') : '............................' }}</strong>
+            </div>
         </td>
     </tr>
 </table>
