@@ -11,14 +11,14 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EntrepriseFormation extends Model implements HasMedia
 {
-  use HasFactory,InteractsWithMedia;
+    use HasFactory,InteractsWithMedia;
     public const PIECES_JOINTES = [
-            'cv_consultants'        => 'CV des consultants',
-            'proposition_intervention' => 'Proposition d\'intervention',
-            'rc_modele_j'            => 'RC Modèle J',
-            'eligibilite_csf'        => 'Éligibilité CSF cabinet',
-            'facture_pro_forma'      => 'Facture pro forma (originale)',
-        ];
+        'cv_consultants'        => 'CV des consultants',
+        'proposition_intervention' => 'Proposition d\'intervention',
+        'rc_modele_j'            => 'RC Modèle J',
+        'eligibilite_csf'        => 'Éligibilité CSF cabinet',
+        'facture_pro_forma'      => 'Facture pro forma (originale)',
+    ];
 
     protected $fillable = [
         'raison_sociale',
@@ -43,13 +43,18 @@ class EntrepriseFormation extends Model implements HasMedia
         'domaines_competence',
         'moyens_pedagogiques',
         'nb_experts_permanents',
+        'nb_experts_permanents_etrangers',
         'nb_experts_vacataires',
+        'nb_experts_vacataires_etrangers',
         'nb_animateurs_formateurs',
+        'nb_animateurs_formateurs_etrangers',
         'nb_autres_employes',
+        'nb_autres_employes_etrangers',
         'effectif_total',
+        'appartient_groupe_etranger',
         'representant_nom',
         'representant_fonction',
-      
+
     ];
 
     /**
@@ -59,6 +64,7 @@ class EntrepriseFormation extends Model implements HasMedia
         'domaines_competence' => 'array',
         'moyens_pedagogiques' => 'array',
         'date_creation' => 'date',
+        'appartient_groupe_etranger' => 'boolean',
     ];
 
 
@@ -71,7 +77,7 @@ class EntrepriseFormation extends Model implements HasMedia
         }
     }
 
-    
+
 
     public function getPieceJointeStatut(string $collection): array
     {
@@ -106,9 +112,23 @@ class EntrepriseFormation extends Model implements HasMedia
     }
 
     /**
+     * Effectif total des étrangers, toutes fonctions confondues (calculé,
+     * non stocké) — utilisé par G3 (GIAC) et le Formulaire F3 (OFPPT) dans
+     * la ligne "Total" du tableau Moyens humains.
+     */
+    public function getEffectifTotalEtrangersAttribute(): int
+    {
+        return $this->nb_experts_permanents_etrangers
+            + $this->nb_experts_vacataires_etrangers
+            + $this->nb_animateurs_formateurs_etrangers
+            + $this->nb_autres_employes_etrangers;
+    }
+
+    /**
      * Accesseur Singleton pour récupérer la configuration unique de Plénitude
      */
     public static function current(): self
+ 
 {
     return self::firstOrCreate(
         ['id' => 1], // Force l'ID 1 pour garantir la fiche unique
@@ -155,6 +175,8 @@ class EntrepriseFormation extends Model implements HasMedia
     );
 }
 
+   
+
     /**
      * Une entreprise de formation possède plusieurs formateurs rattachés
      */
@@ -163,5 +185,5 @@ class EntrepriseFormation extends Model implements HasMedia
         return $this->hasMany(Formateur::class, 'entreprise_formation_id');
     }
 
-   
+
 }

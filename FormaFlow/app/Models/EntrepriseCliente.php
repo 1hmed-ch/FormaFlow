@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -65,6 +66,16 @@ class EntrepriseCliente extends Model
     public function dossiersGiac(): HasMany
     {
         return $this->hasMany(DossierGiac::class, 'entreprise_cliente_id');
+    }
+
+    public function etudesIngenierieFormation(): HasMany
+    {
+        return $this->hasMany(EtudeIngenierieFormation::class, 'entreprise_id');
+    }
+
+    public function etudesDiagnosticStrategique(): HasMany
+    {
+        return $this->hasMany(EtudeDiagnosticStrategique::class, 'entreprise_id');
     }
     public function getEnteteImageBase64(): ?string
     {
