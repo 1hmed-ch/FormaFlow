@@ -34,10 +34,8 @@ class DocumentGenerationService
         }
 
         $formations = $entreprise->formations()
-            ->with(['themes.formateur'])
             ->where('statut', FormationStatus::TERMINEE)
-            ->whereYear('date_fin', $annee)
-            ->orderBy('date_fin')
+            ->with(['themes.formateur'])
             ->get();
 
         if ($formations->isEmpty()) {
