@@ -193,6 +193,78 @@ class ViewEntrepriseCliente extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // 1. Bulletin d'Adhésion (B1)
+            Action::make('genererB1')
+                ->label('Bulletin d\'Adhésion (B1)')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('gray')
+                ->action(function (EntrepriseCliente $record, Action $action) {
+                    try {
+                        $document = app(\App\Services\DocumentGenerationService::class)->generateB1BulletinAdhesion($record);
+
+                        return response()->streamDownload(
+                            fn () => print($document['content']),
+                            $document['filename'],
+                            ['Content-Type' => 'application/pdf']
+                        );
+                    } catch (\App\Exceptions\DocumentGenerationException $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Génération impossible')
+                            ->body($e->getMessage())
+                            ->send();
+
+                        $action->halt();
+                    }
+                }),
+            // 2. Déclaration sur l'Honneur
+            Action::make('genererDeclarationHonneur')
+                ->label('Déclaration sur l\'Honneur')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('gray')
+                ->action(function (EntrepriseCliente $record, Action $action) {
+                    try {
+                        $document = app(\App\Services\DocumentGenerationService::class)->generateGDeclarationHonneur($record);
+
+                        return response()->streamDownload(
+                            fn () => print($document['content']),
+                            $document['filename'],
+                            ['Content-Type' => 'application/pdf']
+                        );
+                    } catch (\App\Exceptions\DocumentGenerationException $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Génération impossible')
+                            ->body($e->getMessage())
+                            ->send();
+
+                        $action->halt();
+                    }
+                }),
+            // 3. Fiche Entreprise (C)
+            Action::make('genererC')
+                ->label('Fiche Entreprise (C)')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('gray')
+                ->action(function (EntrepriseCliente $record, Action $action) {
+                    try {
+                        $document = app(\App\Services\DocumentGenerationService::class)->generateCFicheEntreprise($record);
+
+                        return response()->streamDownload(
+                            fn () => print($document['content']),
+                            $document['filename'],
+                            ['Content-Type' => 'application/pdf']
+                        );
+                    } catch (\App\Exceptions\DocumentGenerationException $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Génération impossible')
+                            ->body($e->getMessage())
+                            ->send();
+
+                        $action->halt();
+                    }
+                }),
             Action::make('genererModele6')
                 ->label('Générer Modèle 6')
                 ->icon('heroicon-o-document-arrow-down')
@@ -318,7 +390,6 @@ class ViewEntrepriseCliente extends ViewRecord
                         $action->halt();
                     }
                 }),
-
             EditAction::make(),
         ];
     }
