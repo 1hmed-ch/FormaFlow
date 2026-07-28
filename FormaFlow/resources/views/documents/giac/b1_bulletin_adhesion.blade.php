@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>B-1 - Bulletin d'Adhésion</title>
     <style>
-     @page {
-    margin: 15px 30px 45px 30px;
-}
+        @page {
+            margin: 40px 95px 90px 95px;
+        }
 
         @font-face {
             font-family: 'Lucida Handwriting';
@@ -14,58 +14,29 @@
             font-style: italic;
         }
 
-.giac-header {
-    text-align: center;
-    margin-bottom: 6px;
-}
-.giac-logo {
-    width: 145px;
-    height: auto;
-    margin-bottom: 2px;
-}
-.giac-chapeau {
-    font-size: 11pt;
-    font-style: italic;
-    margin-top: 2px;
-    margin-bottom: 10px;
-    text-align: center;
-}
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 15px;
+            font-style: italic;
+            color: #1a1a1a;
+            line-height: 1.45;
+        }
 
-.box-title {
-    border: 1pt solid #000000;
-    padding: 8px 14px;
-    text-align: center;
-    background-color: #F6D5DC;
-    width: 55%;
-    margin: 0 auto 20px auto;
-}
-.box-title h2 {
-    margin: 0;
-    font-size: 11pt;
-    font-weight: bold;
-    font-style: italic;
-    line-height: 1.3;
-}
+        .giac-header-logo {
+            text-align: center;
+            margin-bottom: 2px;
+        }
 
-.info-table {
-    width: 65%;
-    margin: 0 auto 16px auto;
-    border-collapse: collapse;
-}
-.info-table td {
-    border: 1pt solid #000000;
-    padding: 12px 10px;
-    font-size: 10.5pt;
-    vertical-align: middle;
-}
+        .giac-header-logo img {
+            height: 120px;
+        }
 
-.doc-body {
-    margin-left: 40px;
-    margin-right: 30px;
-    font-size: 10.5pt;
-    line-height: 1.5;
-    text-align: left;
-}
+        .giac-header-rule {
+            border: none;
+            border-top: 1px solid #A3001E;
+            width: 180px;
+            margin: 2px auto 4px auto;
+        }
 
         .giac-header-text {
             text-align: center;
@@ -90,36 +61,101 @@
             font-size: 18px;
         }
 
-/*.footer-wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-}
-.pink-divider {
-    border-top: 4px solid #40181c;
-    border-bottom: 1px solid #40181c;
-    height: 0;
-    margin-bottom: 3px;
-    padding-top: 1px;
-}
-.footer-content {
-    text-align: center;
-    font-size: 8.5pt;
-    color: #000000;
-    line-height: 1.25;
- }
-.footer-content strong {
-    color: #000000;
-    font-style: italic;
-    font-weight: bold;
-    font-size: 8.5pt;
-}
-.footer-content a {
-    color: #2b4c7e;
-    text-decoration: underline;
-}*/
+        .document-title-box .caption {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .field-line {
+            margin: 5px 30px;
+        }
+
+        .field-label {
+            font-weight: bold;
+        }
+
+        .dotted-fill {
+            border-bottom: 2px dotted #333;
+            display: inline-block;
+            min-width: 140px;
+            padding: 0 4px;
+        }
+
+        .dotted-fill.wide {
+            min-width: 100%;
+            width: 100%;
+        }
+
+        table.info-box {
+            width: 75%;
+            border-collapse: collapse;
+            margin: 10px 80px;
+        }
+
+        table.info-box td {
+            border: 1px solid #000;
+            padding: 13px 10px;
+        }
+
+        .list-items {
+            margin-left: 65px;
+            margin-top: 3px;
+            margin-bottom: 10px;
+        }
+
+        .list-items div {
+            margin-bottom: 3px;
+        }
+
+        .signature-zone {
+            margin-top: 20px;
+        }
+
+        .signature-zone .field-line {
+            margin: 8px 0;
+        }
+
+      /*  .giac-footer {
+            position: fixed;
+            bottom: -70px;
+            left: -90px;
+            right: -90px;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .giac-footer .pink-divider {
+            border-top: 4px solid #501f24;
+            border-bottom: 1px solid #501f24;
+            height: 0;
+            margin-bottom: 3px;
+            padding-top: 1px;
+        }
+
+        .giac-footer .footer-brand {
+            font-weight: bold;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .giac-footer .handwritten-text {
+            font-family: 'Lucida Handwriting', cursive;
+            font-style: italic;
+        }
+
+        .giac-footer .footer-line2 {
+            font-weight: bold;
+            font-style: italic;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .giac-footer a {
+            color: #0563C1;
+            text-decoration: underline;
+        }*/
     </style>
 </head>
 <body>
@@ -176,8 +212,53 @@
     pour l'année <strong>{{ $entreprise->anneesFormations()[0] ?? ($annee ?? '....................') }},</strong>
 </div>
 
-{{--<div class="footer-wrapper">
-    <div class="pink-divider"></div>
+<div class="field-line" style="margin-top: 10px;">Les Frais de Cotisation &amp; de Traitement de dossier :</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; La Cotisation Annuelle : <strong>500,00 DHs</strong> (Cinq Cents Dirhams),
+</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; <span >Traitement de Dossier</span> : <strong>3.000,00 Dhs</strong> (pour chaque étude D.S. ou I.F.),
+</div>
+
+<div class="field-line" style="margin-top: 10px;">sont réglés par le <strong>Chèque</strong> ci-joint :</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; Sur la Banque : 
+    <span style="width: 350px">
+        {{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '....................................................................................................' }}
+    </span>
+</div>
+<div  style="margin-left: 95px;">
+    &bull; De N° : 
+    <span  style="width: 400px">
+        {{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '........................................................................................................................' }}
+    </span>
+</div>
+<div style="margin-left: 95px;">
+    &bull; Daté du : 
+    <span  style="width: 390px">
+        {{ !empty($entreprise->cheque_date) ? \Carbon\Carbon::parse($entreprise->cheque_date)->format('d/m/Y') : '....................................................................................................' }}
+    </span>
+</div>
+<div class="signature-zone">
+    <div class="field-line">
+        <strong>- Lieu &amp; Date de cette demande :</strong>
+        <span>{{ $entreprise->ville ?? '....................' }} , le {{ ($dateEdition ?? now())->format('d/m/Y') }}</span>
+    </div>
+
+    <div class="field-line" style="margin-bottom: 30px;"><strong>- Signature :</strong></div>
+
+    <div class="field-line">
+        <strong>- Nom et Qualité du Signataire :</strong>
+        <span>{{ $gerant->prenom ?? '' }} {{ $gerant->nom ?? '' }}{{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : ' ................................................................' }}</span>
+    </div>
+    <div class="field-line" style="font-size: 11px;">(habilité à signer au sein de l'Entreprise)</div>
+
+    <div class="field-line"><strong>- Mail ( du signataire ) :</strong> {{ $gerant->email ?? '..................................................' }}</div>
+
+    <div class="field-line"><strong>- Cachet de l'Entreprise :</strong></div>
+</div>
+
+{{--<div class="giac-footer">
     <div class="field-line">
         <span class="handwritten-text">GIAC Technologies</span>
         <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
