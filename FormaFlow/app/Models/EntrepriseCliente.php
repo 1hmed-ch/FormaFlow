@@ -42,6 +42,9 @@ class EntrepriseCliente extends Model
         'contact_ref',
         'image_entete',
         'image_pied_page',
+        'cheque_banque',
+        'cheque_numero',
+        'cheque_date',
     ];
 
     protected $casts = [
@@ -49,6 +52,7 @@ class EntrepriseCliente extends Model
         'deja_depose_giac' => 'boolean',
         'date_depot_ancien_giac' => 'date:Y-m-d',
         'montant_tfp' => 'decimal:2',
+        'cheque_date' => 'date:Y-m-d',
     ];
 
     public function gerant()

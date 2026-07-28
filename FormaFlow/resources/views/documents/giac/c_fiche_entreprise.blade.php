@@ -7,12 +7,17 @@
        @page {
             margin: 10px 25px 15px 25px;
         }
+        @font-face {
+            font-family: 'Lucida Handwriting';
+            src: url("{{ public_path('fonts/External/LucidaHandwritingStdBold.TTF') }}") format('truetype');
+            font-style: italic;
+        }
         body {
             font-family: 'Times New Roman', Times, 'DejaVu Serif', serif;
             font-size: 10pt;              
             color: #000000;
             line-height: 1.5;     
-            margin-bottom: 15px;             
+            margin-bottom: 0px;             
         }
 
         .giac-header {
@@ -23,6 +28,12 @@
             width: 140px;
             height: auto;
             margin-bottom: 2px;
+        }
+        .giac-header-rule {
+            border: none;
+            border-top: 1px solid #A3001E;
+            width: 180px;
+            margin: 2px auto 4px auto;
         }
         .giac-chapeau {
             font-size: 10.5pt;
@@ -49,7 +60,7 @@
         }
         .section-box {
             width: 85%;                 
-            margin: 0 auto 15px auto;      
+            margin: 0 auto 10px auto;      
             border: 1px solid #000000;
             border-collapse: collapse;
         }
@@ -66,56 +77,71 @@
 
         .inner-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
         }
-       .inner-table td {
-            padding: 5px 8px;
-            height: 26px;                
+        .inner-table td {
+            padding:3px 8px;
+            height:18px;                
             vertical-align: middle;
-            font-size: 9.5pt;               
+            font-size: 9.5pt;
+        }
+        .inner-table td.label {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .inner-table td.sep {
+            width: 3%;
+            text-align: center;
+            padding: 5px 0;
+            font-weight: bold;
         }
 
         .dotted-fill {
             letter-spacing: 1px;
         }
 
-        .footer-wrapper {
+       .giac-footer {
             position: fixed;
-            bottom: -10px;
-            left: 0;
-            right: 0;
-            width: 100%;
-        }
-        .pink-divider {
-            border-top: 4px solid #40181c;  
-            border-bottom: 1px solid #40181c;
-            height: 0;
-            margin-bottom: 3px;
-            padding-top: 1px;
-        }
-        .footer-content {
+            bottom:18px;
+            left: -25px;
+            right: -25px;
             text-align: center;
-            font-size: 8.5pt;
-            color: #000000;
-            line-height: 1.25;
+            font-family: 'Times New Roman', Times, serif;
         }
-        .footer-content strong {
-            color: #000000;
-            font-style: italic;
-            font-weight: bold;
-            font-size: 8.5pt;
-        }
-        .footer-content a {
-            color: #2b4c7e;
-            text-decoration: underline;
-        }
+
+.giac-footer .pink-divider {
+    border-top: 4px solid #501f24;
+    border-bottom: 1px solid #501f24;
+    height: 0;
+    margin-bottom: 3px;
+    padding-top: 1px;
+}
+
+.giac-footer .handwritten-text {
+    font-family: 'Lucida Handwriting', cursive;
+    font-style: italic;
+   
+}
+
+.giac-footer .footer-line2 {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.giac-footer a {
+    color: #0563C1;
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
 
 <div class="giac-header">
     @php
-        $logoPath = public_path('images/Logo.png');
+        $logoPath = public_path('images/giac/logo-giac.png');
     @endphp
 
     @if(file_exists($logoPath))
@@ -123,7 +149,7 @@
     @else
         <h1 style="color: #c00000; font-size: 18px; margin: 0;">GIAC Technologies</h1>
     @endif
-
+    <div class="giac-header-rule"></div>
     <div class="giac-chapeau">Groupement Interprofessionnel d'Aide au Conseil</div>
 </div>
 
@@ -139,29 +165,29 @@
         <td style="padding: 4px 6px;">
             <table class="inner-table">
                 <tr>
-                    <td style="width: 20%;"><i><strong>Raison Sociale :</strong></i></td>
+                    <td class="label" style="width: 20%;"><i><strong>Raison Sociale :</strong></i></td>
                     <td colspan="3">{{ !empty($entreprise->raison_sociale) ? $entreprise->raison_sociale : '....................................................................................................' }}</td>
                 </tr>
                 <tr>
-                    <td><i><strong>Activités Principales :</strong></i></td>
+                    <td class="label"><i><strong>Activités Principales :</strong></i></td>
                     <td colspan="3">{{ !empty($entreprise->activite) ? $entreprise->activite : (!empty($entreprise->secteur_activite) ? $entreprise->secteur_activite : '....................................................................................................') }}</td>
                 </tr>
                 <tr>
-                    <td><i><strong>Date de Création :</strong></i></td>
+                    <td class="label"><i><strong>Date de Création :</strong></i></td>
                     <td colspan="3">{{ !empty($entreprise->date_creation) ? \Carbon\Carbon::parse($entreprise->date_creation)->format('d/m/Y') : '....................................................................................................' }}</td>
                 </tr>
                 <tr>
-                    <td><i><strong>Adresse :</strong></i></td>
+                    <td class="label"><i><strong>Adresse :</strong></i></td>
                     <td colspan="3">{{ !empty($entreprise->siege_social) ? $entreprise->siege_social : '....................................................................................................' }}</td>
                 </tr>
                 <tr>
-                    <td style="width: 16%;"><i><strong>Téléphone :</strong></i></td>
-                    <td style="width: 40%;">{{ !empty($entreprise->telephone) ? $entreprise->telephone : '................................' }}</td>
-                    <td style="width: 10%; text-align: right; padding-right: 5px;"><i><strong>Fax :</strong></i></td>
-                    <td style="width: 34%;">{{ !empty($entreprise->fax) ? $entreprise->fax : '................................' }}</td>
+                    <td class="label" style="width: 16%;"><i><strong>Téléphone :</strong></i></td>
+                    <td style="width: 44%;">{{ !empty($entreprise->telephone) ? $entreprise->telephone : '................................' }} ;</td>
+                    <td class="label" style="width: 10%; text-align: right; padding-right: 5px;"><i><strong>Fax :</strong></i></td>
+                    <td style="width: 30%;">{{ !empty($entreprise->fax) ? $entreprise->fax : '................................' }}</td>
                 </tr>
                 <tr>
-                    <td><i><strong>Mail de l'Entreprise :</strong></i></td>
+                    <td class="label"><i><strong>Mail de l'Entreprise :</strong></i></td>
                     <td colspan="3">{{ !empty($entreprise->email) ? $entreprise->email : '....................................................................................................' }}</td>
                 </tr>
                 <tr>
@@ -170,7 +196,7 @@
                         @if(!empty($entreprise->contact_ref))
                             {{ $entreprise->contact_ref }}
                         @elseif(!empty($gerant))
-                            {{ $gerant->prenom }} {{ $gerant->nom }} {{ !empty($gerant->fonction) ? '— ' . $gerant->fonction : '' }}
+                            {{ $gerant->prenom }} {{ $gerant->nom }} {{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : '' }}
                         @else
                             ....................................................................................................
                         @endif
@@ -192,21 +218,24 @@
         <td style="padding: 4px 6px;">
             <table class="inner-table">
                 <tr>
-                    <td style="width: 10%;"><i><strong>Cadres :</strong></i></td>
-                    <td style="width: 18%;">{{ $entreprise->effectif_cadre ?? '..........' }}</td>
-                    <td style="width: 18%;"><i><strong>Cadre Moyens :</strong></i></td>
-                    <td style="width: 18%;">{{ $entreprise->effectif_cadre_moyen ?? '..........' }}</td>
-                    <td style="width: 18%;"><i><strong>Agents Qualifiés :</strong></i></td>
-                    <td style="width: 18%;">{{ $entreprise->effectif_agent_qualifie ?? '..........' }}</td>
+                    <td class="label" style="width: 9%;"><i><strong>Cadres :</strong></i></td>
+                    <td style="width: 16%;">{{ $entreprise->effectif_cadre ?? '..........' }}</td>
+                    <td class="sep">;</td>
+                    <td class="label" style="width: 16%;"><i><strong>Cadre Moyens :</strong></i></td>
+                    <td style="width: 16%;">{{ $entreprise->effectif_cadre_moyen ?? '..........' }}</td>
+                    <td class="sep">;</td>
+                    <td class="label" style="width: 16%;"><i><strong>Agents Qualifiés :</strong></i></td>
+                    <td style="width: 16%;">{{ $entreprise->effectif_agent_qualifie ?? '..........' }}</td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="white-space: nowrap;"><i><strong>Agents Sans Qualification :</strong></i></td>
+                    <td class="label" colspan="2"><i><strong>Agents Sans Qualification :</strong></i></td>
                     <td>{{ $entreprise->effectif_agent_sans_qualification ?? '..........' }}</td>
-                    <td colspan="2" style="white-space: nowrap; text-align: right; padding-right: 8px;"><i><strong>Agents Occasionnels :</strong></i></td>
+                    <td class="sep">;</td>
+                    <td class="label" colspan="2" style="text-align: right; padding-right: 8px;"><i><strong>Agents Occasionnels :</strong></i></td>
                     <td>{{ $entreprise->effectif_agent_occasionnel ?? '..........' }}</td>
                 </tr>
                 <tr>
-                    <td colspan="6" style="text-align: center; padding-top: 4px;">
+                    <td colspan="8" style="text-align: center; padding-top: 4px;">
                         <i><strong>Total Effectif : &nbsp;&nbsp;&nbsp; {{ $entreprise->effectif_total ?? '........................' }}</strong></i>
                     </td>
                 </tr>
@@ -220,21 +249,23 @@
         <td style="padding: 2px 4px;">
             <table class="inner-table">
                 <tr>
-                    <td style="width: 50%;">
+                    <td style="padding-bottom: 0;">
                         <i><strong>N° d'Affiliation à la C.N.S.S. :</strong></i> &nbsp; {{ $entreprise->num_cnss ?? '....................' }}
-                    </td>
-                    <td style="width: 50%; text-align: right;">
-                        <i><strong>Montant de la Taxe Versée * :</strong></i> &nbsp; 
-                        <strong>{{ !empty($entreprise->montant_tfp) ? number_format($entreprise->montant_tfp, 2, ',', ' ') . ' DH' : '....................' }}</strong>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="font-size: 7.5pt; font-style: italic; padding-bottom: 1px;">
+                    <td style="padding-top: 0; padding-bottom: 0;">
+                        <i><strong>Montant de la Taxe Versée * :</strong></i> &nbsp; 
+                        {{ !empty($entreprise->montant_tfp) ? number_format($entreprise->montant_tfp, 2, ',', ' ') . ' DH' : '....................' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size: 7.5pt; font-style: italic; line-height: 1.1; padding-top: 0; padding-bottom: 0;">
                         * à l'année précédant l'actuelle demande de Financement.
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="2" style="padding-top: 5px;">
                         <i><strong>N° R.C. Entreprise :</strong></i> &nbsp; {{ $entreprise->rc ?? '........................' }}
                     </td>
                 </tr>
@@ -264,22 +295,27 @@
     </tr>
 </table>
 
-<div style="margin-left: 50px; margin-top: 10px; margin-bottom: 30px; page-break-inside: avoid;">
-    <p style="margin-bottom: 10px; font-size: 10.5pt;">
+<div
+style="margin-left:50px;margin-top:12px;margin-bottom:8px;page-break-inside:avoid;">
+    <p style="margin-bottom: 8px; font-size: 10.5pt;">
         <strong>- <i>Date :</i></strong> &nbsp; {{ \Carbon\Carbon::parse($dateEdition ?? now())->format('d/m/Y') }}
     </p>
     <p style="margin-bottom: 0; font-size: 10.5pt;">
-        <strong>- <i>Cachet &nbsp;&nbsp; et</i></strong>
+        <strong>- <i>Cachet et Signature légalisée :  &nbsp;&nbsp;</i></strong>
     </p>
 </div>
 
-<div class="footer-wrapper">
+<div class="giac-footer">
     <div class="pink-divider"></div>
-    <div class="footer-content">
-        <strong>GIAC Technologies</strong> - 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9 — Casablanca<br>
-        Tél : 0522 27 24 93 – Fax : 0522 27 57 65 – CNSS : 7365514 – e-mail : <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a> – web : <a href="http://www.giactechnologies.com" target="_blank">www.giactechnologies.com</a>
+    <div class="field-line">
+        <span class="handwritten-text">GIAC Technologies</span>
+        <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9 — Casablanca</span>
+    </div>
+    <div class="field-line footer-line2">
+        Tél : 0522 27 24 93 – Fax : 0522 27 57 65 – CNSS : 7365514 – e-mail :
+        <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
+        – web : <a href="http://www.giactechnologies.com" target="_blank">www.giactechnologies.com</a>
     </div>
 </div>
-
 </body>
 </html>

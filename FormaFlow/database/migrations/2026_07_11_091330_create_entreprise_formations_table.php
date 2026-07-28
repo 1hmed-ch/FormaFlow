@@ -17,23 +17,23 @@ return new class extends Migration
         // 1. Informations Générales & Administratives
         $table->string('raison_sociale');
         $table->string('logo')->nullable();
-        $table->string('siege_social');
+        $table->string('siege_social')->nullable();
         $table->string('gerant_nom');
         $table->string('gerant_prenom');
-        $table->date('date_creation');
-        $table->string('statut_juridique');
+        $table->date('date_creation')->nullable();
+        $table->string('statut_juridique')->nullable();
         $table->string('activite');
         
         // 2. Infos Fiscales & Coordonnées
         $table->string('ice');
         $table->string('rc');
-        $table->string('if');
-        $table->string('patente');
+        $table->string('if')->nullable();
+        $table->string('patente')->nullable();
         $table->string('cnss')->nullable();
         $table->string('capital_social')->nullable();
-        $table->string('telephone');
+        $table->string('telephone')->nullable();
         $table->string('fax')->nullable();
-        $table->string('email');
+        $table->string('email')->nullable();
         $table->string('site_web')->nullable();
         
         // 3. Solution JSON flexible pour les Domaines & Moyens
@@ -48,8 +48,8 @@ return new class extends Migration
         $table->integer('effectif_total')->default(0);
         
         // 5. Représentant Légal & Signature pour les PDFs
-        $table->string('representant_nom');
-        $table->string('representant_fonction');
+        $table->string('representant_nom')->nullable();
+        $table->string('representant_fonction')->nullable();
         $table->string('signature')->nullable();
         
         $table->timestamps();

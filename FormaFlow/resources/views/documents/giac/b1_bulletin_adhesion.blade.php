@@ -2,217 +2,272 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>B-1 Bulletin d'Adhésion</title>
+    <title>B-1 - Bulletin d'Adhésion</title>
     <style>
-     @page {
-    margin: 15px 30px 45px 30px;   
-}
+        @page {
+            margin: 40px 95px 90px 95px;
+        }
 
-body {
-    font-family: 'DejaVu Serif', 'Times New Roman', Times, serif;
-    font-size: 11pt;
-    color: #000000;
-    line-height: 1.4;
-}
+        @font-face {
+            font-family: 'Lucida Handwriting';
+            src: url("{{ public_path('fonts/External/LucidaHandwritingStdBold.TTF') }}") format('truetype');
+            font-style: italic;
+        }
 
-.giac-header {
-    text-align: center;
-    margin-bottom: 6px;
-}
-.giac-logo {
-    width: 145px;                   
-    height: auto;
-    margin-bottom: 2px;
-}
-.giac-chapeau {
-    font-size: 11pt;
-    font-style: italic;
-    margin-top: 2px;
-    margin-bottom: 10px;
-    text-align: center;
-}
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 15px;
+            font-style: italic;
+            color: #1a1a1a;
+            line-height: 1.45;
+        }
 
-.box-title {
-    border: 1pt solid #000000;
-    padding: 8px 14px;
-    text-align: center;
-    background-color: #F6D5DC;       
-    width: 55%;                      
-    margin: 0 auto 20px auto;
-}
-.box-title h2 {
-    margin: 0;
-    font-size: 11pt;
-    font-weight: bold;
-    font-style: italic;
-    line-height: 1.3;
-}
+        .giac-header-logo {
+            text-align: center;
+            margin-bottom: 2px;
+        }
 
-.info-table {
-    width: 65%;                      
-    margin: 0 auto 16px auto;
-    border-collapse: collapse;
-}
-.info-table td {
-    border: 1pt solid #000000;
-    padding: 12px 10px;
-    font-size: 10.5pt;
-    vertical-align: middle;
-}
+        .giac-header-logo img {
+            height: 120px;
+        }
 
-.doc-body {
-    margin-left: 40px;
-    margin-right: 30px;
-    font-size: 10.5pt;
-    line-height: 1.5;
-    text-align: left;               
-}
+        .giac-header-rule {
+            border: none;
+            border-top: 1px solid #A3001E;
+            width: 180px;
+            margin: 2px auto 4px auto;
+        }
 
-.doc-body p {
-    margin-bottom: 8px;
-    margin-top: 0;
-    text-align: left;
-}
+        .giac-header-text {
+            text-align: center;
+            font-style: italic;
+            font-size: 17px;
+            margin-bottom: 14px;
+        }
 
-.intro-presente {
-    text-align: center;
-    font-style: italic;
-    margin-bottom: 12px;
-}
+        .document-title-box {
+            border: 1.5px solid #000;
+            background-color: #FADAE1;
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 18px;
+            margin: 16px 15px;
+        }
 
-.list-items {
-    margin-left: 45px;
-    margin-top: 3px;
-    margin-bottom: 10px;
-    text-align: left;
-}
-.list-items div {
-    margin-bottom: 3px;
-}
+        .document-title-box .subtitle {
+            display: block;
+            font-size: 18px;
+        }
 
-.footer-wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-}
-.pink-divider {
-    border-top: 4px solid #40181c;  
-    border-bottom: 1px solid #40181c;
-    height: 0;
-    margin-bottom: 3px;
-    padding-top: 1px;
-}
-.footer-content {
-    text-align: center;
-    font-size: 8.5pt;
-    color: #000000;
-    line-height: 1.25;
- }
-.footer-content strong {
-    color: #000000;
-    font-style: italic;
-    font-weight: bold;
-    font-size: 8.5pt;
-}
-.footer-content a {
-    color: #2b4c7e;
-    text-decoration: underline;
-}
+        .document-title-box .caption {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .field-line {
+            margin: 5px 30px;
+        }
+
+        .field-label {
+            font-weight: bold;
+        }
+
+        .dotted-fill {
+            border-bottom: 2px dotted #333;
+            display: inline-block;
+            min-width: 140px;
+            padding: 0 4px;
+        }
+
+        .dotted-fill.wide {
+            min-width: 100%;
+            width: 100%;
+        }
+
+        table.info-box {
+            width: 75%;
+            border-collapse: collapse;
+            margin: 10px 80px;
+        }
+
+        table.info-box td {
+            border: 1px solid #000;
+            padding: 13px 10px;
+        }
+
+        .list-items {
+            margin-left: 65px;
+            margin-top: 3px;
+            margin-bottom: 10px;
+        }
+
+        .list-items div {
+            margin-bottom: 3px;
+        }
+
+        .signature-zone {
+            margin-top: 20px;
+        }
+
+        .signature-zone .field-line {
+            margin: 8px 0;
+        }
+
+        .giac-footer {
+            position: fixed;
+            bottom: -70px;
+            left: -90px;
+            right: -90px;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .giac-footer .pink-divider {
+            border-top: 4px solid #501f24;
+            border-bottom: 1px solid #501f24;
+            height: 0;
+            margin-bottom: 3px;
+            padding-top: 1px;
+        }
+
+        .giac-footer .footer-brand {
+            font-weight: bold;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .giac-footer .handwritten-text {
+            font-family: 'Lucida Handwriting', cursive;
+            font-style: italic;
+        }
+
+        .giac-footer .footer-line2 {
+            font-weight: bold;
+            font-style: italic;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .giac-footer a {
+            color: #0563C1;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
-<div class="giac-header">
+<div class="giac-header-logo">
     @php
-        $logoPath = public_path('images/Logo.png');
+        $logoPath = public_path('images/giac/logo-giac.png');
     @endphp
 
     @if(file_exists($logoPath))
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents($logoPath)) }}" class="giac-logo">
+        <img src="data:image/png;base64,{{ base64_encode(file_get_contents($logoPath)) }}">
     @else
         <h1 style="color: #c00000; font-size: 22px; margin: 0;">GIAC Technologies</h1>
     @endif
+    <div class="giac-header-rule"></div>
+</div>
+<div class="giac-header-text">Groupement Interprofessionnel d'Aide au Conseil</div>
 
-    <div class="giac-chapeau">Groupement  Interprofessionnel  d'Aide  au  Conseil</div>
+<div class="document-title-box">
+    B -1) <span style="text-decoration: underline;">Bulletin d'Adhésion</span>
+    <span class="caption">(Pour une nouvelle Entreprise)</span>
 </div>
 
-<div class="box-title">
-    <h2><i><strong>B -1)   <u>Bulletin   d'Adhésion</u></strong><br><span style="font-size: 11pt;">(Pour une nouvelle Entreprise)</span></i></h2>
-</div>
+<div class="field-line" style="text-align: center;">Par la présente :</div>
 
-<p class="intro-presente">Par   la   présente :</p>
-
-<table class="info-table">
+<table class="info-box">
     <tr>
-        <td colspan="2">
-            <i><u><strong>L'Entreprise :</strong></u></i> &nbsp; {{ $entreprise->raison_sociale ?? '.........................................................................' }}
+        <td>
+            <span class="field-label">L'Entreprise</span> :
+            <span>{{ $entreprise->raison_sociale ?? '.........................................................................' }}</span>
         </td>
     </tr>
     <tr>
-        <td colspan="2">
-            <i><u><strong>Adresse :</strong></u></i> &nbsp; {{ $entreprise->siege_social ?? '.........................................................................' }}
+        <td>
+            <span class="field-label">Adresse</span> :
+            <span>{{ $entreprise->siege_social ?? '.........................................................................' }}</span>
         </td>
     </tr>
     <tr>
-        <td style="width: 50%; border-right: none;">
-            <i><u><strong>Tel. :</strong></u></i> &nbsp; {{ $entreprise->telephone ?? '......................' }}
-        </td>
-        <td style="width: 50%; border-left: none;">
-            <i><u><strong>Fax :</strong></u></i> &nbsp; {{ $entreprise->fax ?? '......................' }}
+        <td>
+            <span class="field-label">Tel.</span> :
+            <span>{{ $entreprise->telephone ?? '......................' }}</span>
+            &nbsp;&nbsp;&nbsp;
+            <span class="field-label" style="margin-left: 40px;">Fax</span> :
+            <span>{{ $entreprise->fax ?? '......................' }} </span>
         </td>
     </tr>
 </table>
 
-<div class="doc-body">
-    <p style="text-align: center;">
-        <i>Demande   son   <strong>Adhésion</strong>   au   <strong>GIAC Technologies</strong>  pour   l'année  <strong>{{ $entreprise->anneesFormations()[0] ?? ($annee ?? '....................') }}</strong></i>
-    </p>
-
-    <p style="margin-bottom: 4px;"><i>Les  Frais  de  Cotisation  &  de  Traitement  de  dossier :</i></p>
-
-    <div class="list-items">
-        <div>• <i>La  Cotisation  Annuelle :    <strong>500,00  DHs</strong>  (Cinq Cents  Dirhams),</i></div>
-        <div>• <i><u>Traitement  de  Dossier :</u> <strong>3.000,00  Dhs</strong>  (pour chaque  étude  D.S.  ou  I.F.),</i></div>
-    </div>
-
-    <p style="margin-top: 10px; margin-bottom: 6px;">
-        <i>sont  réglés  par  le  <strong>Chèque  ci-joint   :</strong></i>
-    </p>
-
-    <div class="list-items" style="margin-bottom: 16px;">
-        <div>• <i>Sur   la   Banque :</i> .........................................................................</div>
-        <div>• <i>De   N° :</i> ..........................................................................................</div>
-        <div>• <i>Daté    du :</i> ......................................................................................</div>
-    </div>
-
-    <p style="margin-bottom: 14px;">
-        - <i><strong>Lieu    &        Date   (de  cette   demande)   :</strong></i> Fait à {{ $entreprise->ville ?? '....................' }}, le {{ ($dateEdition ?? now())->format('d/m/Y') }}
-    </p>
-
-    <p style="margin-bottom: 22px;">- <i><strong>Signature   :</strong></i></p>
-
-    <p style="margin-bottom: 2px;">
-        - <i><strong>Nom   et   Qualité    du    Signataire :</strong></i> {{ $gerant->prenom ?? '' }} {{ $gerant->nom ?? '' }} {{ !empty($gerant->fonction) ? '— ' . $gerant->fonction : '................................................................' }}
-    </p>
-
-    <p style="margin-left: 15px; margin-bottom: 16px; margin-top: 0;">
-        <i>( Habilité à signer au sein de l'Entreprise )</i>
-    </p>
-
-    <p style="margin-bottom: 22px;">
-        - <i><strong>Mail ( du signataire ) :</strong></i> {{ $gerant->email ?? '..................................................' }}
-    </p>
-
-    <p style="margin-bottom: 35px;">- <i><strong>Cachet     de    l'Entreprise :</strong></i></p>
+<div class="field-line" style="margin-top: 12px;">
+    Demande son <strong>Adhésion</strong> au <strong>GIAC Technologies,</strong>
+</div>
+<div class="field-line">
+    pour l'année <strong>{{ $entreprise->anneesFormations()[0] ?? ($annee ?? '....................') }},</strong>
 </div>
 
-<div class="footer-wrapper">
+<div class="field-line" style="margin-top: 10px;">Les Frais de Cotisation &amp; de Traitement de dossier :</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; La Cotisation Annuelle : <strong>500,00 DHs</strong> (Cinq Cents Dirhams),
+</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; <span >Traitement de Dossier</span> : <strong>3.000,00 Dhs</strong> (pour chaque étude D.S. ou I.F.),
+</div>
+
+<div class="field-line" style="margin-top: 10px;">sont réglés par le <strong>Chèque</strong> ci-joint :</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; Sur la Banque : 
+    <span style="width: 350px">
+        {{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '....................................................................................................' }}
+    </span>
+</div>
+<div  style="margin-left: 95px;">
+    &bull; De N° : 
+    <span  style="width: 400px">
+        {{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '........................................................................................................................' }}
+    </span>
+</div>
+<div style="margin-left: 95px;">
+    &bull; Daté du : 
+    <span  style="width: 390px">
+        {{ !empty($entreprise->cheque_date) ? \Carbon\Carbon::parse($entreprise->cheque_date)->format('d/m/Y') : '....................................................................................................' }}
+    </span>
+</div>
+<div class="signature-zone">
+    <div class="field-line">
+        <strong>- Lieu &amp; Date de cette demande :</strong>
+        <span>{{ $entreprise->ville ?? '....................' }} , le {{ ($dateEdition ?? now())->format('d/m/Y') }}</span>
+    </div>
+
+    <div class="field-line" style="margin-bottom: 30px;"><strong>- Signature :</strong></div>
+
+    <div class="field-line">
+        <strong>- Nom et Qualité du Signataire :</strong>
+        <span>{{ $gerant->prenom ?? '' }} {{ $gerant->nom ?? '' }}{{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : ' ................................................................' }}</span>
+    </div>
+    <div class="field-line" style="font-size: 11px;">(habilité à signer au sein de l'Entreprise)</div>
+
+    <div class="field-line"><strong>- Mail ( du signataire ) :</strong> {{ $gerant->email ?? '..................................................' }}</div>
+
+    <div class="field-line"><strong>- Cachet de l'Entreprise :</strong></div>
+</div>
+
+<div class="giac-footer">
     <div class="pink-divider"></div>
-    <div class="footer-content">
-        <strong>GIAC Technologies</strong> - 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9 — Casablanca<br>
-        Tél : 0522 27 24 93 – Fax : 0522 27 57 65 – CNSS : 7365514 – e-mail : <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a> – web : <a href="http://www.giactechnologies.com" target="_blank">www.giactechnologies.com</a>
+    <div class="field-line">
+        <span class="handwritten-text">GIAC Technologies</span>
+        <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
+    </div>
+    <div class="field-line footer-line2">
+        Tél. : 0522 27 24 93 &ndash; Fax : 0522 27 57 65 &ndash; CNSS : 7365514 &ndash; e-mail :
+        <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
+        &ndash; web : <a href="http://www.giactechnologies.com">www.giactechnologies.com</a>
     </div>
 </div>
 
