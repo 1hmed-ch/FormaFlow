@@ -5,7 +5,7 @@
     <title>B-1 Bulletin d'Adhésion</title>
     <style>
      @page {
-    margin: 15px 30px 45px 30px;   
+    margin: 15px 30px 45px 30px;
 }
 
 body {
@@ -20,7 +20,7 @@ body {
     margin-bottom: 6px;
 }
 .giac-logo {
-    width: 145px;                   
+    width: 145px;
     height: auto;
     margin-bottom: 2px;
 }
@@ -36,8 +36,8 @@ body {
     border: 1pt solid #000000;
     padding: 8px 14px;
     text-align: center;
-    background-color: #F6D5DC;       
-    width: 55%;                      
+    background-color: #F6D5DC;
+    width: 55%;
     margin: 0 auto 20px auto;
 }
 .box-title h2 {
@@ -49,7 +49,7 @@ body {
 }
 
 .info-table {
-    width: 65%;                      
+    width: 65%;
     margin: 0 auto 16px auto;
     border-collapse: collapse;
 }
@@ -65,7 +65,7 @@ body {
     margin-right: 30px;
     font-size: 10.5pt;
     line-height: 1.5;
-    text-align: left;               
+    text-align: left;
 }
 
 .doc-body p {
@@ -90,7 +90,7 @@ body {
     margin-bottom: 3px;
 }
 
-.footer-wrapper {
+/*.footer-wrapper {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -98,7 +98,7 @@ body {
     width: 100%;
 }
 .pink-divider {
-    border-top: 4px solid #40181c;  
+    border-top: 4px solid #40181c;
     border-bottom: 1px solid #40181c;
     height: 0;
     margin-bottom: 3px;
@@ -119,7 +119,7 @@ body {
 .footer-content a {
     color: #2b4c7e;
     text-decoration: underline;
-}
+}*/
     </style>
 </head>
 <body>
@@ -208,13 +208,15 @@ body {
     <p style="margin-bottom: 35px;">- <i><strong>Cachet     de    l'Entreprise :</strong></i></p>
 </div>
 
-<div class="footer-wrapper">
+{{--<div class="footer-wrapper">
     <div class="pink-divider"></div>
     <div class="footer-content">
         <strong>GIAC Technologies</strong> - 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9 — Casablanca<br>
         Tél : 0522 27 24 93 – Fax : 0522 27 57 65 – CNSS : 7365514 – e-mail : <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a> – web : <a href="http://www.giactechnologies.com" target="_blank">www.giactechnologies.com</a>
     </div>
-</div>
+</div>--}}
+
+<x-giac-footer />
 
 </body>
 </html>

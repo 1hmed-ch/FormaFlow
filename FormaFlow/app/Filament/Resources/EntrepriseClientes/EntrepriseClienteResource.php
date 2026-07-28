@@ -11,6 +11,7 @@ use App\Filament\Resources\EntrepriseClientes\Schemas\EntrepriseClienteInfolist;
 use App\Filament\Resources\EntrepriseClientes\Tables\EntrepriseClientesTable;
 use App\Models\EntrepriseCliente;
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -52,10 +53,15 @@ class EntrepriseClienteResource extends Resource
     public static function getRelations(): array
     {
         return [
+            // 1. Original Section: Creates standard tabs for these two
             RelationManagers\FormationsRelationManager::class,
             RelationManagers\ParticipantsRelationManager::class,
-            RelationManagers\EtudesIngenierieFormationRelationManager::class,
-            RelationManagers\EtudesDiagnosticStrategiqueRelationManager::class,
+
+            // 2. New Section Underneath: Creates a separate block named "Giac" with its own two tabs
+            RelationGroup::make('GIAC', [
+                RelationManagers\EtudesIngenierieFormationRelationManager::class,
+                RelationManagers\EtudesDiagnosticStrategiqueRelationManager::class,
+            ]),
         ];
     }
 

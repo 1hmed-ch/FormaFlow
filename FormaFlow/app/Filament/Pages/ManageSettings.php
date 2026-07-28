@@ -135,7 +135,7 @@ class ManageSettings extends Page implements HasForms
                                 ]),
                                 TextInput::make('activite')->label('Activité'),
                                 TextInput::make('siege_social')->label('Siège Social'),
-                                TextInput::make('ville')->label('Ville'),            
+                                TextInput::make('ville')->label('Ville'),
                             ]),
 
                         // Section Visuels
@@ -180,14 +180,14 @@ class ManageSettings extends Page implements HasForms
                         TagsInput::make('moyens_pedagogiques')
                             ->label('Moyens Pédagogiques')
                             ->placeholder('Ajouter un moyen...'),
-                       
+
                     ]),
 
                 // Section 4: RH Effectifs
                 Section::make('Ressources Humaines (Effectifs)')
                     ->description("Le détail \"dont étrangers\" alimente les fiches G3 (GIAC) et Formulaire F3 (OFPPT).")
                     ->schema([
-                        Grid::make(4)->schema([
+                        Grid::make(2)->schema([
                             Fieldset::make('Experts Permanents')->schema([
                                 TextInput::make('nb_experts_permanents')->label('Effectif')->numeric()->minValue(0)->default(0),
                                 TextInput::make('nb_experts_permanents_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
@@ -211,7 +211,7 @@ class ManageSettings extends Page implements HasForms
                     ->numeric()
                     ->minValue(0)
                     ->default(0),
-                
+
                 Toggle::make('appartient_groupe_etranger')
                     ->label("L'organisme appartient à un groupe étranger")
                     ->inline(false)
