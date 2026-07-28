@@ -111,7 +111,7 @@
             margin: 6px 0;
         }
 
-        .giac-footer {
+        /*.giac-footer {
             position: fixed;
             bottom: -70px;
             left: -65px;
@@ -138,7 +138,7 @@
         .giac-footer a {
             color: #0563C1;
             text-decoration: underline;
-        }
+        }*/
     </style>
 </head>
 <body>
@@ -156,7 +156,7 @@
 
 <div class="field-line">
     <span class="field-label" style="text-decoration: underline; margin-left: 50px;">ENTREPRISE BENEFICIAIRE</span> :
-    <span class="dotted-fill wide">{{ $entreprise->raison_sociale }}</span>
+    <span class="dotted-fill wide">{{ $entreprise->raison_sociale ?: '.........................................................................................' }}</span>
 </div>
 
 <div class="g-box">
@@ -164,21 +164,22 @@
 
     <div class="field-line">
         <strong>- Marché d'Exportation : </strong>
-        <span class="dotted-fill">{{ $etude->projet_marche_export ? 'Oui' : '' }}</span>
+        <span class="dotted-fill">{{ $etude->projet_marche_export ? 'Oui' : '............' }}</span>
         <strong style="margin-left: 80px;">- Investissement Technologique : </strong>
-        <span class="dotted-fill">{{ $etude->projet_investissement_techno ? 'Oui' : '' }}</span>
+        <span class="dotted-fill">{{ $etude->projet_investissement_techno ? 'Oui' : '............' }}</span>
     </div>
     <div class="field-line">
         <strong>- Mise aux Normes : </strong>
-        <span class="dotted-fill">{{ $etude->projet_mise_aux_normes ? 'Oui' : '' }}</span>
+        <span class="dotted-fill">{{ $etude->projet_mise_aux_normes ? 'Oui' : '............' }}</span>
         <strong style="margin-left: 100px;">- Autres a préciser : </strong>
-        <span class="dotted-fill wide">{{ $etude->projet_autre ? ($etude->projet_autre_precision ?: 'Oui') : '' }}</span>
+        <span class="dotted-fill wide">{{ $etude->projet_autre ? ($etude->projet_autre_precision ?: '....................................') : '....................................' }}</span>
     </div>
+    <span>{{ $etude->projet_autre_precision ?? '....................................................................................................................................................' }}</span>
 </div>
 
 <div class="g-box">
     <div class="g-box-title">OBJECTIFS et RESULTATS ATTENDUS du DIAGNOSTIC :</div>
-    <div class="field-line">{{ $etude->objectifs_resultats_attendus }}</div>
+    <div class="field-line">{{ $etude->objectifs_resultats_attendus ?: '....................................................................................................................' }}</div>
 </div>
 
 <div class="g-box">
@@ -189,61 +190,61 @@
 
     <div class="field-line">
         <strong>- Prestations Envisagées :</strong>
-        {{ $etude->prestations_envisagees }}
+        {{ $etude->prestations_envisagees ?: '............................................................................................................' }}
     </div>
     <div class="field-line">
         <strong>- En vue de leur application durant l'année :</strong>
-        <span class="dotted-fill">{{ $etude->annee_application }}</span>
+        <span class="dotted-fill">{{ $etude->annee_application ?: '..........' }}</span>
     </div>
     <div class="field-line">
         <strong>- Durée Effective de l'Intervention ( nombre de jours ) :</strong>
-        <span class="dotted-fill">{{ $etude->duree_intervention_jours }}</span>
+        <span class="dotted-fill">{{ is_numeric($etude->duree_intervention_jours) ? $etude->duree_intervention_jours : '..........' }}</span>
     </div>
     <div class="field-line">
         <strong>- Date de démarrage :</strong>
-        <span class="dotted-fill">{{ $etude->date_demarrage->format('d/m/Y') }}</span>
+        <span class="dotted-fill">{{ optional($etude->date_demarrage)->format('d/m/Y') ?: '...../...../..........' }}</span>
     </div>
     <div class="field-line">
         <strong>- Coût Prévisionnel de l'Intervention ( en DH , H.T. ) :</strong>
-        <span class="dotted-fill">{{ number_format((float) $etude->cout_previsionnel, 2, ',', ' ') }}</span>
+        <span class="dotted-fill">{{ is_numeric($etude->cout_previsionnel) ? number_format((float) $etude->cout_previsionnel, 2, ',', ' ') . ' DH H.T' : '.................................' }}</span>
     </div>
 
     <div class="g-box-title" style="margin-top: 8px; border-top: 1px solid #000;">CABINET &ndash; CONSEIL chargé de l'INTERVENTION :</div>
 
     <div class="field-line">
         <strong>- Raison Sociale :</strong>
-        <span class="dotted-fill wide">{{ $organisme->raison_sociale }}</span>
+        <span class="dotted-fill wide">{{ $organisme->raison_sociale ?: '.........................................................................................' }}</span>
     </div>
     <div class="field-line">
         <strong>- Adresse :</strong>
-        <span class="dotted-fill wide">{{ $organisme->siege_social }}</span>
+        <span class="dotted-fill wide">{{ $organisme->siege_social ?: '.........................................................................................' }}</span>
     </div>
     <div class="field-line">
         <strong>- N° de CNSS :</strong>
-        <span class="dotted-fill">{{ $organisme->cnss }}</span>
+        <span class="dotted-fill">{{ $organisme->cnss ?: '......................................' }}</span>
         <strong style="margin-left: 35px;">- Téléphone :</strong>
-        <span class="dotted-fill">{{ $organisme->telephone }}</span>
+        <span class="dotted-fill">{{ $organisme->telephone ?: '......................................' }}</span>
         <strong style="margin-left: 35px;">- Fax :</strong>
-        <span class="dotted-fill">{{ $organisme->fax }}</span>
+        <span class="dotted-fill">{{ $organisme->fax ?: '......................................' }}</span>
     </div>
     <div class="field-line">
         <strong>- N° R.C. :</strong>
-        <span class="dotted-fill">{{ $organisme->rc }}</span>
+        <span class="dotted-fill">{{ $organisme->rc ?: '......................................' }}</span>
         <strong style="margin-left: 130px;">- Mail :</strong>
-        <span class="dotted-fill">{{ $organisme->email }}</span>
+        <span class="dotted-fill">{{ $organisme->email ?: '......................................' }}</span>
     </div>
     <div class="field-line">
         <strong>- Responsable Principal à contacter :</strong>
-        <span class="dotted-fill wide">{{ $organisme->representant_nom }}</span>
+        <span class="dotted-fill wide">{{ $organisme->representant_nom ?: '.........................................................................................' }}</span>
     </div>
 </div>
 
 <div class="signature-zone">
-    <div class="field-line"><strong>- Date :</strong>{{ $dateEdition->format('d/m/Y') }}</div>
+    <div class="field-line"><strong>- Date :</strong> {{ isset($dateEdition) ? $dateEdition->format('d/m/Y') : '......../......../..............' }}</div>
     <div class="field-line"><strong>- Cachet et Signature :</strong></div>
 </div>
 
-<div class="giac-footer">
+{{--<div class="giac-footer">
     <div class="field-line">
         <span class="footer-brand">GIAC Technologies</span>
         <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
@@ -253,7 +254,9 @@
         <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
         &ndash; web : <a href="http://www.giactechnologies.com">www.giactechnologies.com</a>
     </div>
-</div>
+</div>--}}
+
+<x-giac-footer />
 
 </body>
 </html>

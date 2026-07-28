@@ -95,7 +95,7 @@
             margin: 6px 0;
         }
 
-        .giac-footer {
+        /*.giac-footer {
             position: fixed;
             bottom: -70px;
             left: -60px;
@@ -122,7 +122,7 @@
         .giac-footer a {
             color: #0563C1;
             text-decoration: underline;
-        }
+        }*/
     </style>
 </head>
 <body>
@@ -140,70 +140,70 @@
 
 <div class="field-line">
     <span class="field-label" style="text-decoration: underline; margin-left: 30px">ENTREPRISE BENEFICIAIRE</span> :
-    <span class="dotted-fill wide">{{ $entreprise->raison_sociale }}</span>
+    <span class="dotted-fill wide">{{ $entreprise->raison_sociale ?: '.........................................................................................' }}</span>
 </div>
 
 <div class="g-box">
     <div class="field-line">
         <strong>1) Nature de l'Action :</strong>
-        {{ $etude->nature_action }}
+        {{ $etude->nature_action ?: '..................................................' }}
     </div>
 
     <div class="field-line">
         <strong>- Diagnostic des Besoins en Formation :</strong>
-        {{ $etude->diagnostic_besoins ?: '—' }}
+        {{ $etude->diagnostic_besoins ?: '............................................................................................................................................................' }}
     </div>
 
     <div class="field-line">
         <strong>- Elaboration d'un Plan de Formation :</strong>
         <span class="dotted-fill">{{ $etude->plan_formation ? 'Oui' : 'Non' }}</span>
         <strong style="margin-left: 60px">Pour l'Année :</strong>
-        <span class="dotted-fill">{{ $etude->plan_formation && $etude->plan_formation_annee ? $etude->plan_formation_annee : '' }}</span>
+        <span class="dotted-fill">{{ $etude->plan_formation ? ($etude->plan_formation_annee ?: '..........') : '...........' }}</span>
     </div>
 
     <div class="field-line">
-        <strong>- Bilan de Compétence :</strong> {{ $etude->bilan_competence ?: '—' }}
+        <strong>- Bilan de Compétence :</strong> {{ $etude->bilan_competence ?: '....................................................................................................................' }}
     </div>
 
     <div class="field-line">
-        <strong>- Autres ( à préciser ) :</strong> {{ $etude->autres_precisions ?: '—' }}
+        <strong>- Autres ( à préciser ) :</strong> {{ $etude->autres_precisions ?: '....................................................................................................................' }}
     </div>
 
     <div class="field-line">
         <strong>2) Résultats attendus de l'Action :</strong>
-        {{ $etude->resultats_attendus }}
+        {{ $etude->resultats_attendus ?: '....................................................................................................................' }}
     </div>
 
     <div class="field-line">
         <strong>3) Période de Réalisation :</strong>
-        <strong style="margin: 0 7px">du</strong> {{ $etude->periode_debut->format('d/m/Y') }}
-        <strong style="margin: 0 7px">au</strong> {{ $etude->periode_fin->format('d/m/Y') }}
+        <strong style="margin: 0 7px">du</strong> {{ optional($etude->periode_debut)->format('d/m/Y') ?: '...../...../.........' }}
+        <strong style="margin: 0 7px">au</strong> {{ optional($etude->periode_fin)->format('d/m/Y') ?: '...../...../........' }}
     </div>
 
     <div class="field-line">
         <strong>4) Nombre de jours d'Intervention :</strong>
-        {{ $etude->nb_jours_intervention }}
+        {{ is_numeric($etude->nb_jours_intervention) ? $etude->nb_jours_intervention : '..........' }}
     </div>
 
     <div class="field-line">
         <strong>5) Organisme d'Intervention :</strong>
-        {{ $organisme->raison_sociale }}
+        {{ $organisme->raison_sociale ?: '.........................................................................................' }}
     </div>
-    <div class="field-line" style="margin-left: 45px"><strong>* Adresse :</strong> {{ $organisme->siege_social }}</div>
+    <div class="field-line" style="margin-left: 45px"><strong>* Adresse :</strong> {{ $organisme->siege_social ?: '.........................................................................................' }}</div>
     <div class="field-line" style="margin-left: 45px">
-        <strong>* N° de CNSS :</strong> {{ $organisme->cnss }}
-        &nbsp;&nbsp; <strong style="margin-left: 80px">Mail :</strong> {{ $organisme->email }}
-    </div>
-    <div class="field-line" style="margin-left: 45px">
-        <strong>* Tel. :</strong> {{ $organisme->telephone }}
-        &nbsp;&nbsp; <strong style="margin-left: 145px">Fax :</strong> {{ $organisme->fax }}
-    </div>
-    <div class="field-line" style="margin-left: 45px"><strong>* R.C. :</strong> {{ $organisme->rc }}</div>
-    <div class="field-line" style="margin-left: 45px">
-        <strong>* Personne(s) à contacter :</strong> {{ $organisme->representant_nom }}
+        <strong>* N° de CNSS :</strong> {{ $organisme->cnss ?: '......................................' }}
+        &nbsp;&nbsp; <strong style="margin-left: 80px">Mail :</strong> {{ $organisme->email ?: '......................................' }}
     </div>
     <div class="field-line" style="margin-left: 45px">
-        <strong>* Fonction dans l'Entreprise :</strong> {{ $organisme->representant_fonction }}
+        <strong>* Tel. :</strong> {{ $organisme->telephone ?: '......................................' }}
+        &nbsp;&nbsp; <strong style="margin-left: 145px">Fax :</strong> {{ $organisme->fax ?: '......................................' }}
+    </div>
+    <div class="field-line" style="margin-left: 45px"><strong>* R.C. :</strong> {{ $organisme->rc ?: '......................................' }}</div>
+    <div class="field-line" style="margin-left: 45px">
+        <strong>* Personne(s) à contacter :</strong> {{ $organisme->representant_nom ?: '.........................................................................................' }}
+    </div>
+    <div class="field-line" style="margin-left: 45px">
+        <strong>* Fonction dans l'Entreprise :</strong> {{ $organisme->representant_fonction ?: '......................................' }}
     </div>
 
     <div class="field-line">
@@ -213,26 +213,15 @@
 
     <div class="field-line">
         <strong>7) Coût de l'Action ( Hors Taxe ) :</strong>
-        {{ number_format((float) $etude->cout_action, 2, ',', ' ') }} DH
+        {{ is_numeric($etude->cout_action) ? number_format((float) $etude->cout_action, 2, ',', ' ') . ' DH' : '......................................' }}
     </div>
 </div>
 
 <div class="signature-zone">
-    <div class="field-line"><strong>- Date :</strong> {{ $dateEdition->format('d/m/Y') }}</div>
+    <div class="field-line"><strong>- Date :</strong> {{ isset($dateEdition) ? $dateEdition->format('d/m/Y') : '...../...../.........' }}</div>
     <div class="field-line"><strong>- Cachet et Signature :</strong></div>
 </div>
 
-<div class="giac-footer">
-    <div class="field-line">
-        <span class="footer-brand">GIAC Technologies</span>
-        <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
-    </div>
-    <div class="field-line footer-line2">
-        Tél. : 0522 27 24 93 &ndash; Fax : 0522 27 57 65 &ndash; CNSS : 7365514 &ndash; e-mail :
-        <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
-        &ndash; web : <a href="http://www.giactechnologies.com">www.giactechnologies.com</a>
-    </div>
-</div>
-
+<x-giac-footer />
 </body>
 </html>
