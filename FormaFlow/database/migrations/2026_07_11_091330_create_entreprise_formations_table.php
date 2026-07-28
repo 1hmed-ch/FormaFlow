@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
 {
     Schema::create('entreprise_formations', function (Blueprint $table) {
-        $table->id(); 
-        
+        $table->id();
+
         // 1. Informations Générales & Administratives
         $table->string('raison_sociale');
         $table->string('logo')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
         $table->date('date_creation')->nullable();
         $table->string('statut_juridique')->nullable();
         $table->string('activite');
-        
+
         // 2. Infos Fiscales & Coordonnées
         $table->string('ice');
         $table->string('rc');
@@ -35,23 +35,23 @@ return new class extends Migration
         $table->string('fax')->nullable();
         $table->string('email')->nullable();
         $table->string('site_web')->nullable();
-        
+
         // 3. Solution JSON flexible pour les Domaines & Moyens
         $table->json('domaines_competence')->nullable();
         $table->json('moyens_pedagogiques')->nullable();
-        
-        // 4. Effectifs globaux 
+
+        // 4. Effectifs globaux
         $table->integer('nb_experts_permanents')->default(0);
         $table->integer('nb_experts_vacataires')->default(0);
         $table->integer('nb_animateurs_formateurs')->default(0);
         $table->integer('nb_autres_employes')->default(0);
         $table->integer('effectif_total')->default(0);
-        
+
         // 5. Représentant Légal & Signature pour les PDFs
         $table->string('representant_nom')->nullable();
         $table->string('representant_fonction')->nullable();
         $table->string('signature')->nullable();
-        
+
         $table->timestamps();
     });
 }

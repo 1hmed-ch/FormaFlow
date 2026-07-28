@@ -57,6 +57,10 @@
             margin: 5px 0;
         }
 
+        /*
+           You can leave this commented if you are printing literal dots,
+           or uncomment it if you want CSS to draw the lines for you.
+        */
         /*.dotted-fill {
             border-bottom: 1px dotted #333;
             display: inline-block;
@@ -81,9 +85,10 @@
         }
 
         .oval {
-            display: inline-block;
+            display: inline-flex;
+            justify-content: center;
             width: 26px;
-            height: 14px;
+            height: 16px;
             border: 1px solid #000;
             border-radius: 50%;
             vertical-align: middle;
@@ -138,35 +143,6 @@
         .signature-zone .field-line {
             margin: 6px 0;
         }
-
-        .giac-footer {
-            position: fixed;
-            bottom: -70px;
-            left: -60px;
-            right: -60px;
-            text-align: center;
-            border-top: 4px double #622423;
-            padding-top: 4px;
-            font-family: 'Times New Roman', Times, serif;
-        }
-
-        .giac-footer .footer-brand {
-            font-family: 'Lucida Handwriting', cursive;
-            font-style: italic;
-            font-size: 13px;
-        }
-
-        .giac-footer .footer-line2 {
-            font-weight: bold;
-            font-style: italic;
-            font-size: 12px;
-            margin-top: 2px;
-        }
-
-        .giac-footer a {
-            color: #0563C1;
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -183,70 +159,70 @@
     <table style="width: 100%; border-collapse: collapse; border: none;">
         <tr>
             <td colspan="2" style="padding: 5px 0; vertical-align: bottom;">
-                Raison sociale : <span class="dotted-fill wide">{{ $organisme->raison_sociale }}</span>
+                Raison sociale : <span class="dotted-fill wide">{{ $organisme->raison_sociale ?: '.........................................................................................' }}</span>
             </td>
         </tr>
 
         <tr>
             <td style="width: 55%; padding: 5px 0; vertical-align: bottom;">
-                Forme juridique : <span class="dotted-fill">{{ $organisme->statut_juridique }}</span>
+                Forme juridique : <span class="dotted-fill">{{ $organisme->statut_juridique ?: '......................................' }} <span style="margin-left: 10px;">;</span></span>
             </td>
             <td style="width: 45%; padding: 5px 0; vertical-align: bottom;">
-                Date de création : <span class="dotted-fill">{{ optional($organisme->date_creation)->format('d/m/Y') }}</span>
+                Date de création : <span class="dotted-fill">{{ optional($organisme->date_creation)->format('d/m/Y') ?: '......../......../..............' }}</span>
             </td>
         </tr>
 
         <tr>
             <td style="width: 55%; padding: 5px 0; vertical-align: bottom;">
-                Patente : <span class="dotted-fill">{{ $organisme->patente }}</span>
+                Patente : <span class="dotted-fill">{{ $organisme->patente ?: '......................................' }} <span style="margin-left: 10px;">;</span> </span>
             </td>
             <td style="width: 45%; padding: 5px 0; vertical-align: bottom;">
-                Identifiant fiscal : <span class="dotted-fill">{{ $organisme->if }}</span>
+                Identifiant fiscal : <span class="dotted-fill">{{ $organisme->if ?: '......................................' }}</span>
             </td>
         </tr>
 
         <tr>
             <td style="width: 55%; padding: 5px 0; vertical-align: bottom;">
-                N° RC : <span class="dotted-fill">{{ $organisme->rc }}</span>
+                N° RC : <span class="dotted-fill">{{ $organisme->rc ?: '......................................' }} <span style="margin-left: 10px;">;</span> </span>
             </td>
             <td style="width: 45%; padding: 5px 0; vertical-align: bottom;">
-                N° CNSS : <span class="dotted-fill">{{ $organisme->cnss }}</span>
+                N° CNSS : <span class="dotted-fill">{{ $organisme->cnss ?: '......................................' }}</span>
             </td>
         </tr>
 
         <tr>
             <td colspan="2" style="padding: 5px 0; vertical-align: bottom;">
-                Adresse : <span class="dotted-fill wide">{{ $organisme->siege_social }}</span>
+                Adresse : <span class="dotted-fill wide">{{ $organisme->siege_social ?: '.........................................................................................' }}</span>
             </td>
         </tr>
 
         <tr>
             <td style="width: 55%; padding: 5px 0; vertical-align: bottom;">
-                Tél. : <span class="dotted-fill">{{ $organisme->telephone }}</span>
+                Tél. : <span class="dotted-fill">{{ $organisme->telephone ?: '.................................' }} <span style="margin-left: 10px;">;</span> </span>
             </td>
             <td style="width: 45%; padding: 5px 0; vertical-align: bottom;">
-                Fax : <span class="dotted-fill">{{ $organisme->fax }}</span>
+                Fax : <span class="dotted-fill">{{ $organisme->fax ?: '.................................' }}</span>
             </td>
         </tr>
 
         <tr>
             <td style="width: 55%; padding: 5px 0; vertical-align: bottom;">
-                Email : <span class="dotted-fill">{{ $organisme->email }}</span>
+                Email : <span class="dotted-fill">{{ $organisme->email ?: '.................................' }} <span style="margin-left: 10px;">;</span> </span>
             </td>
             <td style="width: 45%; padding: 5px 0; vertical-align: bottom;">
-                Site Web : <span class="dotted-fill">{{ $organisme->site_web }}</span>
+                Site Web : <span class="dotted-fill">{{ $organisme->site_web ?: '......................................' }}</span>
             </td>
         </tr>
     </table>
 
     <div class="field-line">
         Nom et prénom du gérant :
-        <span class="dotted-fill wide">{{ $organisme->gerant_prenom }} {{ $organisme->gerant_nom }}</span>
+        <span class="dotted-fill wide">{{ trim(($organisme->gerant_prenom ?? '') . ' ' . ($organisme->gerant_nom ?? '')) ?: '......................................................................................' }}</span>
     </div>
 
     <div class="field-line">
         Nom et prénom du chargé de mission :
-        <span class="dotted-fill wide">{{ $organisme->representant_nom }}</span>
+        <span class="dotted-fill wide">{{ $organisme->representant_nom ?: '......................................................................................' }}</span>
     </div>
 
     <div class="field-line" style="border-top: 1px solid #000; padding: 4px 10px; margin: 2px -10px;">
@@ -262,27 +238,27 @@
             </tr>
             <tr>
                 <td>Consultants/Experts permanents</td>
-                <td>{{ $organisme->nb_experts_permanents }}</td>
-                <td>{{ $organisme->nb_experts_permanents_etrangers }}</td>
+                <td>{{ is_numeric($organisme->nb_experts_permanents) ? $organisme->nb_experts_permanents : '..........' }}</td>
+                <td>{{ is_numeric($organisme->nb_experts_permanents_etrangers) ? $organisme->nb_experts_permanents_etrangers : '..........' }}</td>
             </tr>
             <tr>
                 <td>Consultants/Experts vacataires</td>
-                <td>{{ $organisme->nb_experts_vacataires }}</td>
-                <td>{{ $organisme->nb_experts_vacataires_etrangers }}</td>
+                <td>{{ is_numeric($organisme->nb_experts_vacataires) ? $organisme->nb_experts_vacataires : '..........' }}</td>
+                <td>{{ is_numeric($organisme->nb_experts_vacataires_etrangers) ? $organisme->nb_experts_vacataires_etrangers : '..........' }}</td>
             </tr>
             <tr>
                 <td>Animateurs/Formateurs</td>
-                <td>{{ $organisme->nb_animateurs_formateurs }}</td>
-                <td>{{ $organisme->nb_animateurs_formateurs_etrangers }}</td>
+                <td>{{ is_numeric($organisme->nb_animateurs_formateurs) ? $organisme->nb_animateurs_formateurs : '..........' }}</td>
+                <td>{{ is_numeric($organisme->nb_animateurs_formateurs_etrangers) ? $organisme->nb_animateurs_formateurs_etrangers : '..........' }}</td>
             </tr>
             <tr>
                 <td>Autres employés :</td>
-                <td>{{ $organisme->nb_autres_employes }}</td>
-                <td>{{ $organisme->nb_autres_employes_etrangers }}</td>
+                <td>{{ is_numeric($organisme->nb_autres_employes) ? $organisme->nb_autres_employes : '..........' }}</td>
+                <td>{{ is_numeric($organisme->nb_autres_employes_etrangers) ? $organisme->nb_autres_employes_etrangers : '..........' }}</td>
             </tr>
             <tr>
                 <td><strong>Total</strong></td>
-                <td colspan="2"><strong>{{ $organisme->effectif_total }}</strong></td>
+                <td colspan="2"><strong>{{ is_numeric($organisme->effectif_total) ? $organisme->effectif_total : '..........' }}</strong></td>
             </tr>
         </table>
     </div>
@@ -291,51 +267,42 @@
         L'organisme appartient-il à un groupe étranger ?
         &nbsp;&nbsp;&nbsp;
         <span style="margin-right: 6px;">oui</span>
-        <span class="oval">{{ $organisme->appartient_groupe_etranger ? 'X' : '' }}</span>
+        <span class="oval" style="font-size: 36px;">{!! $organisme->appartient_groupe_etranger ? '&bull;' : '' !!}</span>
         &nbsp;&nbsp;&nbsp;
         <span style="margin-right: 6px;">non</span>
-        <span class="oval">{{ $organisme->appartient_groupe_etranger ? '' : 'X' }}</span>
+        <span class="oval" style="font-size: 36px;">{!! $organisme->appartient_groupe_etranger === false ? '&bull;' : '' !!}</span>
     </div>
 
     <div class="field-line">
         Si oui lequel :
-        <span class="dotted-fill wide">&nbsp;</span>
+        <span class="dotted-fill wide">{{ $organisme->nom_groupe_etranger ?? '.........................................................................................................................................................' }}</span>
     </div>
 
     <div class="gbb-box" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px 10px; margin: 4px -10px;">
         <div class="field-line">
             Références :
-            <span class="dotted-fill wide">&nbsp;</span>
+            <span class="dotted-fill wide"> {!! !is_null($organisme->references) ? $organisme->references : '...........................................................................................................................................................' !!}</span>
         </div>
         <div class="field-line">
-            <span class="dotted-fill wide">&nbsp;</span>
+            <span class="dotted-fill wide"> {!! !is_null($organisme->references) ? $organisme->references : '..................................................................................................................................................................................' !!}</span>
         </div>
         <div class="field-line">
-            <span class="dotted-fill wide">&nbsp;</span>
+            <span class="dotted-fill wide"> {!! !is_null($organisme->references) ? $organisme->references : '..................................................................................................................................................................................' !!}</span>
         </div>
     </div>
     <div class="signature-zone right" style="margin-top: 16px;">
-        Fait à : <span class="dotted-fill">{{ $organisme->siege_social }}</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Le : <span class="dotted-fill">{{ $dateEdition->format('d/m/Y') }}</span>
+        Fait à : <span class="dotted-fill">{{ $organisme->ville ?: '.........................' }}</span>
+        &nbsp; ; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Le : <span class="dotted-fill">{{ isset($dateEdition) ? $dateEdition->format('d/m/Y') : '...../...../........' }}</span>
     </div>
     <div class="signature-zone centered">
-        <div class="field-line" style="margin-top: 16px;"> {{ $organisme->gerant_nom }} {{ $organisme->gerant_prenom }}</div>
+        <div class="field-line" style="margin-top: 16px;"> {{ trim(($organisme->gerant_nom ?? '') . ' ' . ($organisme->gerant_prenom ?? '')) ?: '.......................................' }}</div>
         <div class="field-line">Qualité du signataire</div>
         <div class="field-line">Signature et Cachet de l'Organisme</div>
     </div>
 </div>
-<div class="giac-footer">
-    <div class="field-line">
-        <span class="footer-brand">GIAC Technologies</span>
-        <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
-    </div>
-    <div class="field-line footer-line2">
-        Tél. : 0522 27 24 93 &ndash; Fax : 0522 27 57 65 &ndash; CNSS : 7365514 &ndash; e-mail :
-        <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
-        &ndash; web : <a href="http://www.giactechnologies.com">www.giactechnologies.com</a>
-    </div>
-</div>
+
+<x-giac-footer />
 
 </body>
 </html>

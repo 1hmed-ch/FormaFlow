@@ -111,7 +111,7 @@
             margin: 8px 0;
         }
 
-        .giac-footer {
+        /*.giac-footer {
             position: fixed;
             bottom: -70px;
             left: -90px;
@@ -143,7 +143,7 @@
         .giac-footer a {
             color: #0563C1;
             text-decoration: underline;
-        }
+        }*/
     </style>
 </head>
 <body>
@@ -179,7 +179,7 @@
         <td>
             <span class="field-label" style="text-decoration: underline;">Tel.</span> :
             <span>{{ $entreprise->telephone }}</span>
-            &nbsp;&nbsp;&nbsp;
+            <span style="margin-left: 10px;">;</span>
             <span class="field-label" style="text-decoration: underline; margin-left: 40px;">Fax</span> :
             <span>{{ $entreprise->fax }}</span>
         </td>
@@ -211,15 +211,15 @@
 
 <div class="signature-zone">
     <div class="field-line">
-        <strong>- Lieu &amp; Date (de cette demande) :</strong>
-        <span>{{ $entreprise->siege_social }}, le {{ $dateEdition->format('d/m/Y') }}</span>
+        <strong>- Lieu &amp; Date </strong>(de cette demande) :
+        <span>{{ $entreprise->ville }}; le {{ $dateEdition->format('d/m/Y') }}</span>
     </div>
 
     <div class="field-line" style="margin-bottom: 30px;"><strong>- Signature :</strong></div>
 
     <div class="field-line">
         <strong>- Nom et Qualité du Signataire :</strong>
-        <span>{{ $gerant->prenom }} {{ $gerant->nom }}, {{ $gerant->fonction }}</span>
+        <span>{{ $gerant->prenom }} {{ $gerant->nom }}; {{ $gerant->fonction }}</span>
     </div>
     <div class="field-line" style="font-size: 11px;">(habilité à signer au sein de l'Entreprise)</div>
 
@@ -228,7 +228,7 @@
     <div class="field-line"><strong>- Cachet de l'Entreprise :</strong></div>
 </div>
 
-<div class="giac-footer">
+{{--<div class="giac-footer">
     <div class="field-line">
         <span class="handwritten-text">GIAC Technologies</span>
         <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
@@ -238,7 +238,9 @@
         <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
         &ndash; web : <a href="http://www.giactechnologies.com">www.giactechnologies.com</a>
     </div>
-</div>
+</div>--}}
+
+<x-giac-footer />
 
 </body>
 </html>
