@@ -20,8 +20,10 @@ use Filament\Tables\Table;
 class ParticipantsRelationManager extends RelationManager
 {
     protected static string $relationship = 'participants';
+    protected static ?string $label = 'Employé';
+    protected static ?string $pluralLabel = 'Employés';
 
-    protected static ?string $title = 'Participants';
+    protected static ?string $title = 'Employés';
 
     public function form(Schema $schema): Schema
     {
