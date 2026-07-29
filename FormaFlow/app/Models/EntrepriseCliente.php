@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 
-class EntrepriseCliente extends Model
+class EntrepriseCliente extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
+
     protected $fillable = [
         'gerant_id',
         'raison_sociale',
@@ -40,8 +42,6 @@ class EntrepriseCliente extends Model
         'fax',
         'email',
         'contact_ref',
-        'image_entete',
-        'image_pied_page',
         'cheque_banque',
         'cheque_numero',
         'cheque_date',
@@ -54,6 +54,35 @@ class EntrepriseCliente extends Model
         'montant_tfp' => 'decimal:2',
         'cheque_date' => 'date:Y-m-d',
     ];
+
+    public const PIECES_JOINTES = [
+        'cin_gerant'       => 'CIN du gérant',
+        'entete_page'      => 'Entête de page',
+        'pied_page'        => 'Pied de page',
+        'logo'             => 'Logo',
+        'autres_documents' => 'Autres documents',
+    ];
+
+    public function registerMediaCollections(): void
+    {
+        $singleCollections = ['cin_gerant', 'entete_page', 'pied_page', 'logo'];
+
+        foreach ($singleCollections as $collection) {
+            $this->addMediaCollection($collection)
+                ->singleFile()
+                ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                ->useDisk('local');
+        }
+
+        $this->addMediaCollection('autres_documents')
+            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+           ->useDisk('local');
+    }
+
+    public function getPieceJointeStatut(string $collectionName): string
+    {
+        return $this->hasMedia($collectionName) ? 'Déposé' : 'Manquant';
+    }
 
     public function gerant()
     {
@@ -81,32 +110,36 @@ class EntrepriseCliente extends Model
     {
         return $this->hasMany(EtudeDiagnosticStrategique::class, 'entreprise_id');
     }
+
     public function getEnteteImageBase64(): ?string
     {
-        return $this->fileToBase64DataUri($this->image_entete);
+        return $this->getMediaBase64('entete_page');
     }
 
     public function getPiedPageImageBase64(): ?string
     {
-        return $this->fileToBase64DataUri($this->image_pied_page);
+        return $this->getMediaBase64('pied_page');
     }
 
-    protected function fileToBase64DataUri(?string $path): ?string
+    /**
+     * Convertit le premier média d'une collection en data URI base64.
+     * Remplace l'ancien système basé sur les colonnes string image_entete / image_pied_page.
+     */
+    protected function getMediaBase64(string $collection): ?string
     {
-        if (empty($path)) {
+        $media = $this->getFirstMedia($collection);
+
+        if (! $media) {
             return null;
         }
 
-        $disk = config('filament.default_filesystem_disk', 'local');
-
-        if (! Storage::disk($disk)->exists($path)) {
+        if (! file_exists($media->getPath())) {
             return null;
         }
 
-        $mimeType = Storage::disk($disk)->mimeType($path) ?: 'image/png';
-        $contents = Storage::disk($disk)->get($path);
-
-        return 'data:' . $mimeType . ';base64,' . base64_encode($contents);
+        return 'data:' . $media->mime_type . ';base64,' . base64_encode(
+            file_get_contents($media->getPath())
+        );
     }
 
     protected static function booted()

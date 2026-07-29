@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\EntrepriseClientes\Schemas;
 
 use App\Enums\gerantGender;
+use App\Models\EntrepriseCliente;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -272,25 +273,46 @@ class EntrepriseClienteForm
                             ->maxLength(20),
                     ])->columnSpanFull(),
 
-                Section::make('Visuels pour les documents générés')
-                    ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')
-                    ->icon('heroicon-o-photo')
+                Section::make('Documents administratifs à joindre')
+                    ->description('Pièces requises pour la constitution des dossiers de l\'entreprise cliente (GIAC, OFPPT...)')
+                    ->icon('heroicon-o-paper-clip')
                     ->columns(2)
                     ->collapsible()
-                    ->schema([
-                        FileUpload::make('image_entete')
-                            ->label("Image d'en-tête")
-                            ->image()
-                            ->directory('entreprises/entetes')
-                            ->maxSize(5120),
-
-                        FileUpload::make('image_pied_page')
-                            ->label('Image de pied de page')
-                            ->image()
-                            ->directory('entreprises/pieds-page')
-                            ->maxSize(5120),
-                    ])
+                    ->schema(self::piecesJointesFields())
                     ->columnSpanFull(),
             ]);
+    }
+
+    protected static function piecesJointesFields(): array
+    {
+        $fields = [];
+
+        foreach (EntrepriseCliente::PIECES_JOINTES as $key => $label) {
+            $isMultiple = $key === 'autres_documents';
+
+            $fields[] = Section::make($label)
+                ->icon(fn (?EntrepriseCliente $record) => $record?->hasMedia($key)
+                    ? 'heroicon-o-check-circle'
+                    : 'heroicon-o-exclamation-triangle')
+                ->iconColor(fn (?EntrepriseCliente $record) => $record?->hasMedia($key)
+                    ? 'success'
+                    : 'warning')
+                ->description(fn (?EntrepriseCliente $record) => $record?->getPieceJointeStatut($key) ?? 'Manquant')
+                ->collapsible()
+                ->collapsed(true)
+                ->compact()
+                ->schema([
+                    SpatieMediaLibraryFileUpload::make($key)
+                        ->label($isMultiple ? 'Documents (PDF / Image)' : 'Document (PDF / Image)')
+                        ->collection($key)
+                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                        ->multiple($isMultiple)
+                        ->maxSize(10240)
+                        ->visibility('private')
+                        ->hiddenLabel(),
+                ]);
+        }
+
+        return $fields;
     }
 }
