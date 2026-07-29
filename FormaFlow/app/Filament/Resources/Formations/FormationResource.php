@@ -22,7 +22,7 @@ class FormationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'intitule';
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Gestion Pédagogique';
+    protected static string|null|\UnitEnum $navigationGroup = 'Dossier de Remboursement';
 
     public static function form(Schema $schema): Schema
     {

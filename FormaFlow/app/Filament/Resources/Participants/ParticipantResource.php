@@ -21,6 +21,9 @@ class ParticipantResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
 
     protected static ?string $recordTitleAttribute = 'nom';
+
+    protected static ?string $label = 'Employé';
+    protected static ?string $pluralLabel = 'Employés';
     protected static string|null|\UnitEnum $navigationGroup = 'Gestion des Entreprises';
 
     public static function form(Schema $schema): Schema

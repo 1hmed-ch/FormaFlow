@@ -29,6 +29,7 @@ class ParticipantsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('nom')->searchable(),
                 Tables\Columns\TextColumn::make('prenom')->searchable(),
                 Tables\Columns\TextColumn::make('cin'),
+                Tables\Columns\TextColumn::make('numero_cnss')->label("N° CNSS"),
                 Tables\Columns\TextColumn::make('email'),
             ])
             ->filters([
