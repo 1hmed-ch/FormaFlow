@@ -173,7 +173,7 @@
             </td>
             <td style="width: 27%;">
                 <strong>Nombre de participants :</strong> {{ $nombreParticipants }}<br>
-                <strong>Lieu :</strong> {{ $groupe->lieu ?? '—' }}
+                <strong>Lieu :</strong> {{ $groupe->lieu ?? '...................' }}
             </td>
             <td style="width: 27%;">
                 <strong>N° du Groupe :</strong> {{ $groupe->libelle }}<br>
