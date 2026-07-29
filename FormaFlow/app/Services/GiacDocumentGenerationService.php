@@ -7,9 +7,9 @@ use App\Models\EntrepriseCliente;
 use App\Models\EntrepriseFormation;
 use App\Models\EtudeDiagnosticStrategique;
 use App\Models\EtudeIngenierieFormation;
+use App\Services\Concerns\PersisteDocumentsGeneres;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -28,9 +28,10 @@ use Illuminate\Support\Str;
  * Volontairement séparé de DocumentGenerationService (qui gère Modèle 5,
  * Modèle 6 et le volet Entreprise du dossier GIAC — G1/G2/G5, TICKET-GIAC-2)
  * afin d'éviter les conflits de fusion entre les deux tickets menés en
- * parallèle. Le rapprochement des deux services (extraction d'un trait
- * partagé pour renderFromView()/persist()) est un refactor naturel à faire
- * une fois les deux tickets mergés.
+ * parallèle. La persistance (finaliserDocument()) est désormais mutualisée
+ * via App\Services\Concerns\PersisteDocumentsGeneres ; renderFromView()
+ * reste dupliqué entre les deux services (refactor à part, sans lien avec
+ * l'archive des documents générés).
  *
  * Contrairement à Modèle 5/6, ces documents sont des formulaires officiels
  * du GIAC : leur en-tête est le logo GIAC (asset statique de l'application,
@@ -40,6 +41,8 @@ use Illuminate\Support\Str;
  */
 class GiacDocumentGenerationService
 {
+    use PersisteDocumentsGeneres;
+
     /**
      * Génère G3 - Fiche de Renseignement de l'Organisme de Conseil.
      *
@@ -58,7 +61,14 @@ class GiacDocumentGenerationService
             'dateEdition' => now(),
         ]);
 
-        return $this->finalize($entreprise, 'giac_g3_fiche_organisme_conseil', $content);
+        $filename = 'giac_g3_fiche_organisme_conseil.pdf';
+
+        $this->finaliserDocument($entreprise, 'giac_g3_fiche_organisme_conseil', 'giac', $filename, $content);
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
     }
 
     /**
@@ -81,11 +91,21 @@ class GiacDocumentGenerationService
             'dateEdition' => now(),
         ]);
 
-        return $this->finalize(
+        $filename = sprintf('giac_g4_fiche_ingenierie_formation_%s.pdf', Str::slug($entreprise->raison_sociale));
+
+        $this->finaliserDocument(
             $entreprise,
-            sprintf('giac_g4_fiche_ingenierie_formation_%s', Str::slug($entreprise->raison_sociale)),
-            $content
+            'giac_g4_fiche_ingenierie_formation',
+            'giac',
+            $filename,
+            $content,
+            ['etude_id' => $etude->id]
         );
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
     }
 
     /**
@@ -108,11 +128,21 @@ class GiacDocumentGenerationService
             'dateEdition' => now(),
         ]);
 
-        return $this->finalize(
+        $filename = sprintf('giac_g6_fiche_diagnostic_strategique_%s.pdf', Str::slug($entreprise->raison_sociale));
+
+        $this->finaliserDocument(
             $entreprise,
-            sprintf('giac_g6_fiche_diagnostic_strategique_%s', Str::slug($entreprise->raison_sociale)),
-            $content
+            'giac_g6_fiche_diagnostic_strategique',
+            'giac',
+            $filename,
+            $content,
+            ['etude_id' => $etude->id]
         );
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
     }
 
     /**
@@ -139,11 +169,21 @@ class GiacDocumentGenerationService
             'dateEdition' => now(),
         ]);
 
-        return $this->finalize(
+        $filename = sprintf('giac_b2_bulletin_readhesion_%s_%d.pdf', Str::slug($entreprise->raison_sociale), $annee);
+
+        $this->finaliserDocument(
             $entreprise,
-            sprintf('giac_b2_bulletin_readhesion_%s_%d', Str::slug($entreprise->raison_sociale), $annee),
-            $content
+            'giac_g7_bulletin_readhesion',
+            'giac',
+            $filename,
+            $content,
+            ['annee' => $annee]
         );
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
     }
 
     /**
@@ -167,7 +207,14 @@ class GiacDocumentGenerationService
             'dateEdition' => now(),
         ]);
 
-        return $this->finalize($entreprise, 'ofppt_f3_fiche_identification_organisme', $content);
+        $filename = 'f3_fiche_identification_organisme.pdf';
+
+        $this->finaliserDocument($entreprise, 'f3_fiche_identification_organisme', 'ofppt', $filename, $content);
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
     }
 
     /**
@@ -224,29 +271,5 @@ class GiacDocumentGenerationService
         $dompdf->render();
 
         return $dompdf->output();
-    }
-
-    /**
-     * Construit le nom de fichier final, persiste le PDF sous
-     * documents/entreprise-{id}/giac/, et retourne [filename, content]
-     * comme le fait DocumentGenerationService pour Modèle 5/6.
-     */
-    protected function finalize(EntrepriseCliente $entreprise, string $baseName, string $content): array
-    {
-        $filename = "{$baseName}.pdf";
-
-        $path = sprintf(
-            '%s/entreprise-%d/giac/%s',
-            config('documents.storage_path', 'documents'),
-            $entreprise->id,
-            $filename
-        );
-
-        Storage::disk(config('documents.storage_disk', 'local'))->put($path, $content);
-
-        return [
-            'filename' => $filename,
-            'content'  => $content,
-        ];
     }
 }

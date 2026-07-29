@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -42,9 +43,6 @@ class EntrepriseCliente extends Model
         'contact_ref',
         'image_entete',
         'image_pied_page',
-        'cheque_banque',
-        'cheque_numero',
-        'cheque_date',
     ];
 
     protected $casts = [
@@ -52,7 +50,6 @@ class EntrepriseCliente extends Model
         'deja_depose_giac' => 'boolean',
         'date_depot_ancien_giac' => 'date:Y-m-d',
         'montant_tfp' => 'decimal:2',
-        'cheque_date' => 'date:Y-m-d',
     ];
 
     public function gerant()
@@ -80,6 +77,16 @@ class EntrepriseCliente extends Model
     public function etudesDiagnosticStrategique(): HasMany
     {
         return $this->hasMany(EtudeDiagnosticStrategique::class, 'entreprise_id');
+    }
+
+    /**
+     * Archive de tous les documents PDF générés pour cette entreprise
+     * (Modèle 5, Modèle 6, fiche d'évaluation, GIAC, OFPPT...).
+     */
+    public function documentsGeneres(): MorphMany
+    {
+        return $this->morphMany(DocumentGenere::class, 'documentable')
+            ->latest('genere_le');
     }
     public function getEnteteImageBase64(): ?string
     {
