@@ -60,12 +60,14 @@ class EntrepriseCliente extends Model implements HasMedia
         'entete_page'      => 'Entête de page',
         'pied_page'        => 'Pied de page',
         'logo'             => 'Logo',
+        'eligibilite_csf'    => 'Éligibilité CSF cabinet',
+        'facture_pro_forma'  => 'Facture pro forma (originale)',
         'autres_documents' => 'Autres documents',
     ];
 
     public function registerMediaCollections(): void
     {
-        $singleCollections = ['cin_gerant', 'entete_page', 'pied_page', 'logo'];
+        $singleCollections = ['cin_gerant', 'entete_page', 'pied_page', 'logo','eligibilite_csf', 'facture_pro_forma'];
 
         foreach ($singleCollections as $collection) {
             $this->addMediaCollection($collection)

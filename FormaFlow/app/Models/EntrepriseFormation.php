@@ -16,8 +16,8 @@ class EntrepriseFormation extends Model implements HasMedia
         'cv_consultants'        => 'CV des consultants',
         'proposition_intervention' => 'Proposition d\'intervention',
         'rc_modele_j'            => 'RC Modèle J',
-        'eligibilite_csf'        => 'Éligibilité CSF cabinet',
-        'facture_pro_forma'      => 'Facture pro forma (originale)',
+       // 'eligibilite_csf'        => 'Éligibilité CSF cabinet',
+        //'facture_pro_forma'      => 'Facture pro forma (originale)',
     ];
 
     protected $fillable = [
@@ -71,14 +71,19 @@ class EntrepriseFormation extends Model implements HasMedia
 
 
     public function registerMediaCollections(): void
-    {
-        foreach (array_keys(self::PIECES_JOINTES) as $collection) {
-            $this->addMediaCollection($collection)
-                ->singleFile() // un seul fichier actif par type = auto-remplacement à l'upload
-                ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
-        }
+{
+    $singleFileCollections = array_diff(array_keys(self::PIECES_JOINTES), ['cv_consultants']);
+
+    foreach ($singleFileCollections as $collection) {
+        $this->addMediaCollection($collection)
+            ->singleFile()
+            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
     }
 
+    // CV des consultants : plusieurs fichiers possibles 
+    $this->addMediaCollection('cv_consultants')
+        ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
+}
 
 
     public function getPieceJointeStatut(string $collection): array
