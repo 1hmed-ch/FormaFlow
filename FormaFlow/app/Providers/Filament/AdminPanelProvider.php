@@ -34,6 +34,9 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 //'primary' => Color::hex("#3ABCF8"),
                 'primary' => Color::Blue,
+                'indigo' => Color::Indigo,
+                'violet' => Color::Violet,
+                'teal' => Color::Teal,
                 'danger'  => Color::Rose,
                 'gray'    => Color::Zinc,
                 'info'    => Color::Blue,
