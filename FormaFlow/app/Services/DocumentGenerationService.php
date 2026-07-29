@@ -388,7 +388,8 @@ class DocumentGenerationService
 
         return $types->count() > 1 ? TypeFormation::LES_DEUX : $types->first();
     }
-
+    
+    
     public function generateGDeclarationHonneur(EntrepriseCliente $entreprise): array
     {
         $entreprise->loadMissing('gerant');

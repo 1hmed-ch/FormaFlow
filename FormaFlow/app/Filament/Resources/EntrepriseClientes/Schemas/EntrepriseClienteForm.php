@@ -151,7 +151,20 @@ class EntrepriseClienteForm
                         ])
                         ->columns(2)
                         ->columnSpanFull(),
-                Section::make('Identifiants Légaux & Administratifs')
+                Section::make('Informations du Chèque ')
+                        ->schema([
+                            TextInput::make('cheque_banque')
+                                ->label('Banque')
+                                ->nullable(),
+                            TextInput::make('cheque_numero')
+                                ->label('N° de Chèque')
+                                ->nullable(),
+                            DatePicker::make('cheque_date')
+                                ->label('Date du Chèque')
+                                ->native(false)
+                                ->nullable(),
+                                ])->columns(3)->columnSpanFull(),
+            Section::make('Identifiants Légaux & Administratifs')
                     ->description('Numéros d\'immatriculation légaux (ICE, IF, RC...)')
                     ->icon('heroicon-o-document-text')
                     ->columns(2)

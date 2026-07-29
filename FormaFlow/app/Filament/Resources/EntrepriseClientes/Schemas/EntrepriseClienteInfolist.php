@@ -16,7 +16,6 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
-
 class EntrepriseClienteInfolist
 {
     public static function configure(Schema $schema): Schema
@@ -145,7 +144,7 @@ class EntrepriseClienteInfolist
                             ->placeholder('—'),
                     ])->columnSpanFull(),
 
-                Section::make('Visuels pour les documents générés')
+                Section::make('Visuels pour les documents générés')            
                     ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')
                     ->icon('heroicon-o-photo')
                     ->columnSpanFull()
@@ -164,9 +163,11 @@ class EntrepriseClienteInfolist
                             ->height(100)
                             ->placeholder('Aucune image fournie'),
                     ]),
-                Actions::make([
-                    ActionGroup::make(actions: [
-                        Action::make('genererModele6')
+
+                Actions::make([      
+                ActionGroup::make(actions: [
+                // 1. Modèle 6
+                Action::make('genererModele6')
                             ->label('Modèle 6')
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
@@ -199,64 +200,39 @@ class EntrepriseClienteInfolist
                                         ->send();
 
                                     $action->halt();
-                                }
-                            }),
+                        }
+                    }),
 
-                        Action::make('genererG3')
-                            ->label('Fiche de Renseignement')
-                            ->icon('heroicon-o-document-arrow-down')
-                            ->color('gray')
-                            ->action(function (EntrepriseCliente $record, Action $action) {
-                                try {
-                                    $document = app(GiacDocumentGenerationService::class)
-                                        ->generateFicheOrganismeConseil($record);
+                // 2. Bulletin d'Adhésion (B1)
+                Action::make('genererB1')
+                    ->label('Bulletin d\'Adhésion')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->action(function (EntrepriseCliente $record, Action $action) {
+                        try {
+                            $document = app(DocumentGenerationService::class)
+                                ->generateB1BulletinAdhesion($record);
 
-                                    return response()->streamDownload(
-                                        function () use ($document) {
-                                            echo $document['content'];
-                                        },
-                                        $document['filename'],
-                                        ['Content-Type' => 'application/pdf']
-                                    );
-                                } catch (DocumentGenerationException $e) {
-                                    Notification::make()
-                                        ->danger()
-                                        ->title('Génération impossible')
-                                        ->body($e->getMessage())
-                                        ->send();
+                            return response()->streamDownload(
+                                function () use ($document) {
+                                    echo $document['content'];
+                                },
+                                $document['filename'],
+                                ['Content-Type' => 'application/pdf']
+                            );
+                        } catch (DocumentGenerationException $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Génération impossible')
+                                ->body($e->getMessage())
+                                ->send();
 
-                                    $action->halt();
-                                }
-                            }),
-
-                        Action::make('genererF3')
-                            ->label('Fiche d\'identification de l\'organisme')
-                            ->icon('heroicon-o-document-arrow-down')
-                            ->color('gray')
-                            ->action(function (EntrepriseCliente $record, Action $action) {
-                                try {
-                                    $document = app(GiacDocumentGenerationService::class)
-                                        ->generateF3FicheIdentificationOrganisme($record);
-
-                                    return response()->streamDownload(
-                                        function () use ($document) {
-                                            echo $document['content'];
-                                        },
-                                        $document['filename'],
-                                        ['Content-Type' => 'application/pdf']
-                                    );
-                                } catch (DocumentGenerationException $e) {
-                                    Notification::make()
-                                        ->danger()
-                                        ->title('Génération impossible')
-                                        ->body($e->getMessage())
-                                        ->send();
-
-                                    $action->halt();
-                                }
-                            }),
-
-                        Action::make('genererG7')
+                            $action->halt();
+                        }
+                    }),
+                
+                // 3. G7 - Bulletin Ré-adhésion
+               Action::make('genererG7')
                             ->label('Bulletin Ré-adhésion')
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
@@ -289,9 +265,94 @@ class EntrepriseClienteInfolist
                                         ->send();
 
                                     $action->halt();
-                                }
-                            }),
-                    ])->button()
+                        }
+                    }),
+
+                // 4. Fiche Entreprise (C)
+                Action::make('genererC')
+                    ->label('Fiche Entreprise (C)')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->action(function (EntrepriseCliente $record, Action $action) {
+                        try {
+                            $document = app(DocumentGenerationService::class)
+                                ->generateCFicheEntreprise($record);
+
+                            return response()->streamDownload(
+                                function () use ($document) {
+                                    echo $document['content'];
+                                },
+                                $document['filename'],
+                                ['Content-Type' => 'application/pdf']
+                            );
+                        } catch (DocumentGenerationException $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Génération impossible')
+                                ->body($e->getMessage())
+                                ->send();
+
+                            $action->halt();
+                        }
+                    }),
+                
+                // 5. G3 - Fiche Organisme Conseil (GIAC)
+                Action::make('genererG3')
+                            ->label('Fiche de Renseignement')
+                            ->icon('heroicon-o-document-arrow-down')
+                            ->color('gray')
+                            ->action(function (EntrepriseCliente $record, Action $action) {
+                                try {
+                                    $document = app(GiacDocumentGenerationService::class)
+                                        ->generateFicheOrganismeConseil($record);
+
+                                    return response()->streamDownload(
+                                        function () use ($document) {
+                                            echo $document['content'];
+                                        },
+                                        $document['filename'],
+                                        ['Content-Type' => 'application/pdf']
+                                    );
+                                } catch (DocumentGenerationException $e) {
+                                    Notification::make()
+                                        ->danger()
+                                        ->title('Génération impossible')
+                                        ->body($e->getMessage())
+                                        ->send();
+
+                                    $action->halt();
+                        }
+                    }),
+
+               
+                    // 7. Déclaration sur l'Honneur
+                Action::make('genererDeclarationHonneur')
+                    ->label('Déclaration sur l\'Honneur')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->action(function (EntrepriseCliente $record, Action $action) {
+                        try {
+                            $document = app(DocumentGenerationService::class)
+                                ->generateGDeclarationHonneur($record);
+
+                            return response()->streamDownload(
+                                function () use ($document) {
+                                    echo $document['content'];
+                                },
+                                $document['filename'],
+                                ['Content-Type' => 'application/pdf']
+                            );
+                        } catch (DocumentGenerationException $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Génération impossible')
+                                ->body($e->getMessage())
+                                ->send();
+
+                            $action->halt();
+                        }
+                    }),
+                     ])->button()
                 ])->alignEnd()->columnSpanFull(),
             ]);
     }

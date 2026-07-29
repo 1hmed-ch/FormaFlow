@@ -21,6 +21,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Actions;
 
 class ManageSettings extends Page implements HasForms
 {
@@ -106,6 +107,7 @@ class ManageSettings extends Page implements HasForms
                         ->label("Date d'expiration")
                         ->native(false),
                 ]);
+                
         }
         return $schema
             ->components([
@@ -239,27 +241,28 @@ class ManageSettings extends Page implements HasForms
                         ]),
                     ]),
 
+               
                 // Section 6: Pièces Jointes
                 Section::make('Pièces Jointes de l\'organisme')
                     ->description('Veuillez glisser-déposer vos documents administratifs requis.')
                     ->schema([
                         Grid::make(2)->schema($piecesJointesFields)
                     ]),
+
+                // Bouton en bas
+                Actions::make([
+                    Action::make('save')
+                        ->label('Enregistrer')
+                        ->action('save')
+                        ->color('primary')
+                        ->keyBindings(['mod+s']),
+                ])
+    ->alignEnd(),
             ])
             ->statePath('data');
     }
 
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Enregistrer')
-                ->submit('save')
-                ->color('primary')
-                ->keyBindings(['mod+s']),
-        ];
-    }
-
+    
     public function save(): void
     {
         $record = EntrepriseFormation::current();

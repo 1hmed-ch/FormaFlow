@@ -62,13 +62,17 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'fax'                     => 'nullable|string|max:50',
             'email'                   => 'sometimes|required|email|max:255|unique:entreprise_clientes,email,' . $id,
             'contact_ref'             => 'nullable|string|max:255',
-
             'gerant_nom'              => 'sometimes|required|string|max:255',
             'gerant_prenom'           => 'sometimes|required|string|max:255',
             'gerant_fonction'         => 'sometimes|required|string|max:255',
-            'gerant_genre'         => ['sometimes', new Enum(GerantGender::class)],
+            'gerant_genre'            => ['sometimes', new Enum(GerantGender::class)],
             'gerant_cin'              => 'sometimes|required|string|max:50|unique:gerants,cin,' . $gerantId,
             'gerant_email'            => 'sometimes|required|email|max:255|unique:gerants,email,' . $gerantId,
+            'cheque_banque'           => 'nullable|string|max:255',
+            'cheque_numero'           => 'nullable|string|max:50',
+            'cheque_date'             => 'nullable|date:Y-m-d',
+            
+            
         ];
     }
 

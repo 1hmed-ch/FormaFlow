@@ -23,7 +23,7 @@ class ViewEntrepriseCliente extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            /*ActionGroup::make(actions: [
+            /*ActionGroup::make([
                 Action::make('genererModele6')
                     ->label('Générer Modèle 6')
                     ->icon('heroicon-o-document-arrow-down')
@@ -149,7 +149,6 @@ class ViewEntrepriseCliente extends ViewRecord
                             $action->halt();
                         }
                     }),
-
             ])->button(),*/
             EditAction::make(),
         ];
@@ -168,4 +167,3 @@ class ViewEntrepriseCliente extends ViewRecord
         return 2;
     }
 }
-

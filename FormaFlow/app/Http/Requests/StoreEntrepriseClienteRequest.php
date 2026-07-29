@@ -58,6 +58,11 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'gerant_cin'              => 'required|string|max:20|unique:gerants,cin',
             'gerant_email'            => 'required|email|max:255|unique:gerants,email',
             'gerant_genre'            => ['required', new Enum(GerantGender::class)],
+            'cheque_banque'           => 'nullable|string|max:255',
+            'cheque_numero'           => 'nullable|string|max:50',
+            'cheque_date'             => 'nullable|date:Y-m-d',
+            
+
 
         ];
     }
