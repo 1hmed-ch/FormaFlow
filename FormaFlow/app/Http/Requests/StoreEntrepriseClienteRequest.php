@@ -61,6 +61,9 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'cheque_banque'           => 'nullable|string|max:255',
             'cheque_numero'           => 'nullable|string|max:50',
             'cheque_date'             => 'nullable|date:Y-m-d',
+            'gmail_login_ofppt'       => ['nullable', 'email', 'max:255'],
+            'gmail_ofppt_mdp'         => ['nullable', 'string', 'max:255'],
+            'ofppt_mdp'               => ['nullable', 'string', 'max:255'],
             
 
 

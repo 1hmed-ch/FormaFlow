@@ -152,6 +152,28 @@ class EntrepriseClienteForm
                         ])
                         ->columns(2)
                         ->columnSpanFull(),
+                Section::make('Codes d\'accès Plateforme OFPPT')
+                        ->description('Informations d\'inscription (Gmail) et de connexion à la plateforme')
+                        ->icon('heroicon-o-key')
+                        ->columns(2)
+                        ->schema([
+                            // 1. Gmail d'inscription
+                            TextInput::make('gmail_login_ofppt')
+                                ->label('Gmail - Login')
+                                ->email()
+                                ->maxLength(255),
+
+                            TextInput::make('gmail_ofppt_mdp')
+                                ->label('Gmail - Mot de passe')
+                                ->password()
+                                ->revealable()
+                                ->maxLength(255),
+                            TextInput::make('ofppt_mdp')
+                                ->label('Plateforme - Mot de passe')
+                                ->password()
+                                ->revealable()
+                                ->maxLength(255),
+                        ])->columnSpanFull(),
                 Section::make('Informations du Chèque ')
                         ->schema([
                             TextInput::make('cheque_banque')

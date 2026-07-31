@@ -464,4 +464,24 @@ class DocumentGenerationService
             'content'  => $content,
         ];
     }
+    public function generateImpressionDossier(DossierGiac $dossier): array
+    {
+        $entreprise = $dossier->entrepriseCliente;
+        $entreprise->loadMissing('gerant', 'documentsGeneres');
+
+        $content = $this->renderFromView('documents.archive-dossier-impression', [
+            'dossier'          => $dossier,
+            'entreprise'       => $entreprise,
+            'documentsGeneres' => $entreprise->documentsGeneres,
+            'progression'      => $dossier->getProgressionArchive(),
+            'dateEdition'      => now(),
+        ]);
+
+        $filename = sprintf('dossier_%s.pdf', \Illuminate\Support\Str::slug($entreprise->raison_sociale));
+
+        return [
+            'filename' => $filename,
+            'content'  => $content,
+        ];
+    }
 }

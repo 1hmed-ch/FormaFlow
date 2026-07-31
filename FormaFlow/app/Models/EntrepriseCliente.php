@@ -47,6 +47,9 @@ class EntrepriseCliente extends Model implements HasMedia
         'cheque_banque',
         'cheque_numero',
         'cheque_date',
+        'gmail_login_ofppt',
+        'gmail_ofppt_mdp',
+        'ofppt_mdp',
     ];
 
     protected $casts = [
@@ -55,6 +58,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'date_depot_ancien_giac' => 'date:Y-m-d',
         'montant_tfp' => 'decimal:2',
         'cheque_date'=>'date:Y-m-d',
+    
         
     ];
 
