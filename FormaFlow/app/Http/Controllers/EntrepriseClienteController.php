@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\DocumentGenerationException;
-use App\Services\DocumentGenerationService;
 use App\Exceptions\SuppressionBloqueeException;
 use App\Http\Requests\StoreEntrepriseClienteRequest;
 use App\Http\Requests\UpdateEntrepriseClienteRequest;
@@ -104,113 +102,78 @@ class EntrepriseClienteController extends Controller
 
     /* PUT/PATCH /api/entreprise-clientes/{entreprise_cliente} */
     public function update(UpdateEntrepriseClienteRequest $request, EntrepriseCliente $entreprise_cliente): JsonResponse
-{
-    try {
-        DB::transaction(function () use ($request, $entreprise_cliente) {
-
-            $entreprise_cliente->update($request->validated());
-
-            if ($entreprise_cliente->gerant) {
-                $entreprise_cliente->gerant->update([
-                    'nom'      => $request->input('gerant_nom', $entreprise_cliente->gerant->nom),
-                    'prenom'   => $request->input('gerant_prenom', $entreprise_cliente->gerant->prenom),
-                    'fonction' => $request->input('gerant_fonction', $entreprise_cliente->gerant->fonction),
-                    'cin'      => $request->input('gerant_cin', $entreprise_cliente->gerant->cin),
-                    'genre'    => $request->input('gerant_genre', $entreprise_cliente->gerant->genre),
-                ]);
-            }
-        });
-
-        return response()->json([
-            'success' => true,
-            'status'  => Response::HTTP_OK,
-            'message' => 'Entreprise cliente et les informations du gérant mises à jour avec succès.',
-            'data'    => $entreprise_cliente->fresh()->load('gerant')
-        ], Response::HTTP_OK);
-
-    } catch (Exception $e) {
-        Log::error('Erreur mise à jour EntrepriseCliente', [
-            'id'    => $entreprise_cliente->id,
-            'error' => $e->getMessage()
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la mise à jour de l\'entreprise.',
-            'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-}
-
-    /* DELETE /api/entreprise-clientes/{entreprise_cliente} */
-
-
-public function destroy(EntrepriseCliente $entreprise_cliente): JsonResponse
-{
-    try {
-        $entreprise_cliente->delete();
-
-        return response()->json([
-            'success' => true,
-            'status'  => Response::HTTP_OK,
-            'message' => 'Entreprise cliente supprimée avec succès.'
-        ], Response::HTTP_OK);
-    } catch (SuppressionBloqueeException $e) {
-        return response()->json([
-            'success' => false,
-            'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
-            'message' => $e->getMessage()
-        ], Response::HTTP_UNPROCESSABLE_ENTITY);
-    } catch (Exception $e) {
-        Log::error('Erreur suppression EntrepriseCliente', [
-            'id'    => $entreprise_cliente->id,
-            'error' => $e->getMessage()
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la suppression de l\'entreprise.',
-            'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-}
-
-    /* GET /api/entreprise-clientes/{entreprise_cliente}/documents/modele-6?annee=2026 */
-    public function genererModele6(
-        Request $request,
-        EntrepriseCliente $entreprise_cliente,
-        DocumentGenerationService $documentGenerationService
-    ): Response|JsonResponse {
-        $validated = $request->validate([
-            'annee' => ['required', 'integer', 'digits:4'],
-        ]);
-
+    {
         try {
-            $document = $documentGenerationService->generateModele6(
-                $entreprise_cliente,
-                (int) $validated['annee']
-            );
+            DB::transaction(function () use ($request, $entreprise_cliente) {
 
-            return response($document['content'], Response::HTTP_OK)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="'.$document['filename'].'"');
-        } catch (DocumentGenerationException $e) {
+                $entreprise_cliente->update($request->validated());
+
+                if ($entreprise_cliente->gerant) {
+                    $entreprise_cliente->gerant->update([
+                        'nom'      => $request->input('gerant_nom', $entreprise_cliente->gerant->nom),
+                        'prenom'   => $request->input('gerant_prenom', $entreprise_cliente->gerant->prenom),
+                        'fonction' => $request->input('gerant_fonction', $entreprise_cliente->gerant->fonction),
+                        'cin'      => $request->input('gerant_cin', $entreprise_cliente->gerant->cin),
+                        'genre'    => $request->input('gerant_genre', $entreprise_cliente->gerant->genre),
+                    ]);
+                }
+            });
+
             return response()->json([
-                'success' => false,
-                'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'message' => $e->getMessage(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Entreprise cliente et les informations du gérant mises à jour avec succès.',
+                'data'    => $entreprise_cliente->fresh()->load('gerant')
+            ], Response::HTTP_OK);
+
         } catch (Exception $e) {
-            Log::error('Erreur génération Modèle 6', [
+            Log::error('Erreur mise à jour EntrepriseCliente', [
                 'id'    => $entreprise_cliente->id,
-                'error' => $e->getMessage(),
+                'error' => $e->getMessage()
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la génération de l\'attestation.',
-                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error',
+                'message' => 'Erreur lors de la mise à jour de l\'entreprise.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /* DELETE /api/entreprise-clientes/{entreprise_cliente} */
+
+
+    public function destroy(EntrepriseCliente $entreprise_cliente): JsonResponse
+    {
+        try {
+            $entreprise_cliente->delete();
+
+            return response()->json([
+                'success' => true,
+                'status'  => Response::HTTP_OK,
+                'message' => 'Entreprise cliente supprimée avec succès.'
+            ], Response::HTTP_OK);
+        } catch (SuppressionBloqueeException $e) {
+            return response()->json([
+                'success' => false,
+                'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'message' => $e->getMessage()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $e) {
+            Log::error('Erreur suppression EntrepriseCliente', [
+                'id'    => $entreprise_cliente->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de l\'entreprise.',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal Server Error'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Modèle 6 se génère désormais par formation :
+    // GET /api/formations/{formation}/documents/modele-6?annee=2026
+    // Voir FormationController::genererModele6().
 }
