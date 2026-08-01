@@ -170,6 +170,7 @@ class EntrepriseClienteInfolist
                     ->description('Historique complet des PDF générés pour cette entreprise (Modèle 5, Modèle 6, fiche d\'évaluation, GIAC, OFPPT...)')
                     ->icon('heroicon-o-archive-box')
                     ->collapsible()
+                    ->collapsed()
                     ->columnSpanFull()
                     ->schema([
                         RepeatableEntry::make('documentsGeneres')
@@ -181,6 +182,7 @@ class EntrepriseClienteInfolist
                                 TableColumn::make('Statut'),
                                 TableColumn::make('Généré le'),
                                 TableColumn::make('Taille'),
+                                TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
                             ])
                             ->schema([
@@ -211,47 +213,44 @@ class EntrepriseClienteInfolist
                                     ->color('primary')
                                     ->url(fn ($record): string => route('documents-generes.telecharger', $record))
                                     ->openUrlInNewTab(),
+                                Actions::make([
+                                    Action::make('supprimer')
+                                        ->label('')
+                                        ->icon('heroicon-o-trash')
+                                        ->color('danger')
+                                        ->requiresConfirmation()
+                                        ->modalHeading('Supprimer le document')
+                                        ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.')
+                                        ->action(function ($record, Action $action) {
+                                            try {
+                                                $record->delete();
+
+                                                Notification::make()
+                                                    ->success()
+                                                    ->title('Document supprimé')
+                                                    ->body('Le document a été supprimé avec succès.')
+                                                    ->send();
+                                            } catch (\Exception $e) {
+                                                Notification::make()
+                                                    ->danger()
+                                                    ->title('Erreur lors de la suppression')
+                                                    ->body('Une erreur est survenue lors de la suppression du document.')
+                                                    ->send();
+
+                                                $action->halt();
+                                            }
+                                        }),
+                                ])
                             ])
                             ->placeholder('Aucun document généré pour le moment.'),
                     ]),
 
                 Actions::make([
                     ActionGroup::make(actions: [
-                        Action::make('genererModele6')
-                            ->label('Modèle 6')
-                            ->icon('heroicon-o-document-arrow-down')
-                            ->color('gray')
-                            ->form([
-                                TextInput::make('annee')
-                                    ->label('Exercice (année)')
-                                    ->numeric()
-                                    ->required()
-                                    ->default(now()->year)
-                                    ->minValue(2000)
-                                    ->maxValue(now()->year),
-                            ])
-                            ->action(function (EntrepriseCliente $record, array $data, Action $action) {
-                                try {
-                                    $document = app(DocumentGenerationService::class)
-                                        ->generateModele6($record, (int)$data['annee']);
-
-                                    return response()->streamDownload(
-                                        function () use ($document) {
-                                            echo $document['content'];
-                                        },
-                                        $document['filename'],
-                                        ['Content-Type' => 'application/pdf']
-                                    );
-                                } catch (DocumentGenerationException $e) {
-                                    Notification::make()
-                                        ->danger()
-                                        ->title('Génération impossible')
-                                        ->body($e->getMessage())
-                                        ->send();
-
-                                    $action->halt();
-                                }
-                            }),
+                        // Modèle 6 se génère désormais depuis la table des
+                        // Formations (une attestation par formation), plus
+                        // depuis la fiche entreprise. Voir
+                        // FormationsTable::configure().
 
                         // 2. Bulletin d'Adhésion (B1)
                         Action::make('genererB1')
