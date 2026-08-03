@@ -34,7 +34,7 @@ class DossierGiac extends Model
             return 0;
         }
 
-        $totalPieces = count(\App\Models\EntrepriseCliente::PIECES_JOINTES); // 7
+        $totalPieces = count(\App\Models\EntrepriseCliente::PIECES_JOINTES); 
         $piecesOk = collect(\App\Models\EntrepriseCliente::PIECES_JOINTES)
             ->keys()
             ->filter(fn ($key) => $entreprise->hasMedia($key))

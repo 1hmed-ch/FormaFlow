@@ -67,5 +67,21 @@
             @endforelse
         </tbody>
     </table>
+    <h2>Autres documents</h2>
+<table>
+    <thead>
+        <tr><th>Intitulé</th><th>Ajouté le</th></tr>
+    </thead>
+    <tbody>
+        @forelse ($autresDocuments as $document)
+            <tr>
+                <td>{{ $document->getCustomProperty('intitule') ?: $document->file_name }}</td>
+                <td>{{ $document->created_at?->format('d/m/Y H:i') }}</td>
+            </tr>
+        @empty
+            <tr><td colspan="2">Aucun document complémentaire ajouté.</td></tr>
+        @endforelse
+    </tbody>
+</table>
 </body>
 </html>

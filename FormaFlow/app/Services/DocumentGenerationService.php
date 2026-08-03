@@ -465,19 +465,48 @@ class DocumentGenerationService
         ];
     }
     public function generateImpressionDossier(DossierGiac $dossier): array
-    {
-        $entreprise = $dossier->entrepriseCliente;
-        $entreprise->loadMissing('gerant', 'documentsGeneres');
+{
+    $entreprise = $dossier->entrepriseCliente;
+    $entreprise->loadMissing('gerant', 'documentsGeneres');
 
-        $content = $this->renderFromView('documents.archive-dossier-impression', [
-            'dossier'          => $dossier,
-            'entreprise'       => $entreprise,
-            'documentsGeneres' => $entreprise->documentsGeneres,
-            'progression'      => $dossier->getProgressionArchive(),
-            'dateEdition'      => now(),
+    $content = $this->renderFromView('documents.archive-dossier-impression', [
+        'dossier'           => $dossier,
+        'entreprise'        => $entreprise,
+        'documentsGeneres'  => $entreprise->documentsGeneres,
+        'autresDocuments'   => $entreprise->getMedia('autres_documents'),
+        'progression'       => $dossier->getProgressionArchive(),
+        'dateEdition'       => now(),
+    ]);
+
+    $filename = sprintf('dossier_%s.pdf', \Illuminate\Support\Str::slug($entreprise->raison_sociale));
+
+    return [
+        'filename' => $filename,
+        'content'  => $content,
+    ];
+}
+    public function generateFicheAccesClient(EntrepriseCliente $entreprise): array
+    {
+        $entreprise->loadMissing('gerant');
+
+        if (! $entreprise->gerant) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la Fiche Client : aucun gérant n'est renseigné pour l'entreprise {$entreprise->raison_sociale}."
+            );
+        }
+
+        $content = $this->renderFromView('documents.fiche-client-interne', [
+            'entreprise'  => $entreprise,
+            'gerant'      => $entreprise->gerant,
+            'organisme'   => EntrepriseFormation::current(),
+            'dateEdition' => now(),
         ]);
 
-        $filename = sprintf('dossier_%s.pdf', \Illuminate\Support\Str::slug($entreprise->raison_sociale));
+        $filename = sprintf('fiche_acces_client_%s.pdf', Str::slug($entreprise->raison_sociale));
+
+        // Pas de finaliserDocument() ici volontairement : ce PDF contient des
+        // mots de passe en clair (Gmail/OFPPT), on évite d'en garder une trace
+        // persistante dans documentsGeneres.
 
         return [
             'filename' => $filename,

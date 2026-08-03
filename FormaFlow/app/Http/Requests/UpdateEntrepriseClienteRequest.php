@@ -67,6 +67,7 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'gerant_fonction'         => 'sometimes|required|string|max:255',
             'gerant_genre'            => ['sometimes', new Enum(GerantGender::class)],
             'gerant_cin'              => 'sometimes|required|string|max:50|unique:gerants,cin,' . $gerantId,
+            'gerant_telephone'        => ['nullable', 'string', 'max:20'],
             'gerant_email'            => 'sometimes|required|email|max:255|unique:gerants,email,' . $gerantId,
             'cheque_banque'           => 'nullable|string|max:255',
             'cheque_numero'           => 'nullable|string|max:50',

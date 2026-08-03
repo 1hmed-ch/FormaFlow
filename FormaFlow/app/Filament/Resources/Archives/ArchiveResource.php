@@ -36,7 +36,6 @@ class ArchiveResource extends Resource
         ];
     }
 
-    // Module 100% consultation : pas de création/modification/suppression manuelle
     public static function canCreate(): bool
     {
         return false;

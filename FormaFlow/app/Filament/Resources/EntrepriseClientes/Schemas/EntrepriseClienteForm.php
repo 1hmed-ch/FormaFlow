@@ -13,6 +13,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\FileUpload;
 
 class EntrepriseClienteForm
 {
@@ -149,6 +151,10 @@ class EntrepriseClienteForm
                                 ->options(gerantGender::class)
                                 ->required()
                                 ->native(false),
+                            TextInput::make('telephone')
+                            ->label('Téléphone')
+                            ->tel()
+                            ->maxLength(20),
                         ])
                         ->columns(2)
                         ->columnSpanFull(),
@@ -295,17 +301,45 @@ class EntrepriseClienteForm
                             ->maxLength(20),
                     ])->columnSpanFull(),
 
-                Section::make('Documents administratifs à joindre')
-                    ->description('Pièces requises pour la constitution des dossiers de l\'entreprise cliente (GIAC, OFPPT...)')
-                    ->icon('heroicon-o-paper-clip')
-                    ->columns(2)
-                    ->collapsible()
-                    ->schema(self::piecesJointesFields())
-                    ->columnSpanFull(),
-            ]);
+                /*Section::make('Documents administratifs à joindre')
+                            ->description('Pièces requises pour la constitution des dossiers de l\'entreprise cliente (GIAC, OFPPT...)')
+                            ->icon('heroicon-o-paper-clip')
+                            ->columns(2)
+                            ->collapsible()
+                            ->schema(self::piecesJointesFields())
+                            ->columnSpanFull(),
+                Section::make('Autres documents')
+                            ->description('Documents complémentaires avec intitulé libre')
+                            ->icon('heroicon-o-document-duplicate')
+                            ->collapsible()
+                            ->columnSpanFull()
+                            ->schema([
+                                Repeater::make('autres_documents_repeater')
+                                    ->label('Nouveaux documents à ajouter')
+                                    ->default([])
+                                    ->schema([
+                                        TextInput::make('intitule')
+                                            ->label('Intitulé du document')
+                                            ->required()
+                                            ->maxLength(255),
+
+                                        FileUpload::make('fichier')
+                                            ->label('Fichier')
+                                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                            ->maxSize(10240)
+                                            ->disk('local')
+                                            ->directory('tmp-autres-documents')
+                                            ->visibility('private')
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                                    ->addActionLabel('Ajouter un document')
+                                    ->reorderable(false),
+                            ]),*/
+        ]);
     }
 
-    protected static function piecesJointesFields(): array
+    /*protected static function piecesJointesFields(): array
     {
         $fields = [];
 
@@ -336,5 +370,5 @@ class EntrepriseClienteForm
         }
 
         return $fields;
-    }
+    }*/
 }

@@ -22,10 +22,10 @@ class ArchivesTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('date_generation')
+                TextColumn::make('annee_formation')
                     ->label('Année')
-                    ->state(fn ($record) => $record->date_generation?->year ?? '—')
-                    ->sortable(),
+                    ->state(fn ($record) => $record->entrepriseCliente?->anneesFormations()[0] ?? '—')
+                    ->sortable(false),
 
                 TextColumn::make('statut')
                     ->label('Statut')
@@ -48,25 +48,27 @@ class ArchivesTable
                     ->searchable()
                     ->preload(),
 
-                SelectFilter::make('statut')
+               SelectFilter::make('statut')
                     ->label('Statut')
-                    ->options([
-                        StatutDossierGiac::EnCours->value => StatutDossierGiac::EnCours->getLabel(),
-                        StatutDossierGiac::Signe->value   => StatutDossierGiac::Signe->getLabel(),
-                    ]),
+                    ->options(collect(StatutDossierGiac::cases())
+                        ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])
+                        ->toArray()),
 
                 SelectFilter::make('annee')
                     ->label('Année')
-                    ->options(fn () => DossierGiac::query()
-                        ->selectRaw('YEAR(date_generation) as annee')
-                        ->distinct()
-                        ->orderByDesc('annee')
-                        ->pluck('annee', 'annee')
-                        ->filter()
+                    ->options(fn () => \App\Models\EntrepriseCliente::query()
+                        ->with('formations.themes')
+                        ->get()
+                        ->flatMap(fn ($e) => $e->anneesFormations())
+                        ->unique()
+                        ->sortDesc()
+                        ->mapWithKeys(fn ($annee) => [$annee => $annee])
                         ->toArray())
                     ->query(function ($query, array $data) {
                         if (filled($data['value'])) {
-                            $query->whereYear('date_generation', $data['value']);
+                            $query->whereHas('entrepriseCliente.formations.themes', function ($q) use ($data) {
+                                $q->whereYear('date_fin', $data['value']);
+                            });
                         }
                     })
                     ->indicateUsing(function (array $data): ?Indicator {

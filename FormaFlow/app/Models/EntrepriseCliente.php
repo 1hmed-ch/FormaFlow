@@ -69,7 +69,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'logo'             => 'Logo',
         'eligibilite_csf'    => 'Éligibilité CSF cabinet',
         'facture_pro_forma'  => 'Facture pro forma (originale)',
-        'autres_documents' => 'Autres documents',
+       // 'autres_documents' => 'Autres documents',
     ];
 
     public function registerMediaCollections(): void
