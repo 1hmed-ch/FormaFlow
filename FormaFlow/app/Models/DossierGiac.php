@@ -51,7 +51,7 @@ class DossierGiac extends Model implements HasMedia
             return 0;
         }
 
-        $totalPieces = count(\App\Models\EntrepriseCliente::PIECES_JOINTES); 
+        $totalPieces = count(\App\Models\EntrepriseCliente::PIECES_JOINTES);
         $piecesOk = collect(\App\Models\EntrepriseCliente::PIECES_JOINTES)
             ->keys()
             ->filter(fn ($key) => $entreprise->hasMedia($key))
@@ -67,7 +67,6 @@ class DossierGiac extends Model implements HasMedia
 
         return $total > 0 ? (int) round((($piecesOk + $giacOk) / $total) * 100) : 0;
     }
-}
 
     public function registerMediaCollections(): void
     {
