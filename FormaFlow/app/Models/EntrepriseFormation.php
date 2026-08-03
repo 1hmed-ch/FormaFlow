@@ -14,6 +14,8 @@ class EntrepriseFormation extends Model implements HasMedia
     use HasFactory,InteractsWithMedia;
     public const PIECES_JOINTES = [
         'cv_consultants'        => 'CV des consultants',
+        'fiche_identification'  => 'Fiche d’identification de l’organisme de formation',
+        'fiche_renseignement'  => 'Fiche de renseignement de l’organisme de conseil',
         'proposition_intervention' => 'Proposition d\'intervention',
         'rc_modele_j'            => 'RC Modèle J',
         'eligibilite_csf'        => 'Éligibilité CSF cabinet',
@@ -52,7 +54,7 @@ class EntrepriseFormation extends Model implements HasMedia
         'nb_autres_employes_etrangers',
         'effectif_total',
         'appartient_groupe_etranger',
-        'nom_groupe_etranger', 
+        'nom_groupe_etranger',
         'references',
         'representant_nom',
         'representant_fonction',
@@ -130,7 +132,7 @@ class EntrepriseFormation extends Model implements HasMedia
      * Accesseur Singleton pour récupérer la configuration unique de Plénitude
      */
     public static function current(): self
- 
+
 {
     return self::firstOrCreate(
         ['id' => 1], // Force l'ID 1 pour garantir la fiche unique
@@ -172,17 +174,17 @@ class EntrepriseFormation extends Model implements HasMedia
             'nb_autres_employes_etrangers' => 0,
             'effectif_total'          => 0,
             'appartient_groupe_etranger' => false,
-            'nom_groupe_etranger'                => null, 
-            'references'                         => null, 
-            // 5. Représentant Légal 
+            'nom_groupe_etranger'                => null,
+            'references'                         => null,
+            // 5. Représentant Légal
             'representant_nom'        => 'Nom Représentant',
             'representant_fonction'   => 'Gérant',
-          
+
         ]
     );
 }
 
-   
+
 
     /**
      * Une entreprise de formation possède plusieurs formateurs rattachés
