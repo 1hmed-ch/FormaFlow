@@ -52,9 +52,43 @@ class ManageSettings extends Page implements HasForms
     public function form(Schema $schema): Schema
     {
 
-        $piecesJointesFields = [];
-        foreach (EntrepriseFormation::PIECES_JOINTES as $key => $label) {
-            $record = EntrepriseFormation::current();
+         $piecesJointesFields = [];
+    $record = EntrepriseFormation::current();
+
+    foreach (EntrepriseFormation::PIECES_JOINTES as $key => $label) {
+
+        $isMultiple = $key === 'cv_consultants';
+
+        if ($isMultiple) {
+            // Cas particulier : collection multiple (CV des consultants) 
+            $mediaCollection = $record->getMedia($key);
+            $isUploaded = $mediaCollection->isNotEmpty();
+
+            if (!$isUploaded) {
+                $icon = 'heroicon-o-exclamation-triangle';
+                $color = 'warning';
+                $description = 'Document manquant';
+            } else {
+                $icon = 'heroicon-o-check-circle';
+                $color = 'success';
+                $description = $mediaCollection->count() . ' fichier(s) fourni(s)';
+            }
+
+            $fieldsSchema = [
+                SpatieMediaLibraryFileUpload::make($key)
+                    ->label('Documents (PDF / Image)')
+                    ->collection($key)
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->multiple()
+                    ->maxSize(10240)
+                    ->visibility('private')
+                    ->model($record)
+                    ->columnSpanFull(),
+                // Pas de DatePicker ici : plusieurs fichiers, pas de date unique.
+            ];
+
+        } else {
+            //Cas normal : collection single-file
             $media = $record->getFirstMedia($key);
             $isUploaded = $media !== null;
 
@@ -66,7 +100,6 @@ class ManageSettings extends Page implements HasForms
                 && $dateExpiration
                 && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
 
-            // Détermination du statut (indépendant de la date d'expiration)
             if (!$isUploaded) {
                 $icon = 'heroicon-o-exclamation-triangle';
                 $color = 'warning';
@@ -81,34 +114,35 @@ class ManageSettings extends Page implements HasForms
                 $description = 'Document fourni';
             }
 
-            // Ajout de la date d'ajout si le fichier existe
             if ($isUploaded) {
                 $description .= ' • Ajouté le ' . $media->created_at->format('d/m/Y');
             }
 
-            $piecesJointesFields[] = Section::make($label)
-                ->icon($icon)
-                ->iconColor($color)
-                ->description($description)
-                ->collapsible()
-                ->collapsed(true)
-                ->compact()
-                ->columns(2)
-                ->schema([
-                    SpatieMediaLibraryFileUpload::make($key)
-                        ->label('Document (PDF / Image)')
-                        ->collection($key)
-                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                        ->maxSize(10240)
-                        ->visibility('private')
-                        ->model($record),
+            $fieldsSchema = [
+                SpatieMediaLibraryFileUpload::make($key)
+                    ->label('Document (PDF / Image)')
+                    ->collection($key)
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(10240)
+                    ->visibility('private')
+                    ->model($record),
 
-                    DatePicker::make('date_expiration_' . $key)
-                        ->label("Date d'expiration")
-                        ->native(false),
-                ]);
-                
+                DatePicker::make('date_expiration_' . $key)
+                    ->label("Date d'expiration")
+                    ->native(false),
+            ];
         }
+
+        $piecesJointesFields[] = Section::make($label)
+            ->icon($icon)
+            ->iconColor($color)
+            ->description($description)
+            ->collapsible()
+            ->collapsed(true)
+            ->compact()
+            ->columns(2)
+            ->schema($fieldsSchema);
+    }
         return $schema
             ->components([
                 Grid::make(3)
@@ -264,40 +298,44 @@ class ManageSettings extends Page implements HasForms
 
     
     public function save(): void
-    {
-        $record = EntrepriseFormation::current();
-        $state = $this->form->getState();
-        try {
-            $record->update($state);
+{
+    $record = EntrepriseFormation::current();
+    $state = $this->form->getState();
+    try {
+        $record->update($state);
 
-            foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
-                $media = $record->getFirstMedia($collection);
-                if ($media) {
-                    $expirationDate = $state['date_expiration_' . $collection] ?? null;
-                    $media->setCustomProperty('date_expiration', $expirationDate);
-                    $media->save();
-                }
+        foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
+            if ($collection === 'cv_consultants') {
+                continue; // pas de date d'expiration pour cette collection multiple
             }
 
-            Notification::make()
-                ->title('Paramètres enregistrés avec succès !')
-                ->success()
-                ->send();
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            Notification::make()
-                ->title('Erreur de base de données')
-                ->body('Une contrainte a empêché l\'enregistrement. Vérifiez les champs uniques (ICE, RC...).')
-                ->danger()
-                ->send();
-            report($e);
-        } catch (\Throwable $e) {
-            Notification::make()
-                ->title('Une erreur est survenue')
-                ->body('L\'enregistrement a échoué.')
-                ->danger()
-                ->send();
-            report($e);
+            $media = $record->getFirstMedia($collection);
+            if ($media) {
+                $expirationDate = $state['date_expiration_' . $collection] ?? null;
+                $media->setCustomProperty('date_expiration', $expirationDate);
+                $media->save();
+            }
         }
+
+        Notification::make()
+            ->title('Paramètres enregistrés avec succès !')
+            ->success()
+            ->send();
+
+    } catch (\Illuminate\Database\QueryException $e) {
+        Notification::make()
+            ->title('Erreur de base de données')
+            ->body('Une contrainte a empêché l\'enregistrement. Vérifiez les champs uniques (ICE, RC...).')
+            ->danger()
+            ->send();
+        report($e);
+    } catch (\Throwable $e) {
+        Notification::make()
+            ->title('Une erreur est survenue')
+            ->body('L\'enregistrement a échoué.')
+            ->danger()
+            ->send();
+        report($e);
     }
+}
 }

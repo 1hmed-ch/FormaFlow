@@ -58,9 +58,13 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'gerant_cin'              => 'required|string|max:20|unique:gerants,cin',
             'gerant_email'            => 'required|email|max:255|unique:gerants,email',
             'gerant_genre'            => ['required', new Enum(GerantGender::class)],
+            'gerant_telephone'        => ['nullable', 'string', 'max:20'],
             'cheque_banque'           => 'nullable|string|max:255',
             'cheque_numero'           => 'nullable|string|max:50',
             'cheque_date'             => 'nullable|date:Y-m-d',
+            'gmail_login_ofppt'       => ['nullable', 'email', 'max:255'],
+            'gmail_ofppt_mdp'         => ['nullable', 'string', 'max:255'],
+            'ofppt_mdp'               => ['nullable', 'string', 'max:255'],
             
 
 

@@ -153,6 +153,13 @@ class EntrepriseClienteInfolist
                             ->label('Fax')
                             ->placeholder('—'),
                     ])->columnSpanFull(),
+                Section::make('Documents administratifs')
+                    ->description('Pièces requises pour la constitution des dossiers de l\'entreprise cliente (GIAC, OFPPT...)')
+                    ->icon('heroicon-o-paper-clip')
+                    ->columnSpanFull()
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema(self::piecesJointesEntries()),
 
                 Section::make('Visuels pour les documents générés')
                     ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')
@@ -642,5 +649,26 @@ class EntrepriseClienteInfolist
                     ])->button()
                 ])->alignEnd()->columnSpanFull(),
             ]);
+    }
+    protected static function piecesJointesEntries(): array
+    {
+        $entries = [];
+ 
+        foreach (EntrepriseCliente::PIECES_JOINTES as $key => $label) {
+            $entries[] = TextEntry::make($key . '_statut')
+                ->label($label)
+                ->state(fn (EntrepriseCliente $record) => $record->getPieceJointeStatut($key))
+                ->badge()
+                ->color(fn (EntrepriseCliente $record) => $record->hasMedia($key) ? 'success' : 'danger')
+                ->icon(fn (EntrepriseCliente $record) => $record->hasMedia($key)
+                    ? 'heroicon-o-check-circle'
+                    : 'heroicon-o-exclamation-triangle')
+                ->url(fn (EntrepriseCliente $record) => $record->hasMedia($key)
+                    ? $record->getFirstMediaUrl($key)
+                    : null)
+                ->openUrlInNewTab();
+        }
+ 
+        return $entries;
     }
 }

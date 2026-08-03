@@ -3,15 +3,18 @@
 namespace App\Filament\Resources\EntrepriseClientes\Schemas;
 
 use App\Enums\gerantGender;
+use App\Models\EntrepriseCliente;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\FileUpload;
 
 class EntrepriseClienteForm
 {
@@ -148,9 +151,35 @@ class EntrepriseClienteForm
                                 ->options(gerantGender::class)
                                 ->required()
                                 ->native(false),
+                            TextInput::make('telephone')
+                            ->label('Téléphone')
+                            ->tel()
+                            ->maxLength(20),
                         ])
                         ->columns(2)
                         ->columnSpanFull(),
+                Section::make('Codes d\'accès Plateforme OFPPT')
+                        ->description('Informations d\'inscription (Gmail) et de connexion à la plateforme')
+                        ->icon('heroicon-o-key')
+                        ->columns(2)
+                        ->schema([
+                            // 1. Gmail d'inscription
+                            TextInput::make('gmail_login_ofppt')
+                                ->label('Gmail - Login')
+                                ->email()
+                                ->maxLength(255),
+
+                            TextInput::make('gmail_ofppt_mdp')
+                                ->label('Gmail - Mot de passe')
+                                ->password()
+                                ->revealable()
+                                ->maxLength(255),
+                            TextInput::make('ofppt_mdp')
+                                ->label('Plateforme - Mot de passe')
+                                ->password()
+                                ->revealable()
+                                ->maxLength(255),
+                        ])->columnSpanFull(),
                 Section::make('Informations du Chèque ')
                         ->schema([
                             TextInput::make('cheque_banque')
@@ -272,25 +301,74 @@ class EntrepriseClienteForm
                             ->maxLength(20),
                     ])->columnSpanFull(),
 
-                Section::make('Visuels pour les documents générés')
-                    ->description('Utilisées pour habiller le Modèle 6 et la Fiche de présence générés pour cette entreprise')
-                    ->icon('heroicon-o-photo')
-                    ->columns(2)
-                    ->collapsible()
-                    ->schema([
-                        FileUpload::make('image_entete')
-                            ->label("Image d'en-tête")
-                            ->image()
-                            ->directory('entreprises/entetes')
-                            ->maxSize(5120),
+                /*Section::make('Documents administratifs à joindre')
+                            ->description('Pièces requises pour la constitution des dossiers de l\'entreprise cliente (GIAC, OFPPT...)')
+                            ->icon('heroicon-o-paper-clip')
+                            ->columns(2)
+                            ->collapsible()
+                            ->schema(self::piecesJointesFields())
+                            ->columnSpanFull(),
+                Section::make('Autres documents')
+                            ->description('Documents complémentaires avec intitulé libre')
+                            ->icon('heroicon-o-document-duplicate')
+                            ->collapsible()
+                            ->columnSpanFull()
+                            ->schema([
+                                Repeater::make('autres_documents_repeater')
+                                    ->label('Nouveaux documents à ajouter')
+                                    ->default([])
+                                    ->schema([
+                                        TextInput::make('intitule')
+                                            ->label('Intitulé du document')
+                                            ->required()
+                                            ->maxLength(255),
 
-                        FileUpload::make('image_pied_page')
-                            ->label('Image de pied de page')
-                            ->image()
-                            ->directory('entreprises/pieds-page')
-                            ->maxSize(5120),
-                    ])
-                    ->columnSpanFull(),
-            ]);
+                                        FileUpload::make('fichier')
+                                            ->label('Fichier')
+                                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                            ->maxSize(10240)
+                                            ->disk('local')
+                                            ->directory('tmp-autres-documents')
+                                            ->visibility('private')
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                                    ->addActionLabel('Ajouter un document')
+                                    ->reorderable(false),
+                            ]),*/
+        ]);
     }
+
+    /*protected static function piecesJointesFields(): array
+    {
+        $fields = [];
+
+        foreach (EntrepriseCliente::PIECES_JOINTES as $key => $label) {
+            $isMultiple = $key === 'autres_documents';
+
+            $fields[] = Section::make($label)
+                ->icon(fn (?EntrepriseCliente $record) => $record?->hasMedia($key)
+                    ? 'heroicon-o-check-circle'
+                    : 'heroicon-o-exclamation-triangle')
+                ->iconColor(fn (?EntrepriseCliente $record) => $record?->hasMedia($key)
+                    ? 'success'
+                    : 'warning')
+                ->description(fn (?EntrepriseCliente $record) => $record?->getPieceJointeStatut($key) ?? 'Manquant')
+                ->collapsible()
+                ->collapsed(true)
+                ->compact()
+                ->schema([
+                    SpatieMediaLibraryFileUpload::make($key)
+                        ->label($isMultiple ? 'Documents (PDF / Image)' : 'Document (PDF / Image)')
+                        ->collection($key)
+                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                        ->multiple($isMultiple)
+                        ->maxSize(10240)
+                        ->visibility('private')
+                        ->hiddenLabel(),
+                ]);
+        }
+
+        return $fields;
+    }*/
 }
