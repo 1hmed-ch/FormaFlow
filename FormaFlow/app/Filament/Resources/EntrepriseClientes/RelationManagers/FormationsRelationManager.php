@@ -3,6 +3,10 @@
 namespace App\Filament\Resources\EntrepriseClientes\RelationManagers;
 
 use App\Enums\FormationStatus;
+use App\Exceptions\DocumentGenerationException;
+use App\Models\Formation;
+use App\Services\DocumentGenerationService;
+use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -12,6 +16,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -99,10 +104,41 @@ class FormationsRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make(),
-                // No DissociateAction: formations.entreprise_id is NOT NULL,
-                // so dissociating would attempt to null it and fail at the
-                // DB level. Removing a formation from an entreprise means
-                // deleting it (or reassigning it via Associate elsewhere).
+                /*Action::make('genererModele6')
+                    ->label('Modèle 6')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->visible(fn (Formation $record): bool => $record->statut === FormationStatus::TERMINEE)
+                    ->form([
+                        TextInput::make('annee')
+                            ->label('Exercice (année)')
+                            ->numeric()
+                            ->required()
+                            ->default(now()->year)
+                            ->minValue(2000),
+                    ])
+                    ->action(function (Formation $record, array $data, Action $action) {
+                        try {
+                            $document = app(DocumentGenerationService::class)
+                                ->generateModele6($record, (int) $data['annee']);
+
+                            return response()->streamDownload(
+                                function () use ($document) {
+                                    echo $document['content'];
+                                },
+                                $document['filename'],
+                                ['Content-Type' => 'application/pdf']
+                            );
+                        } catch (DocumentGenerationException $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Génération impossible')
+                                ->body($e->getMessage())
+                                ->send();
+
+                            $action->halt();
+                        }
+                    }),*/
                 DeleteAction::make(),
             ])
             ->toolbarActions([

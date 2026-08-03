@@ -9,6 +9,7 @@ use App\Models\DossierGiac;
 use App\Enums\StatutDossierGiac;
 use App\Models\EntrepriseCliente;
 use App\Models\EntrepriseFormation;
+use App\Models\Formation;
 use App\Models\Groupe;
 use App\Services\Concerns\PersisteDocumentsGeneres;
 use Dompdf\Dompdf;
@@ -20,38 +21,54 @@ class DocumentGenerationService
     use PersisteDocumentsGeneres;
 
     /**
-     * Génère l'attestation "Modèle 6" (Document D) pour une entreprise
-     * cliente, sur un exercice donné.
+     * Génère l'attestation "Modèle 6" (Document D) pour UNE formation
+     * donnée, sur un exercice précisé par l'utilisateur.
      *
-     * @throws DocumentGenerationException si le gérant n'est pas renseigné,
-     *         ou si aucune formation/aucun thème éligible n'est trouvé.
+     * Le document liste les thèmes de cette formation (et non plus
+     * l'ensemble des formations terminées de l'entreprise) : le bouton de
+     * génération vit donc désormais sur la table des Formations plutôt
+     * que sur la fiche entreprise, chaque formation ayant son propre
+     * Modèle 6.
+     *
+     * L'archive reste rattachée à l'EntrepriseCliente (et non à la
+     * Formation) afin que l'historique complet d'une entreprise continue
+     * d'apparaître au même endroit ; l'identifiant de la formation est
+     * conservé dans les métadonnées pour pouvoir filtrer/retrouver le
+     * document d'origine.
+     *
+     * @throws DocumentGenerationException si la formation n'est pas au
+     *         statut "Terminée", si le gérant n'est pas renseigné, ou si
+     *         la formation ne comporte aucun thème à attester.
      */
-    public function generateModele6(EntrepriseCliente $entreprise, int $annee): array
+    public function generateModele6(Formation $formation, int $annee): array
     {
-        $entreprise->loadMissing('gerant');
+        $formation->loadMissing(['entrepriseCliente.gerant', 'themes.formateur']);
+
+        $entreprise = $formation->entrepriseCliente;
+
+        if (! $entreprise) {
+            throw new DocumentGenerationException(
+                "Impossible de générer l'attestation : cette formation n'est rattachée à aucune entreprise cliente."
+            );
+        }
+
+        if ($formation->statut !== FormationStatus::TERMINEE) {
+            throw new DocumentGenerationException(
+                "Impossible de générer l'attestation : la formation \"{$formation->intitule}\" n'est pas encore au statut \"Terminée\"."
+            );
+        }
 
         if (! $entreprise->gerant) {
             throw new DocumentGenerationException(
-                "Impossible de générer l'attestation : aucun gérant n'est renseigné pour cette entreprise."
+                "Impossible de générer l'attestation : aucun gérant n'est renseigné pour l'entreprise {$entreprise->raison_sociale}."
             );
         }
 
-        $formations = $entreprise->formations()
-            ->where('statut', FormationStatus::TERMINEE)
-            ->with(['themes.formateur'])
-            ->get();
-
-        if ($formations->isEmpty()) {
-            throw new DocumentGenerationException(
-                "Aucune formation au statut \"Terminée\" n'a été trouvée pour l'entreprise sur l'exercice {$annee}."
-            );
-        }
-
-        $themes = $formations->flatMap(fn ($formation) => $formation->themes)->values();
+        $themes = $formation->themes;
 
         if ($themes->isEmpty()) {
             throw new DocumentGenerationException(
-                "Les formations terminées de l'exercice {$annee} ne comportent aucun thème à attester."
+                "La formation \"{$formation->intitule}\" ne comporte aucun thème à attester."
             );
         }
 
@@ -59,6 +76,7 @@ class DocumentGenerationService
             'entreprise'    => $entreprise,
             'gerant'        => $entreprise->gerant,
             'organisme'     => EntrepriseFormation::current(),
+            'formation'     => $formation,
             'annee'         => $annee,
             'themes'        => $themes,
             'dateEdition'   => now(),
@@ -66,7 +84,12 @@ class DocumentGenerationService
             'piedPageImage' => $entreprise->getPiedPageImageBase64(),
         ]);
 
-        $filename = sprintf('modele6_%s_%d.pdf', Str::slug($entreprise->raison_sociale), $annee);
+        $filename = sprintf(
+            'modele6_%s_%s_%d.pdf',
+            Str::slug($entreprise->raison_sociale),
+            Str::slug($formation->intitule),
+            $annee
+        );
 
         $this->finaliserDocument(
             $entreprise,
@@ -74,7 +97,7 @@ class DocumentGenerationService
             'remboursement',
             $filename,
             $content,
-            ['annee' => $annee]
+            ['annee' => $annee, 'formation_id' => $formation->id]
         );
 
         return [

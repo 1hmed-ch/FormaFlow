@@ -2,12 +2,19 @@
 
 namespace App\Filament\Resources\EntrepriseClientes\Schemas;
 
+use App\Enums\CategorieDocumentGenere;
 use App\Exceptions\DocumentGenerationException;
+use App\Filament\Resources\EntrepriseClientes\Pages\ViewEntrepriseCliente;
+use App\Models\DossierGiac;
 use App\Models\EntrepriseCliente;
+use App\Models\EntrepriseFormation;
 use App\Services\DocumentGenerationService;
 use App\Services\GiacDocumentGenerationService;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -173,14 +180,216 @@ class EntrepriseClienteInfolist
                             ->height(100)
                             ->placeholder('Aucune image fournie'),
                     ]),
+
+                Section::make('Checklist GIAC — Dossier complet')
+                    ->description("Pièces à joindre au dossier GIAC : les 7 pièces de l'entreprise sont à téléverser ici, les 5 pièces du cabinet proviennent de la fiche Organisme de Formation.")
+                    ->icon('heroicon-o-clipboard-document-check')
+                    ->collapsible()
+                    ->collapsed()
+                    ->columnSpanFull()
+                    ->schema(function (EntrepriseCliente $record): array {
+                        $sections = [];
+
+                        foreach (DossierGiac::PIECES_JOINTES as $key => $label) {
+                            $statut = DossierGiac::pourEntreprise($record)->getPieceJointeStatut($key);
+
+                            $sections[] = Section::make($label)
+                                ->icon(match ($statut['etat']) {
+                                    'Signé' => 'heroicon-o-check-circle',
+                                    'En attente' => 'heroicon-o-clock',
+                                    default => 'heroicon-o-exclamation-triangle',
+                                })
+                                ->iconColor(match ($statut['etat']) {
+                                    'Signé' => 'success',
+                                    'En attente' => 'warning',
+                                    default => 'danger',
+                                })
+                                ->collapsible()
+                                ->collapsed()
+                                ->compact()
+                                ->columns(3)
+                                ->schema([
+                                    TextEntry::make("checklist_entreprise_{$key}_etat")
+                                        ->label('État')
+                                        ->state($statut['etat'])
+                                        ->badge()
+                                        ->color(match ($statut['etat']) {
+                                            'Signé' => 'success',
+                                            'En attente' => 'warning',
+                                            default => 'danger',
+                                        }),
+
+                                    TextEntry::make("checklist_entreprise_{$key}_nom_fichier")
+                                        ->label('Nom du fichier')
+                                        ->state($statut['nom_fichier'] ?? '—'),
+
+                                    TextEntry::make("checklist_entreprise_{$key}_date_ajout")
+                                        ->label("Date d'ajout")
+                                        ->state($statut['date_ajout']?->format('d/m/Y') ?? '—'),
+
+                                    Actions::make([
+                                        Action::make("televerser_{$key}")
+                                            ->label($statut['media'] ? 'Remplacer' : 'Téléverser')
+                                            ->icon('heroicon-o-arrow-up-tray')
+                                            ->color('gray')
+                                            ->form([
+                                                FileUpload::make('document')
+                                                    ->label('Document (PDF / Image)')
+                                                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                                    ->maxSize(10240)
+                                                    ->disk('local')
+                                                    ->directory('giac-checklist-tmp')
+                                                    ->required(),
+                                            ])
+                                            ->action(function (array $data, EntrepriseCliente $record) use ($key) {
+                                                DossierGiac::pourEntreprise($record)
+                                                    ->addMediaFromDisk($data['document'], 'local')
+                                                    ->toMediaCollection($key);
+
+                                                Notification::make()
+                                                    ->success()
+                                                    ->title('Document enregistré')
+                                                    ->send();
+                                            }),
+
+                                        Action::make("telecharger_{$key}")
+                                            ->label('Télécharger')
+                                            ->icon('heroicon-o-arrow-down-tray')
+                                            ->color('gray')
+                                            ->visible((bool) $statut['media'])
+                                            ->action(function (EntrepriseCliente $record) use ($key) {
+                                                $media = DossierGiac::pourEntreprise($record)->getFirstMedia($key);
+
+                                                return response()->download($media->getPath(), $media->file_name);
+                                            }),
+                                    ])->columnSpanFull(),
+                                ]);
+                        }
+
+                        foreach (EntrepriseFormation::PIECES_JOINTES as $key => $label) {
+                            $organisme = EntrepriseFormation::current();
+                            $statut = $organisme->getPieceJointeStatut($key);
+
+                            $sections[] = Section::make($label)
+                                ->description('Pièce du cabinet — gérée depuis Organisme de Formation')
+                                ->icon(match ($statut['etat']) {
+                                    'Valide' => 'heroicon-o-check-circle',
+                                    'Expiré' => 'heroicon-o-x-circle',
+                                    default => 'heroicon-o-exclamation-triangle',
+                                })
+                                ->iconColor(match ($statut['etat']) {
+                                    'Valide' => 'success',
+                                    'Expiré' => 'danger',
+                                    default => 'warning',
+                                })
+                                ->collapsible()
+                                ->collapsed()
+                                ->compact()
+                                ->columns(3)
+                                ->schema([
+                                    TextEntry::make("checklist_cabinet_{$key}_etat")
+                                        ->label('État')
+                                        ->state($statut['etat'])
+                                        ->badge()
+                                        ->color(match ($statut['etat']) {
+                                            'Valide' => 'success',
+                                            'Expiré' => 'danger',
+                                            default => 'warning',
+                                        }),
+
+                                    TextEntry::make("checklist_cabinet_{$key}_nom_fichier")
+                                        ->label('Nom du fichier')
+                                        ->state($statut['nom_fichier'] ?? '—'),
+
+                                    TextEntry::make("checklist_cabinet_{$key}_date_ajout")
+                                        ->label("Date d'ajout")
+                                        ->state($statut['date_ajout']?->format('d/m/Y') ?? '—'),
+
+                                    Actions::make([
+                                        Action::make("gerer_{$key}")
+                                            ->label($statut['media'] ? 'Gérer dans les Paramètres' : 'Ajouter dans les Paramètres')
+                                            ->icon('heroicon-o-arrow-top-right-on-square')
+                                            ->color('gray')
+                                            ->url(fn () => \App\Filament\Pages\ManageSettings::getUrl())
+                                            ->openUrlInNewTab(),
+                                    ])->columnSpanFull(),
+                                ]);
+                        }
+
+                        return $sections;
+                    }),
+
                 Section::make('Archive des documents générés')
                     ->description('Historique complet des PDF générés pour cette entreprise (Modèle 5, Modèle 6, fiche d\'évaluation, GIAC, OFPPT...)')
                     ->icon('heroicon-o-archive-box')
                     ->collapsible()
+                    ->collapsed()
                     ->columnSpanFull()
+                    ->headerActions([
+                        Action::make('filtrerDocumentsGeneres')
+                            ->label('Filtrer')
+                            ->icon('heroicon-o-funnel')
+                            ->color('gray')
+                            ->fillForm(fn (ViewEntrepriseCliente $livewire): array => [
+                                'categorie' => $livewire->archiveDocumentsCategorie,
+                                'genere_du' => $livewire->archiveDocumentsDateDebut,
+                                'genere_au' => $livewire->archiveDocumentsDateFin,
+                            ])
+                            ->form([
+                                Select::make('categorie')
+                                    ->label('Catégorie')
+                                    ->options(CategorieDocumentGenere::class)
+                                    ->native(false)
+                                    ->placeholder('Toutes les catégories'),
+
+                                DatePicker::make('genere_du')
+                                    ->label('Généré à partir du')
+                                    ->native(false),
+
+                                DatePicker::make('genere_au')
+                                    ->label("Généré jusqu'au")
+                                    ->native(false)
+                                    ->afterOrEqual('genere_du'),
+                            ])
+                            ->action(function (array $data, ViewEntrepriseCliente $livewire) {
+                                $livewire->archiveDocumentsCategorie = $data['categorie'] ?? null;
+                                $livewire->archiveDocumentsDateDebut = $data['genere_du'] ?? null;
+                                $livewire->archiveDocumentsDateFin = $data['genere_au'] ?? null;
+                            }),
+
+                        Action::make('reinitialiserFiltreDocumentsGeneres')
+                            ->label('Réinitialiser')
+                            ->icon('heroicon-o-x-mark')
+                            ->color('gray')
+                            ->visible(fn (ViewEntrepriseCliente $livewire): bool => filled($livewire->archiveDocumentsCategorie)
+                                || filled($livewire->archiveDocumentsDateDebut)
+                                || filled($livewire->archiveDocumentsDateFin))
+                            ->action(function (ViewEntrepriseCliente $livewire) {
+                                $livewire->archiveDocumentsCategorie = null;
+                                $livewire->archiveDocumentsDateDebut = null;
+                                $livewire->archiveDocumentsDateFin = null;
+                            }),
+                    ])
                     ->schema([
                         RepeatableEntry::make('documentsGeneres')
                             ->hiddenLabel()
+                            ->state(function (EntrepriseCliente $record, ViewEntrepriseCliente $livewire) {
+                                $query = $record->documentsGeneres();
+
+                                if (filled($livewire->archiveDocumentsCategorie)) {
+                                    $query->where('categorie', $livewire->archiveDocumentsCategorie);
+                                }
+
+                                if (filled($livewire->archiveDocumentsDateDebut)) {
+                                    $query->whereDate('genere_le', '>=', $livewire->archiveDocumentsDateDebut);
+                                }
+
+                                if (filled($livewire->archiveDocumentsDateFin)) {
+                                    $query->whereDate('genere_le', '<=', $livewire->archiveDocumentsDateFin);
+                                }
+
+                                return $query->latest('genere_le')->get();
+                            })
                             ->table([
                                 TableColumn::make('Type'),
                                 TableColumn::make('Catégorie'),
@@ -188,6 +397,7 @@ class EntrepriseClienteInfolist
                                 TableColumn::make('Statut'),
                                 TableColumn::make('Généré le'),
                                 TableColumn::make('Taille'),
+                                TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
                             ])
                             ->schema([
@@ -218,47 +428,50 @@ class EntrepriseClienteInfolist
                                     ->color('primary')
                                     ->url(fn ($record): string => route('documents-generes.telecharger', $record))
                                     ->openUrlInNewTab(),
+                                Actions::make([
+                                    Action::make('supprimer')
+                                        ->label('')
+                                        ->icon('heroicon-o-trash')
+                                        ->color('danger')
+                                        ->requiresConfirmation()
+                                        ->modalHeading('Supprimer le document')
+                                        ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.')
+                                        ->action(function ($record, Action $action) {
+                                            try {
+                                                $record->delete();
+
+                                                Notification::make()
+                                                    ->success()
+                                                    ->title('Document supprimé')
+                                                    ->body('Le document a été supprimé avec succès.')
+                                                    ->send();
+                                            } catch (\Exception $e) {
+                                                Notification::make()
+                                                    ->danger()
+                                                    ->title('Erreur lors de la suppression')
+                                                    ->body('Une erreur est survenue lors de la suppression du document.')
+                                                    ->send();
+
+                                                $action->halt();
+                                            }
+                                        }),
+                                ])
                             ])
-                            ->placeholder('Aucun document généré pour le moment.'),
+                            ->placeholder(fn (ViewEntrepriseCliente $livewire): string => (
+                                filled($livewire->archiveDocumentsCategorie)
+                                || filled($livewire->archiveDocumentsDateDebut)
+                                || filled($livewire->archiveDocumentsDateFin)
+                            )
+                                ? 'Aucun document ne correspond aux critères sélectionnés.'
+                                : 'Aucun document généré pour le moment.'),
                     ]),
 
                 Actions::make([
                     ActionGroup::make(actions: [
-                        Action::make('genererModele6')
-                            ->label('Modèle 6')
-                            ->icon('heroicon-o-document-arrow-down')
-                            ->color('gray')
-                            ->form([
-                                TextInput::make('annee')
-                                    ->label('Exercice (année)')
-                                    ->numeric()
-                                    ->required()
-                                    ->default(now()->year)
-                                    ->minValue(2000)
-                                    ->maxValue(now()->year),
-                            ])
-                            ->action(function (EntrepriseCliente $record, array $data, Action $action) {
-                                try {
-                                    $document = app(DocumentGenerationService::class)
-                                        ->generateModele6($record, (int)$data['annee']);
-
-                                    return response()->streamDownload(
-                                        function () use ($document) {
-                                            echo $document['content'];
-                                        },
-                                        $document['filename'],
-                                        ['Content-Type' => 'application/pdf']
-                                    );
-                                } catch (DocumentGenerationException $e) {
-                                    Notification::make()
-                                        ->danger()
-                                        ->title('Génération impossible')
-                                        ->body($e->getMessage())
-                                        ->send();
-
-                                    $action->halt();
-                                }
-                            }),
+                        // Modèle 6 se génère désormais depuis la table des
+                        // Formations (une attestation par formation), plus
+                        // depuis la fiche entreprise. Voir
+                        // FormationsTable::configure().
 
                         // 2. Bulletin d'Adhésion (B1)
                         Action::make('genererB1')

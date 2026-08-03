@@ -26,4 +26,4 @@ Route::apiResource('/groupes', GroupeController::class);
 Route::post('/groupes/{groupe}/participants', [GroupeController::class, 'attachParticipants']);
 Route::delete('/groupes/{groupe}/participants/{participant}', [GroupeController::class, 'detachParticipant']);
 
-Route::get('/entreprise-clientes/{entreprise_cliente}/documents/modele-6', [EntrepriseClienteController::class, 'genererModele6']);
+Route::get('/formations/{formation}/documents/modele-6', [FormationController::class, 'genererModele6']);
