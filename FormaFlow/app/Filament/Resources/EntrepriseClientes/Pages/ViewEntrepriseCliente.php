@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EntrepriseClientes\Pages;
 
+use App\Enums\CategorieDocumentGenere;
 use App\Exceptions\DocumentGenerationException;
 use App\Filament\Resources\EntrepriseClientes\EntrepriseClienteResource;
 use App\Filament\Resources\EntrepriseClientes\Widgets\EntrepriseClienteFormationsChart;
@@ -20,136 +21,20 @@ class ViewEntrepriseCliente extends ViewRecord
 {
     protected static string $resource = EntrepriseClienteResource::class;
 
+    /**
+     * État du filtre appliqué à la section "Archive des documents générés"
+     * de l'infolist. Lu et modifié depuis EntrepriseClienteInfolist via
+     * l'action "Filtrer" (catégorie + plage de dates de génération).
+     */
+    public string|CategorieDocumentGenere|null $archiveDocumentsCategorie = null;
+
+    public ?string $archiveDocumentsDateDebut = null;
+
+    public ?string $archiveDocumentsDateFin = null;
+
     protected function getHeaderActions(): array
     {
         return [
-            /*ActionGroup::make([
-                Action::make('genererModele6')
-                    ->label('Générer Modèle 6')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->form([
-                        TextInput::make('annee')
-                            ->label('Exercice (année)')
-                            ->numeric()
-                            ->required()
-                            ->default(now()->year)
-                            ->minValue(2000)
-                            ->maxValue(now()->year),
-                    ])
-                    ->action(function (EntrepriseCliente $record, array $data, Action $action) {
-                        try {
-                            $document = app(DocumentGenerationService::class)
-                                ->generateModele6($record, (int)$data['annee']);
-
-                            return response()->streamDownload(
-                                function () use ($document) {
-                                    echo $document['content'];
-                                },
-                                $document['filename'],
-                                ['Content-Type' => 'application/pdf']
-                            );
-                        } catch (DocumentGenerationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Génération impossible')
-                                ->body($e->getMessage())
-                                ->send();
-
-                            $action->halt();
-                        }
-                    }),
-
-                Action::make('genererG3')
-                    ->label('Générer G3 (GIAC)')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->action(function (EntrepriseCliente $record, Action $action) {
-                        try {
-                            $document = app(GiacDocumentGenerationService::class)
-                                ->generateFicheOrganismeConseil($record);
-
-                            return response()->streamDownload(
-                                function () use ($document) {
-                                    echo $document['content'];
-                                },
-                                $document['filename'],
-                                ['Content-Type' => 'application/pdf']
-                            );
-                        } catch (DocumentGenerationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Génération impossible')
-                                ->body($e->getMessage())
-                                ->send();
-
-                            $action->halt();
-                        }
-                    }),
-
-                Action::make('genererF3')
-                    ->label('Générer Formulaire F3 (OFPPT)')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->action(function (EntrepriseCliente $record, Action $action) {
-                        try {
-                            $document = app(GiacDocumentGenerationService::class)
-                                ->generateF3FicheIdentificationOrganisme($record);
-
-                            return response()->streamDownload(
-                                function () use ($document) {
-                                    echo $document['content'];
-                                },
-                                $document['filename'],
-                                ['Content-Type' => 'application/pdf']
-                            );
-                        } catch (DocumentGenerationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Génération impossible')
-                                ->body($e->getMessage())
-                                ->send();
-
-                            $action->halt();
-                        }
-                    }),
-
-                Action::make('genererG7')
-                    ->label('Générer G7 (Bulletin Ré-adhésion)')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->form([
-                        TextInput::make('annee')
-                            ->label('Exercice (année)')
-                            ->numeric()
-                            ->required()
-                            ->default(now()->year)
-                            ->minValue(2000)
-                            ->maxValue(now()->year + 1),
-                    ])
-                    ->action(function (EntrepriseCliente $record, array $data, Action $action) {
-                        try {
-                            $document = app(GiacDocumentGenerationService::class)
-                                ->generateBulletinReadhesion($record, (int)$data['annee']);
-
-                            return response()->streamDownload(
-                                function () use ($document) {
-                                    echo $document['content'];
-                                },
-                                $document['filename'],
-                                ['Content-Type' => 'application/pdf']
-                            );
-                        } catch (DocumentGenerationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Génération impossible')
-                                ->body($e->getMessage())
-                                ->send();
-
-                            $action->halt();
-                        }
-                    }),
-            ])->button(),*/
             EditAction::make(),
         ];
     }
