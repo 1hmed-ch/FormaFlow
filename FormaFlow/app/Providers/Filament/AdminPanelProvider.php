@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -29,8 +30,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->brandLogo(asset('images/Logo/AppLogo1.png'))
             ->brandName('FormaFlow')
-            ->login()
+            ->favicon(asset('images/Logo/favicon.png'))
+            ->login(Login::class)
+            ->brandLogoHeight("3rem")
             ->colors([
                 //'primary' => Color::hex("#3ABCF8"),
                 'primary' => Color::Blue,
