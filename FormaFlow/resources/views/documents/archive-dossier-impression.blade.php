@@ -83,5 +83,27 @@
         @endforelse
     </tbody>
 </table>
+<h2>Demande de Financement (OFPPT)</h2>
+<div class="header-meta">
+    Statut : {{ $statutFinancement?->getLabel() ?? '—' }}
+</div>
+<table>
+    <thead>
+        <tr><th>Pièce</th><th>Statut</th></tr>
+    </thead>
+    <tbody>
+        @foreach ($piecesOfppt as $key => $label)
+            @php $depose = $entreprise->hasMedia($key); @endphp
+            <tr>
+                <td>{{ $label }}</td>
+                <td>
+                    <span class="badge {{ $depose ? 'badge-success' : 'badge-danger' }}">
+                        {{ $depose ? 'Déposé' : 'Manquant' }}
+                    </span>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 </body>
 </html>

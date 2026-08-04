@@ -10,6 +10,10 @@ use Filament\Schemas\Schema;
 class ViewArchive extends ViewRecord
 {
     protected static string $resource = ArchiveResource::class;
+    public ?string $archiveDocumentsCategorie = null;
+    public ?string $archiveDocumentsDateDebut = null;
+    public ?string $archiveDocumentsDateFin = null;
+
 
     public function infolist(Schema $schema): Schema
     {

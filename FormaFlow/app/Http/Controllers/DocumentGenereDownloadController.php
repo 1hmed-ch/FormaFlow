@@ -30,4 +30,18 @@ class DocumentGenereDownloadController extends Controller
             $documentGenere->nom_fichier
         );
     }
+    public function stream(DocumentGenere $documentGenere): StreamedResponse
+    {
+        abort_unless(
+            $documentGenere->existeSurLeDisque(),
+            404,
+            "Ce document n'est plus disponible sur le disque de stockage."
+        );
+
+        return Storage::disk($documentGenere->disque)->response(
+            $documentGenere->chemin,
+            $documentGenere->nom_fichier,
+            ['Content-Type' => 'application/pdf']
+        );
+    }
 }

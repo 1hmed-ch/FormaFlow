@@ -487,27 +487,26 @@ class DocumentGenerationService
             'content'  => $content,
         ];
     }
-    public function generateImpressionDossier(DossierGiac $dossier): array
-{
-    $entreprise = $dossier->entrepriseCliente;
-    $entreprise->loadMissing('gerant', 'documentsGeneres');
+        public function generateImpressionDossier(DossierGiac $dossier): array
+    {
+        $entreprise = $dossier->entrepriseCliente;
+        $entreprise->loadMissing('gerant', 'documentsGeneres');
 
-    $content = $this->renderFromView('documents.archive-dossier-impression', [
-        'dossier'           => $dossier,
-        'entreprise'        => $entreprise,
-        'documentsGeneres'  => $entreprise->documentsGeneres,
-        'autresDocuments'   => $entreprise->getMedia('autres_documents'),
-        'progression'       => $dossier->getProgressionArchive(),
-        'dateEdition'       => now(),
-    ]);
+        $content = $this->renderFromView('documents.archive-dossier-impression', [
+            'dossier'           => $dossier,
+            'entreprise'        => $entreprise,
+            'documentsGeneres'  => $entreprise->documentsGeneres,
+            'autresDocuments'   => $entreprise->getMedia('autres_documents'),
+            'progression'       => $dossier->getProgressionArchive(),
+            'statutFinancement' => $entreprise->statut_demande_financement,
+            'piecesOfppt'       => EntrepriseCliente::PIECES_JOINTES_OFPPT,
+            'dateEdition'       => now(),
+        ]);
 
-    $filename = sprintf('dossier_%s.pdf', \Illuminate\Support\Str::slug($entreprise->raison_sociale));
+        $filename = sprintf('dossier_%s.pdf', \Illuminate\Support\Str::slug($entreprise->raison_sociale));
 
-    return [
-        'filename' => $filename,
-        'content'  => $content,
-    ];
-}
+        return ['filename' => $filename, 'content' => $content];
+    }
     public function generateFicheAccesClient(EntrepriseCliente $entreprise): array
     {
         $entreprise->loadMissing('gerant');

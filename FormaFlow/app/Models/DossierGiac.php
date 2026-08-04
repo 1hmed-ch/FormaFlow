@@ -36,6 +36,7 @@ class DossierGiac extends Model implements HasMedia
     protected $casts = [
         'statut' => StatutDossierGiac::class,
         'date_generation' => 'datetime',
+        
     ];
 
     public function entrepriseCliente(): BelongsTo
@@ -45,28 +46,30 @@ class DossierGiac extends Model implements HasMedia
 
     public function getProgressionArchive(): int
     {
-        $entreprise = $this->entrepriseCliente;
-
-        if (! $entreprise) {
+        $totalPieces = count(self::PIECES_JOINTES);
+        
+        if ($totalPieces === 0) {
             return 0;
         }
 
-        $totalPieces = count(\App\Models\EntrepriseCliente::PIECES_JOINTES);
-        $piecesOk = collect(\App\Models\EntrepriseCliente::PIECES_JOINTES)
+        $piecesOk = collect(self::PIECES_JOINTES)
             ->keys()
-            ->filter(fn ($key) => $entreprise->hasMedia($key))
+            ->filter(fn ($key) => $this->hasMedia($key))
             ->count();
 
-        $totalGiac = 7; // B1, B2, C, D, E, F, G
-        $giacOk = $entreprise->documentsGeneres()
-            ->where('categorie', 'giac')
-            ->distinct('type_document')
-            ->count('type_document');
+        $progression = (int) round(($piecesOk / $totalPieces) * 100);
 
-        $total = $totalPieces + $totalGiac;
+        if ($progression >= 100 && $this->statut !== StatutDossierGiac::Signe) {
+            $this->statut = StatutDossierGiac::Signe;
+            $this->saveQuietly(); 
+        } elseif ($progression < 100 && $this->statut === StatutDossierGiac::Signe) {
+            $this->statut = StatutDossierGiac::EnCours;
+            $this->saveQuietly();
+        }
 
-        return $total > 0 ? (int) round((($piecesOk + $giacOk) / $total) * 100) : 0;
+        return $progression;
     }
+
 
     public function registerMediaCollections(): void
     {

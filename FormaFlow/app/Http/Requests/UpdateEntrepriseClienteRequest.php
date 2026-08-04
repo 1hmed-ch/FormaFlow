@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use App\Enums\GerantGender; 
 use Illuminate\Validation\Rules\Enum;
+use App\Enums\DemandeFinancementStatus;
 class UpdateEntrepriseClienteRequest extends FormRequest
 {
     /**
@@ -75,6 +76,8 @@ class UpdateEntrepriseClienteRequest extends FormRequest
             'gmail_login_ofppt'       => ['nullable', 'email', 'max:255'],
             'gmail_ofppt_mdp'         => ['nullable', 'string', 'max:255'],
             'ofppt_mdp'               => ['nullable', 'string', 'max:255'],
+            'statut_demande_financement' => ['nullable', Rule::enum(DemandeFinancementStatus::class)],
+    
             
             
         ];
