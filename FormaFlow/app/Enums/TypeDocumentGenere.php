@@ -23,17 +23,17 @@ enum TypeDocumentGenere: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Modele6 => 'Modèle 6 — Attestation',
-            self::Modele5FichePresence => 'Modèle 5 — Fiche de présence',
+            self::Modele6 => 'Modèle 6',
+            self::Modele5FichePresence => 'Fiche de présence',
             self::FicheEvaluationSynthetique => "Fiche d'évaluation synthétique",
-            self::GiacG1BulletinAdhesion => "B1 — Bulletin d'adhésion",
-            self::GiacG2FicheEntreprise => 'C — Fiche d\'information entreprise',
-            self::GiacG3FicheOrganismeConseil => 'F — Fiche G3 organisme de conseil',
-            self::GiacG4FicheIngenierieFormation => 'E — Fiche technique ingénierie',
-            self::GiacG5DeclarationHonneur => "G — Déclaration sur l'honneur",
-            self::GiacG6FicheDiagnosticStrategique => 'D — Fiche technique diagnostic',
-            self::GiacG7BulletinReadhesion => 'B2 — Bulletin de ré-adhésion',
-            self::F3FicheIdentificationOrganisme => "F3 — Fiche d'identification organisme",
+            self::GiacG1BulletinAdhesion => "Bulletin d'adhésion",
+            self::GiacG2FicheEntreprise => 'Fiche d\'information entreprise',
+            self::GiacG3FicheOrganismeConseil => 'Fiche G3 organisme de conseil',
+            self::GiacG4FicheIngenierieFormation => 'Fiche technique ingénierie',
+            self::GiacG5DeclarationHonneur => "Déclaration sur l'honneur",
+            self::GiacG6FicheDiagnosticStrategique => 'Fiche technique diagnostic',
+            self::GiacG7BulletinReadhesion => 'Bulletin de ré-adhésion',
+            self::F3FicheIdentificationOrganisme => "F3 Fiche d'identification organisme",
         };
     }
 }

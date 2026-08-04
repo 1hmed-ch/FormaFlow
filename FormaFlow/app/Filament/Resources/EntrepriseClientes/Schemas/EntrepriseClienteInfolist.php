@@ -271,7 +271,7 @@ class EntrepriseClienteInfolist
                             $statut = $organisme->getPieceJointeStatut($key);
 
                             $sections[] = Section::make($label)
-                                ->description('Pièce du cabinet — gérée depuis Organisme de Formation')
+                                ->description('Pièce du cabinet')
                                 ->icon(match ($statut['etat']) {
                                     'Valide' => 'heroicon-o-check-circle',
                                     'Expiré' => 'heroicon-o-x-circle',
@@ -432,6 +432,7 @@ class EntrepriseClienteInfolist
                                     Action::make('supprimer')
                                         ->label('')
                                         ->icon('heroicon-o-trash')
+                                        ->size('sm')
                                         ->color('danger')
                                         ->requiresConfirmation()
                                         ->modalHeading('Supprimer le document')
