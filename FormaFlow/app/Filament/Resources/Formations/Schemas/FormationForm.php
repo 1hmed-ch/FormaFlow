@@ -52,7 +52,7 @@ class FormationForm
                             ->options(FormationStatus::class)
                             ->default(FormationStatus::PLANIFIEE)
                             ->colors([
-                                FormationStatus::PLANIFIEE->value => 'primary',
+                                FormationStatus::PLANIFIEE->value => 'indigo',
                                 FormationStatus::EN_COURS->value => 'warning',
                                 FormationStatus::TERMINEE->value => 'success',
                                 FormationStatus::ANNULEE->value => 'danger',

@@ -3,6 +3,10 @@
 namespace App\Filament\Resources\EntrepriseClientes\Widgets;
 
 use App\Enums\FormationStatus;
+use App\Filament\Resources\Archives\ArchiveResource;
+use App\Filament\Resources\Formations\FormationResource;
+use App\Filament\Resources\Groupes\GroupeResource;
+use App\Filament\Resources\Participants\ParticipantResource;
 use App\Models\EntrepriseCliente;
 use App\Models\Groupe;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -41,20 +45,24 @@ class EntrepriseClienteOverview extends BaseWidget
             Stat::make('Formations', $entreprise->formations()->count())
                 ->description($formationsEnCours.' en cours · '.$formationsTerminees.' terminées')
                 ->icon('heroicon-o-academic-cap')
+                ->url(FormationResource::getUrl('index'))
                 ->color('info'),
 
             Stat::make('Participants', $entreprise->participants()->count())
                 ->icon('heroicon-o-identification')
+                ->url(ParticipantResource::getUrl('index'))
                 ->color('success'),
 
             Stat::make('Groupes', $groupesCount)
                 ->description('Toutes formations confondues')
                 ->icon('heroicon-o-user-group')
+                ->url(GroupeResource::getUrl('index'))
                 ->color('warning'),
 
             Stat::make('Documents générés', $documentsCount)
                 ->description('Modèles 6 archivés')
                 ->icon('heroicon-o-document-arrow-down')
+                ->url(ArchiveResource::getUrl('view', ['record' => $this->record]))
                 ->color('gray'),
         ];
     }

@@ -55,7 +55,7 @@ class FormationsRelationManager extends RelationManager
                 Select::make('statut')
                     ->label('Statut de la formation')
                     ->options(FormationStatus::class)
-                    ->default('Planifiee')
+                    ->default(FormationStatus::PLANIFIEE)
                     ->native(false)
                     ->required()
                     ->columnSpanFull(),
@@ -83,10 +83,10 @@ class FormationsRelationManager extends RelationManager
                     ->label('État d\'avancement')
                     ->badge()
                     ->color(fn ($state): string => match ($state->value ?? $state) {
-                        'PLANIFIEE', 'Planifiee' => 'info',
+                        'PLANIFIEE', 'Planifiée' => 'info',
                         'EN_COURS', 'En cours'   => 'warning',
-                        'TERMINEE', 'Terminee'   => 'success',
-                        'ANNULEE', 'Annulee'     => 'danger',
+                        'TERMINEE', 'Terminée'   => 'success',
+                        'ANNULEE', 'Annulée'     => 'danger',
                         default                  => 'gray',
                     }),
             ])
@@ -97,48 +97,10 @@ class FormationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make(),
-                // "entreprise_id" is NOT NULL, so Associate reassigns an
-                // existing formation from another entreprise rather than
-                // linking an "orphan" one.
                 AssociateAction::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                /*Action::make('genererModele6')
-                    ->label('Modèle 6')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('gray')
-                    ->visible(fn (Formation $record): bool => $record->statut === FormationStatus::TERMINEE)
-                    ->form([
-                        TextInput::make('annee')
-                            ->label('Exercice (année)')
-                            ->numeric()
-                            ->required()
-                            ->default(now()->year)
-                            ->minValue(2000),
-                    ])
-                    ->action(function (Formation $record, array $data, Action $action) {
-                        try {
-                            $document = app(DocumentGenerationService::class)
-                                ->generateModele6($record, (int) $data['annee']);
-
-                            return response()->streamDownload(
-                                function () use ($document) {
-                                    echo $document['content'];
-                                },
-                                $document['filename'],
-                                ['Content-Type' => 'application/pdf']
-                            );
-                        } catch (DocumentGenerationException $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Génération impossible')
-                                ->body($e->getMessage())
-                                ->send();
-
-                            $action->halt();
-                        }
-                    }),*/
                 DeleteAction::make(),
             ])
             ->toolbarActions([

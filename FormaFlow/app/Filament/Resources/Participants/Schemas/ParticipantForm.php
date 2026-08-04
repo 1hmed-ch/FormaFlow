@@ -15,7 +15,7 @@ class ParticipantForm
     {
         return $schema
             ->components([
-                Section::make('Identité du Participant')
+                Section::make('Identité de l\'Employé')
                     ->description('Informations personnelles et identification légale')
                     ->icon('heroicon-o-identification')
                     ->collapsible()
@@ -54,12 +54,6 @@ class ParticipantForm
                             ->columnSpanFull()
                             ->maxLength(255),
 
-                        /*Select::make('categorie_sp')
-                            ->label('Catégorie Socio-Professionnelle')
-                            ->options(CategorieSP::class)
-                            ->native(false)
-                            ->columnSpanFull()
-                            ->required(),*/
                         ToggleButtons::make('categorie_sp')
                             ->label('Catégorie Socio-Professionnelle')
                             ->options([
@@ -69,8 +63,8 @@ class ParticipantForm
                             ])
                             ->colors([
                                 CategorieSP::Cadre->value => 'primary',
-                                CategorieSP::Employe->value => 'success',
-                                CategorieSP::Ouvrier->value => 'warning',
+                                CategorieSP::Employe->value => 'teal',
+                                CategorieSP::Ouvrier->value => 'indigo',
                             ])
                             ->icons([
                                 CategorieSP::Cadre->value => 'heroicon-o-user-circle',
