@@ -121,7 +121,7 @@
     <p><span class="info-label">Thème de l'action :</span> {{ $theme->intitule }}</p>
     <p>
         <span class="info-label">Jours de réalisation :</span>
-        Du {{ $groupe->date_debut->format('d/m/Y') }} au {{ $groupe->date_fin->format('d/m/Y') }}
+        Du {{ $theme?->date_debut?->format('d/m/Y') ?? '--' }} au {{ $theme?->date_fin?->format('d/m/Y') ?? '--' }}
     </p>
 </div>
 

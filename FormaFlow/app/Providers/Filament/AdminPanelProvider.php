@@ -20,6 +20,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -41,8 +42,8 @@ class AdminPanelProvider extends PanelProvider
                 'indigo' => Color::Indigo,
                 'violet' => Color::Violet,
                 'teal' => Color::Teal,
-                'yellow' => COlor::Yellow,
-                'olive' => COlor::Olive,
+                'yellow' => Color::Yellow,
+                'olive' => Color::Olive,
                 'danger'  => Color::Rose,
                 'gray'    => Color::Zinc,
                 'info'    => Color::Sky,
@@ -60,6 +61,12 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 FormaFlowStatsOverview::class,
             ])
+            ->plugin(
+                FilamentFullCalendarPlugin::make()
+                    ->locale('fr')
+                    ->selectable(false)
+                    ->editable(false),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

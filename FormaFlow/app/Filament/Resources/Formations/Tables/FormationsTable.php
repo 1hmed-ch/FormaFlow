@@ -44,6 +44,14 @@ class FormationsTable
                     ->limit(35)
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('date_debut')
+                    ->label('Début')
+                    ->date('d/m/Y')
+                    ->sortable(),
+                TextColumn::make('date_fin')
+                    ->label('Fin')
+                    ->date('d/m/Y')
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
