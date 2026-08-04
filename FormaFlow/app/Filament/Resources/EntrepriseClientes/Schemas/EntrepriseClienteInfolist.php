@@ -468,12 +468,6 @@ class EntrepriseClienteInfolist
 
                 Actions::make([
                     ActionGroup::make(actions: [
-                        // Modèle 6 se génère désormais depuis la table des
-                        // Formations (une attestation par formation), plus
-                        // depuis la fiche entreprise. Voir
-                        // FormationsTable::configure().
-
-                        // 2. Bulletin d'Adhésion (B1)
                         Action::make('genererB1')
                             ->label('Bulletin d\'Adhésion')
                             ->icon('heroicon-o-document-arrow-down')
@@ -536,8 +530,6 @@ class EntrepriseClienteInfolist
                                     $action->halt();
                                 }
                             }),
-
-                        // 4. Fiche Entreprise (C)
                         Action::make('genererC')
                             ->label('Fiche Entreprise (C)')
                             ->icon('heroicon-o-document-arrow-down')
@@ -619,7 +611,6 @@ class EntrepriseClienteInfolist
                                 }
                             }),
 
-                        // 7. Déclaration sur l'Honneur
                         Action::make('genererDeclarationHonneur')
                             ->label('Déclaration sur l\'Honneur')
                             ->icon('heroicon-o-document-arrow-down')
@@ -653,7 +644,7 @@ class EntrepriseClienteInfolist
     protected static function piecesJointesEntries(): array
     {
         $entries = [];
- 
+
         foreach (EntrepriseCliente::PIECES_JOINTES as $key => $label) {
             $entries[] = TextEntry::make($key . '_statut')
                 ->label($label)
@@ -668,7 +659,7 @@ class EntrepriseClienteInfolist
                     : null)
                 ->openUrlInNewTab();
         }
- 
+
         return $entries;
     }
 }

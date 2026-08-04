@@ -57,7 +57,7 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
                         ->numeric()
                         ->minValue(2000)
                         ->visible(fn ($get) => (bool) $get('plan_formation')),
-                ]),
+                ])->columnSpanFull(),
 
                 Textarea::make('bilan_competence')
                     ->label('Bilan de Compétence')
@@ -71,7 +71,6 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
 
                 Textarea::make('resultats_attendus')
                     ->label("Résultats attendus de l'Action")
-                    ->required()
                     ->rows(3)
                     ->columnSpanFull(),
 
@@ -79,30 +78,26 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
                     DatePicker::make('periode_debut')
                         ->label('Période - Début')
                         ->displayFormat('d/m/Y')
-                        ->native(false)
-                        ->required(),
+                        ->native(false),
 
                     DatePicker::make('periode_fin')
                         ->label('Période - Fin')
                         ->displayFormat('d/m/Y')
                         ->native(false)
-                        ->afterOrEqual('periode_debut')
-                        ->required(),
-                ]),
+                        ->afterOrEqual('periode_debut'),
+                ])->columnSpanFull(),
 
                 Grid::make(2)->schema([
                     TextInput::make('nb_jours_intervention')
                         ->label("Nombre de jours d'Intervention")
                         ->numeric()
-                        ->minValue(0)
-                        ->required(),
+                        ->minValue(0),
 
                     TextInput::make('cout_action')
                         ->label("Coût de l'Action (Hors Taxe, DH)")
                         ->numeric()
-                        ->minValue(0)
-                        ->required(),
-                ]),
+                        ->minValue(0),
+                ])->columnSpanFull(),
 
                 DatePicker::make('date_signature')
                     ->label('Date de Signature')
@@ -138,6 +133,9 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
 
                 TextColumn::make('cout_action')
                     ->label('Coût (DH)')
+                    ->badge()
+                    ->color('teal')
+                    ->icon('heroicon-o-currency-dollar')
                     ->numeric(decimalPlaces: 2)
                     ->sortable(),
 

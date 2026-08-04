@@ -40,7 +40,7 @@ class ParticipantsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->multiple()
                     // 1. Afficher "Nom Prénom" dans la liste déroulante
-                    ->recordTitle(fn ($record) => "{$record->nom} {$record->prenom}")
+                    ->recordTitle(fn ($record) => "{$record->prenom} {$record->nom} - {$record->cin} ({$record->categorie_sp->value})")
                     // 2. Permettre la recherche par nom OU par prénom
                     ->recordSelectSearchColumns(['nom', 'prenom'])
                     ->recordSelectOptionsQuery(function (Builder $query) use ($groupe) {

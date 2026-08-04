@@ -14,6 +14,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -32,10 +33,10 @@ class FormationsTable
                     ->label('État d\'avancement')
                     ->badge()
                     ->color(fn ($state): string => match ($state->value ?? $state) {
-                        'PLANIFIEE', 'Planifiee' => 'info',
+                        'PLANIFIEE', 'Planifiée' => 'info',
                         'EN_COURS', 'En cours'   => 'warning',
-                        'TERMINEE', 'Terminee'   => 'success',
-                        'ANNULEE', 'Annulee'     => 'danger',
+                        'TERMINEE', 'Terminée'   => 'success',
+                        'ANNULEE', 'Annulée'     => 'danger',
                         default                  => 'gray',
                     }),
                 TextColumn::make('entrepriseCliente.raison_sociale')
@@ -106,14 +107,32 @@ class FormationsTable
                     Action::make('changerStatut')
                         ->label('Changer le statut')
                         ->icon('heroicon-o-arrow-path')
-                        ->color('warning')
+                        ->color('indigo')
                         ->form([
-                            Select::make('statut')
+                            /*Select::make('statut')
                                 ->label('État d\'avancement')
                                 ->options(FormationStatus::class)
                                 ->native(false)
                                 ->default(fn (Formation $record) => $record->statut)
-                                ->required(),
+                                ->required(),*/
+                            ToggleButtons::make('statut')
+                                ->label('État d\'avancement')
+                                ->options(FormationStatus::class)
+                                ->default(fn (Formation $record) => $record->statut)
+                                ->colors([
+                                    FormationStatus::PLANIFIEE->value => 'info',
+                                    FormationStatus::EN_COURS->value => 'yellow',
+                                    FormationStatus::TERMINEE->value => 'success',
+                                    FormationStatus::ANNULEE->value => 'danger',
+                                ])
+                                ->icons([
+                                    FormationStatus::PLANIFIEE->value => 'heroicon-o-calendar',
+                                    FormationStatus::EN_COURS->value => 'heroicon-o-clock',
+                                    FormationStatus::TERMINEE->value => 'heroicon-o-check-circle',
+                                    FormationStatus::ANNULEE->value => 'heroicon-o-x-circle',
+                                ])
+                                ->required()
+                                ->inline(),
                         ])
                         ->action(function (Formation $record, array $data): void {
                             $record->update([

@@ -33,6 +33,9 @@ class GroupesTable
                     ->searchable(),
                 TextColumn::make('effectif_max')
                     ->numeric()
+                    ->badge()
+                    ->color('indigo')
+                    ->icon('heroicon-o-users')
                     ->sortable(),
                 TextColumn::make('lieu')
                     ->searchable()

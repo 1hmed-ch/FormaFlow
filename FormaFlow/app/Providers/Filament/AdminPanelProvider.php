@@ -41,11 +41,13 @@ class AdminPanelProvider extends PanelProvider
                 'indigo' => Color::Indigo,
                 'violet' => Color::Violet,
                 'teal' => Color::Teal,
+                'yellow' => COlor::Yellow,
+                'olive' => COlor::Olive,
                 'danger'  => Color::Rose,
                 'gray'    => Color::Zinc,
-                'info'    => Color::Blue,
+                'info'    => Color::Sky,
                 'success' => Color::Emerald,
-                'warning' => Color::Amber,
+                'warning' => Color::Orange,
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('18rem')

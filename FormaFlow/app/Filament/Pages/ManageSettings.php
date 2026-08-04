@@ -60,7 +60,7 @@ class ManageSettings extends Page implements HasForms
         $isMultiple = $key === 'cv_consultants';
 
         if ($isMultiple) {
-            // Cas particulier : collection multiple (CV des consultants) 
+            // Cas particulier : collection multiple (CV des consultants)
             $mediaCollection = $record->getMedia($key);
             $isUploaded = $mediaCollection->isNotEmpty();
 
@@ -84,11 +84,9 @@ class ManageSettings extends Page implements HasForms
                     ->visibility('private')
                     ->model($record)
                     ->columnSpanFull(),
-                // Pas de DatePicker ici : plusieurs fichiers, pas de date unique.
             ];
 
         } else {
-            //Cas normal : collection single-file
             $media = $record->getFirstMedia($key);
             $isUploaded = $media !== null;
 
@@ -173,8 +171,6 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('siege_social')->label('Siège Social'),
                                 TextInput::make('ville')->label('Ville'),
                             ]),
-
-                        // Section Visuels
                         Section::make('Visuels')
                             ->columnSpan(1)
                             ->schema([
@@ -185,8 +181,6 @@ class ManageSettings extends Page implements HasForms
                                     ->maxSize(5120),
                             ]),
                     ]),
-
-                // Section 2: Identifiants Fiscaux
                 Section::make('Identifiants Fiscaux & Coordonnées')
                     ->schema([
                         Grid::make(4)->schema([
@@ -206,8 +200,6 @@ class ManageSettings extends Page implements HasForms
                             TextInput::make('site_web')->label('Site Web')->url(),
                         ]),
                     ]),
-
-                // Section 3: Domaines
                 Section::make('Compétences & Moyens')
                     ->schema([
                         TagsInput::make('domaines_competence')
@@ -218,8 +210,6 @@ class ManageSettings extends Page implements HasForms
                             ->placeholder('Ajouter un moyen...'),
 
                     ]),
-
-                // Section 4: RH Effectifs
                 Section::make('Ressources Humaines (Effectifs)')
                     ->description("Le détail \"dont étrangers\" alimente les fiches G3 (GIAC) et Formulaire F3 (OFPPT).")
                     ->schema([
@@ -266,7 +256,6 @@ class ManageSettings extends Page implements HasForms
                     ->rows(3)
                     ->columnSpanFull(),
                                     ]),
-                // Section 5: Représentant Légal
                 Section::make('Représentant Légal')
                     ->schema([
                         Grid::make(2)->schema([
@@ -275,15 +264,13 @@ class ManageSettings extends Page implements HasForms
                         ]),
                     ]),
 
-               
-                // Section 6: Pièces Jointes
+
                 Section::make('Pièces Jointes de l\'organisme')
                     ->description('Veuillez glisser-déposer vos documents administratifs requis.')
                     ->schema([
                         Grid::make(2)->schema($piecesJointesFields)
                     ]),
 
-                // Bouton en bas
                 Actions::make([
                     Action::make('save')
                         ->label('Enregistrer')
@@ -296,7 +283,7 @@ class ManageSettings extends Page implements HasForms
             ->statePath('data');
     }
 
-    
+
     public function save(): void
 {
     $record = EntrepriseFormation::current();
@@ -306,7 +293,7 @@ class ManageSettings extends Page implements HasForms
 
         foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
             if ($collection === 'cv_consultants') {
-                continue; // pas de date d'expiration pour cette collection multiple
+                continue;
             }
 
             $media = $record->getFirstMedia($collection);

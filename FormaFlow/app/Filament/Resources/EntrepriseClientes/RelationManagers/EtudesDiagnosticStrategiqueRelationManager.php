@@ -46,7 +46,7 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
                     Toggle::make('projet_autre')
                         ->label('Autre')
                         ->live(),
-                ]),
+                ])->columnSpanFull(),
 
                 TextInput::make('projet_autre_precision')
                     ->label('Autre - à préciser')
@@ -56,7 +56,6 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
 
                 Textarea::make('objectifs_resultats_attendus')
                     ->label('Objectifs et Résultats Attendus du Diagnostic')
-                    ->required()
                     ->rows(3)
                     ->columnSpanFull(),
 
@@ -69,29 +68,25 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
                     TextInput::make('annee_application')
                         ->label("Année d'Application")
                         ->numeric()
-                        ->minValue(2000)
-                        ->required(),
+                        ->minValue(2000),
 
                     TextInput::make('duree_intervention_jours')
                         ->label("Durée de l'Intervention (jours)")
                         ->numeric()
-                        ->minValue(0)
-                        ->required(),
-                ]),
+                        ->minValue(0),
+                ])->columnSpanFull(),
 
                 Grid::make(2)->schema([
                     DatePicker::make('date_demarrage')
                         ->label('Date de Démarrage')
                         ->displayFormat('d/m/Y')
-                        ->native(false)
-                        ->required(),
+                        ->native(false),
 
                     TextInput::make('cout_previsionnel')
                         ->label("Coût Prévisionnel (Hors Taxe, DH)")
                         ->numeric()
-                        ->minValue(0)
-                        ->required(),
-                ]),
+                        ->minValue(0),
+                ])->columnSpanFull(),
 
                 DatePicker::make('date_signature')
                     ->label('Date de Signature')
@@ -126,6 +121,9 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
 
                 TextColumn::make('cout_previsionnel')
                     ->label('Coût (DH)')
+                    ->badge()
+                    ->color('teal')
+                    ->icon('heroicon-o-currency-dollar')
                     ->numeric(decimalPlaces: 2)
                     ->sortable(),
 
