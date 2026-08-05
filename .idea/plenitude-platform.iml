@@ -166,6 +166,9 @@
       <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/spatie/image-optimizer" />
       <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/spatie/laravel-medialibrary" />
       <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/spatie/temporary-directory" />
+      <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/intervention/gif" />
+      <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/intervention/image" />
+      <excludeFolder url="file://$MODULE_DIR$/FormaFlow/vendor/saade/filament-fullcalendar" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

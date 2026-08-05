@@ -178,6 +178,9 @@
       <path value="$PROJECT_DIR$/FormaFlow/vendor/spatie/image-optimizer" />
       <path value="$PROJECT_DIR$/FormaFlow/vendor/spatie/laravel-medialibrary" />
       <path value="$PROJECT_DIR$/FormaFlow/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/saade/filament-fullcalendar" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/intervention/image" />
+      <path value="$PROJECT_DIR$/FormaFlow/vendor/intervention/gif" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />

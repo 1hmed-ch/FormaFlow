@@ -28,6 +28,15 @@ class FormationForm
                             ->maxLength(255)
                             ->columnSpanFull(),
 
+                        DatePicker::make('date_debut')
+                            ->label('Date de début')
+                            ->native(false),
+
+                        DatePicker::make('date_fin')
+                            ->label('Date de fin')
+                            ->native(false)
+                            ->afterOrEqual('date_debut'),
+
                         Select::make('entreprise_id')
                             ->label('Entreprise Cliente')
                             ->relationship('entrepriseCliente', 'raison_sociale')
@@ -67,7 +76,7 @@ class FormationForm
                             ->inline()
                             ->columnSpanFull(),
 
-                        ])->columnSpanFull(),
-                    ]);
+                    ])->columnSpanFull(),
+            ]);
     }
 }
