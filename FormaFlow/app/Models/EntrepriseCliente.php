@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Enums\DemandeFinancementStatus;
 
 
 class EntrepriseCliente extends Model implements HasMedia
@@ -50,6 +51,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'gmail_login_ofppt',
         'gmail_ofppt_mdp',
         'ofppt_mdp',
+        'statut_demande_financement',
     ];
 
     protected $casts = [
@@ -58,6 +60,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'date_depot_ancien_giac' => 'date:Y-m-d',
         'montant_tfp' => 'decimal:2',
         'cheque_date'=>'date:Y-m-d',
+        'statut_demande_financement' => \App\Enums\DemandeFinancementStatus::class,
     
         
     ];
@@ -71,10 +74,18 @@ class EntrepriseCliente extends Model implements HasMedia
         'facture_pro_forma'  => 'Facture pro forma (originale)',
        // 'autres_documents' => 'Autres documents',
     ];
+    public const PIECES_JOINTES_OFPPT = [
+    'formulaire_f2' => 'Formulaire F2',
+    'formulaire_f3' => 'Formulaire F3',
+    'modele_1' => 'Modèle 1',
+    'rapport_valide_giac' => 'Rapport validé par le GIAC',
+    'attestation_approbation_rapport' => "Attestation d'approbation du rapport",
+    ];
 
     public function registerMediaCollections(): void
     {
-        $singleCollections = ['cin_gerant', 'entete_page', 'pied_page', 'logo','eligibilite_csf', 'facture_pro_forma'];
+        $singleCollections = ['cin_gerant', 'entete_page', 'pied_page', 'logo','eligibilite_csf', 'facture_pro_forma',
+        'formulaire_f2', 'formulaire_f3', 'modele_1', 'rapport_valide_giac', 'attestation_approbation_rapport',];
 
         foreach ($singleCollections as $collection) {
             $this->addMediaCollection($collection)

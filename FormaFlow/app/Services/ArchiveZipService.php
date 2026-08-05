@@ -3,16 +3,18 @@
 namespace App\Services;
 
 use App\Models\DossierGiac;
-use App\Models\EntrepriseFormation;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 class ArchiveZipService
 {
-    public function build(DossierGiac $dossier): string
-    {
+    public function build(
+        DossierGiac $dossier,
+        ?string $categorie = null,
+        ?string $dateDebut = null,
+        ?string $dateFin = null
+    ): string {
         $entreprise = $dossier->entrepriseCliente;
-        $organisme  = EntrepriseFormation::current();
 
         $zipFilename = sprintf(
             'dossier_%s_%d.zip',
@@ -30,27 +32,35 @@ class ArchiveZipService
             throw new \RuntimeException("Impossible de créer l'archive ZIP.");
         }
 
-        // 1. Pièces jointes de l'entreprise cliente (toutes collections)
-        foreach ($entreprise->media as $media) {
-            if (file_exists($media->getPath())) {
-                $zip->addFile($media->getPath(), 'Entreprise/' . $media->collection_name . '/' . $media->file_name);
-            }
+        // Documents générés, triés par les plus récents en premier
+        $documentsQuery = $entreprise->documentsGeneres()->latest('genere_le');
+
+        if (filled($categorie)) {
+            $documentsQuery->where('categorie', $categorie);
+        }
+        if (filled($dateDebut)) {
+            $documentsQuery->whereDate('genere_le', '>=', $dateDebut);
+        }
+        if (filled($dateFin)) {
+            $documentsQuery->whereDate('genere_le', '<=', $dateFin);
         }
 
-        // 2. Documents GIAC générés
-        foreach ($entreprise->documentsGeneres as $document) {
+        // Tableau pour suivre les fichiers déjà ajoutés par leur nom et éviter les doublons obsolètes
+        $fichiersAjoutes = [];
+
+        foreach ($documentsQuery->get() as $document) {
             if (Storage::disk($document->disque)->exists($document->chemin)) {
-                $zip->addFromString(
-                    'GIAC/' . $document->nom_fichier,
-                    Storage::disk($document->disque)->get($document->chemin)
-                );
-            }
-        }
+                $sousDossier = $document->categorie?->value ?? $document->categorie ?? 'Autres';
+                $cheminDansZip = ucfirst($sousDossier) . '/' . $document->nom_fichier;
 
-        // 3. Pièces jointes de l'organisme de formation (toutes collections)
-        foreach ($organisme->media as $media) {
-            if (file_exists($media->getPath())) {
-                $zip->addFile($media->getPath(), 'Organisme-Formation/' . $media->collection_name . '/' . $media->file_name);
+                if (!in_array($cheminDansZip, $fichiersAjoutes)) {
+                    $zip->addFromString(
+                        $cheminDansZip,
+                        Storage::disk($document->disque)->get($document->chemin)
+                    );
+
+                    $fichiersAjoutes[] = $cheminDansZip;
+                }
             }
         }
 
