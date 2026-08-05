@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Filament\Resources\Archives\Schemas;
-
 use App\Exceptions\DocumentGenerationException;
 use App\Models\DossierGiac;
 use App\Models\EntrepriseCliente;
@@ -25,15 +23,12 @@ use App\Filament\Resources\Archives\Pages\ViewArchive;
 use App\Enums\CategorieDocumentGenere;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
-
-
 class ArchiveInfolist
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-
                 // Bloc 1 : Fiche entreprise
                 Section::make('Fiche entreprise')
                     ->description('Fiche d\'information générale de l\'entreprise')

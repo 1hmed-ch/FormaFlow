@@ -493,14 +493,15 @@ class DocumentGenerationService
         $entreprise->loadMissing('gerant', 'documentsGeneres');
 
         $content = $this->renderFromView('documents.archive-dossier-impression', [
-            'dossier'           => $dossier,
-            'entreprise'        => $entreprise,
-            'documentsGeneres'  => $entreprise->documentsGeneres,
-            'autresDocuments'   => $entreprise->getMedia('autres_documents'),
-            'progression'       => $dossier->getProgressionArchive(),
-            'statutFinancement' => $entreprise->statut_demande_financement,
-            'piecesOfppt'       => EntrepriseCliente::PIECES_JOINTES_OFPPT,
-            'dateEdition'       => now(),
+            'dossier'               => $dossier,
+            'entreprise'            => $entreprise,
+            'documentsGeneres'      => $entreprise->documentsGeneres,
+            'autresDocuments'       => $entreprise->getMedia('autres_documents'),
+            'autresDocumentsOfppt'  => $entreprise->getMedia('autres_documents_ofppt'), // ⬅️ zdna hadi
+            'progression'           => $dossier->getProgressionArchive(),
+            'statutFinancement'     => $entreprise->statut_demande_financement,
+            'piecesOfppt'           => EntrepriseCliente::PIECES_JOINTES_OFPPT,
+            'dateEdition'           => now(),
         ]);
 
         $filename = sprintf('dossier_%s.pdf', \Illuminate\Support\Str::slug($entreprise->raison_sociale));
@@ -526,9 +527,6 @@ class DocumentGenerationService
 
         $filename = sprintf('fiche_acces_client_%s.pdf', Str::slug($entreprise->raison_sociale));
 
-        // Pas de finaliserDocument() ici volontairement : ce PDF contient des
-        // mots de passe en clair (Gmail/OFPPT), on évite d'en garder une trace
-        // persistante dans documentsGeneres.
 
         return [
             'filename' => $filename,
