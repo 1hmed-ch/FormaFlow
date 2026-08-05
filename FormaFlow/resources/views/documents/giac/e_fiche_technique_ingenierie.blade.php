@@ -171,7 +171,7 @@
 
     <div class="field-line">
         <strong>2) Résultats attendus de l'Action :</strong>
-        {{ $etude->resultats_attendus ?: '....................................................................................................................' }}
+        {{ $etude->resultats_attendus ?: '......................................................................................' }}
     </div>
 
     <div class="field-line">
@@ -187,9 +187,9 @@
 
     <div class="field-line">
         <strong>5) Organisme d'Intervention :</strong>
-        {{ $organisme->raison_sociale ?: '.........................................................................................' }}
+        {{ $organisme->raison_sociale ?: '......................................................' }}
     </div>
-    <div class="field-line" style="margin-left: 45px"><strong>* Adresse :</strong> {{ $organisme->siege_social ?: '.........................................................................................' }}</div>
+    <div class="field-line" style="margin-left: 45px"><strong>* Adresse :</strong> {{ $organisme->siege_social ?: '...........................................................' }}</div>
     <div class="field-line" style="margin-left: 45px">
         <strong>* N° de CNSS :</strong> {{ $organisme->cnss ?: '......................................' }}
         &nbsp;&nbsp; <strong style="margin-left: 80px">Mail :</strong> {{ $organisme->email ?: '......................................' }}
@@ -200,7 +200,7 @@
     </div>
     <div class="field-line" style="margin-left: 45px"><strong>* R.C. :</strong> {{ $organisme->rc ?: '......................................' }}</div>
     <div class="field-line" style="margin-left: 45px">
-        <strong>* Personne(s) à contacter :</strong> {{ $organisme->representant_nom ?: '.........................................................................................' }}
+        <strong>* Personne(s) à contacter :</strong> {{ $organisme->representant_nom ?: '............................................................' }}
     </div>
     <div class="field-line" style="margin-left: 45px">
         <strong>* Fonction dans l'Entreprise :</strong> {{ $organisme->representant_fonction ?: '......................................' }}

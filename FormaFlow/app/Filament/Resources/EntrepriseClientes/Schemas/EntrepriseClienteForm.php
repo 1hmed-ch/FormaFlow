@@ -45,13 +45,13 @@ class EntrepriseClienteForm
 
                         TextInput::make('siege_social')
                             ->label('Siège Social')
-                            ->required()
+                           // ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
 
                        TextInput::make('ville')
-                            ->label('Ville')
-                            ->required(),
+                            ->label('Ville'),
+                            //->required(),
                             
                         DatePicker::make('date_creation')
                             ->label('Date de Création')
@@ -65,7 +65,7 @@ class EntrepriseClienteForm
 
                         TextInput::make('secteur_activite')
                             ->label('Secteur d\'Activité')
-                            ->required()
+                            //->required()
                             ->maxLength(255),
 
                         Textarea::make('activite')
@@ -130,7 +130,7 @@ class EntrepriseClienteForm
                             TextInput::make('fonction')
                                 ->label('Fonction / Qualité')
                                 ->placeholder('ex: Gérant, Directeur Général...')
-                                ->required()
+                               // ->required()
                                 ->maxLength(255),
 
                             TextInput::make('cin')

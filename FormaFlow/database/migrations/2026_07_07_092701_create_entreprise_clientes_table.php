@@ -15,18 +15,18 @@ return new class extends Migration
             $table->id(); 
             
             $table->string('raison_sociale');
-            $table->string('siege_social');
+            $table->string('siege_social')->nullable();
             $table->date('date_creation')->nullable();
             $table->string('statut_juridique')->nullable();
             
             $table->string('ice', 15)->unique(); 
             $table->string('if', 50)->unique();  
             
-            $table->string('num_cnss', 50)->nullable()->unique();
-            $table->string('rc', 50)->nullable()->unique();
-            $table->string('patente', 50)->nullable()->unique();
+            $table->string('num_cnss', 50)->nullable();
+            $table->string('rc', 50)->nullable();
+            $table->string('patente', 50)->nullable();
             
-            $table->string('secteur_activite');
+            $table->string('secteur_activite')->nullable();
             $table->string('activite')->nullable();
             $table->string('region_affiliation_cnss')->nullable();
             $table->integer('effectif_total')->nullable();

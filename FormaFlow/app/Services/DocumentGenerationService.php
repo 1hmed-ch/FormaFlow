@@ -341,11 +341,11 @@ class DocumentGenerationService
             );
         }
 
-        if ($entreprise->effectif_total === null || $entreprise->effectif_total <= 0) {
+        /*if ($entreprise->effectif_total === null || $entreprise->effectif_total <= 0) {
             throw new DocumentGenerationException(
                 "Impossible de générer la Fiche d'Information (G2) : l'effectif total de l'entreprise {$entreprise->raison_sociale} doit être renseigné."
             );
-        }
+        }*/
 
         $content = $this->renderFromView('documents.giac.c_fiche_entreprise', [
             'entreprise'  => $entreprise,
@@ -443,11 +443,11 @@ class DocumentGenerationService
             );
         }
 
-        if (empty($entreprise->ville)) {
+       /* if (empty($entreprise->ville)) {
             throw new DocumentGenerationException(
                 "Impossible de générer la Déclaration sur l'Honneur : la ville de l'entreprise {$entreprise->raison_sociale} n'est pas renseignée."
             );
-        }
+        }*/
 
         $annees = $entreprise->anneesFormations();
 
