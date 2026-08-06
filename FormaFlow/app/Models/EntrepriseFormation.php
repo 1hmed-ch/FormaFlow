@@ -13,15 +13,12 @@ class EntrepriseFormation extends Model implements HasMedia
 {
     use HasFactory,InteractsWithMedia;
     public const PIECES_JOINTES = [
-        'cv_consultants'        => 'CV des consultants',
-        'fiche_identification'  => 'Fiche d’identification de l’organisme de formation',
-        'fiche_renseignement'  => 'Fiche de renseignement de l’organisme de conseil',
-        'proposition_intervention' => 'Proposition d\'intervention',
-        'rc_modele_j'            => 'RC Modèle J',
-       // 'eligibilite_csf'        => 'Éligibilité CSF cabinet',
-        //'facture_pro_forma'      => 'Facture pro forma (originale)',
-    ];
-
+    'cv_consultants'           => ['label' => 'CV des consultants', 'multiple' => true],
+    'fiche_identification'     => ['label' => 'Fiche d’identification de l’organisme de formation', 'multiple' => false],
+    'fiche_renseignement'      => ['label' => 'Fiche de renseignement de l’organisme de conseil', 'multiple' => false],
+    'proposition_intervention' => ['label' => "Proposition d'intervention", 'multiple' => false],
+    'rc_modele_j'              => ['label' => 'RC Modèle J', 'multiple' => false],
+];
     protected $fillable = [
         'raison_sociale',
         'logo',
@@ -73,20 +70,16 @@ class EntrepriseFormation extends Model implements HasMedia
 
 
     public function registerMediaCollections(): void
-{
-    $singleFileCollections = array_diff(array_keys(self::PIECES_JOINTES), ['cv_consultants']);
+    {
+        foreach (self::PIECES_JOINTES as $key => $config) {
+            $collection = $this->addMediaCollection($key)
+                ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
 
-    foreach ($singleFileCollections as $collection) {
-        $this->addMediaCollection($collection)
-            ->singleFile()
-            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
+            if (!$config['multiple']) {
+                $collection->singleFile();
+            }
+        }
     }
-
-    // CV des consultants : plusieurs fichiers possibles 
-    $this->addMediaCollection('cv_consultants')
-        ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
-}
-
 
     public function getPieceJointeStatut(string $collection): array
     {

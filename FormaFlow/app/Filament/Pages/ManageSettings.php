@@ -36,111 +36,119 @@ class ManageSettings extends Page implements HasForms
 
     public ?array $data = [];
 
+    /**
+     * Sous-ensemble de PIECES_JOINTES géré sur CETTE page.
+     * Les autres (fiche_identification, fiche_renseignement) sont
+     * gérées ailleurs — on ne les touche pas ici.
+     */
+    protected const PIECES_JOINTES_PAGE = [
+        'rc_modele_j',
+        'cv_consultants',
+        'proposition_intervention',
+    ];
+
+    /**
+     * Retourne uniquement le sous-ensemble de PIECES_JOINTES pertinent
+     * pour cette page (garde label + multiple depuis le modèle).
+     */
+    protected static function piecesJointesPage(): array
+    {
+        return array_intersect_key(
+            EntrepriseFormation::PIECES_JOINTES,
+            array_flip(self::PIECES_JOINTES_PAGE)
+        );
+    }
+
     public function mount(): void
     {
         $record = EntrepriseFormation::current();
 
         $initialData = $record->toArray();
 
-        foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
+        foreach (array_keys(self::piecesJointesPage()) as $collection) {
             $status = $record->getPieceJointeStatut($collection);
             $initialData['date_expiration_' . $collection] = $status['date_expiration'] ?? null;
         }
 
         $this->form->fill($initialData);
     }
+
     public function form(Schema $schema): Schema
     {
+        $piecesJointesFields = [];
+        $record = EntrepriseFormation::current();
 
-         $piecesJointesFields = [];
-    $record = EntrepriseFormation::current();
+        $makeSection = function (string $key, string $label, bool $isMultiple) use ($record) {
+            if ($isMultiple) {
+                $mediaCollection = $record->getMedia($key);
+                $isUploaded = $mediaCollection->isNotEmpty();
 
-    foreach (EntrepriseFormation::PIECES_JOINTES as $key => $label) {
+                $icon = $isUploaded ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle';
+                $color = $isUploaded ? 'success' : 'warning';
+                $description = $isUploaded ? $mediaCollection->count() . ' fichier(s) fourni(s)' : 'Document manquant';
 
-        $isMultiple = $key === 'cv_consultants';
-
-        if ($isMultiple) {
-            // Cas particulier : collection multiple (CV des consultants)
-            $mediaCollection = $record->getMedia($key);
-            $isUploaded = $mediaCollection->isNotEmpty();
-
-            if (!$isUploaded) {
-                $icon = 'heroicon-o-exclamation-triangle';
-                $color = 'warning';
-                $description = 'Document manquant';
+                $fieldsSchema = [
+                    SpatieMediaLibraryFileUpload::make($key)
+                        ->label('Documents (PDF / Image)')
+                        ->collection($key)
+                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                        ->multiple()
+                        ->maxSize(10240)
+                        ->visibility('private')
+                        ->model($record)
+                        ->columnSpanFull(),
+                ];
             } else {
-                $icon = 'heroicon-o-check-circle';
-                $color = 'success';
-                $description = $mediaCollection->count() . ' fichier(s) fourni(s)';
+                $media = $record->getFirstMedia($key);
+                $isUploaded = $media !== null;
+                $dateExpiration = $isUploaded ? $media->getCustomProperty('date_expiration') : null;
+                $isExpired = $isUploaded && $dateExpiration && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
+
+                if (!$isUploaded) {
+                    $icon = 'heroicon-o-exclamation-triangle';
+                    $color = 'warning';
+                    $description = 'Document manquant';
+                } elseif ($isExpired) {
+                    $icon = 'heroicon-o-x-circle';
+                    $color = 'danger';
+                    $description = 'Document expiré';
+                } else {
+                    $icon = 'heroicon-o-check-circle';
+                    $color = 'success';
+                    $description = 'Document fourni • Ajouté le ' . $media->created_at->format('d/m/Y');
+                }
+
+                $fieldsSchema = [
+                    SpatieMediaLibraryFileUpload::make($key)
+                        ->label('Document (PDF / Image)')
+                        ->collection($key)
+                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                        ->maxSize(10240)
+                        ->visibility('private')
+                        ->model($record),
+
+                    DatePicker::make('date_expiration_' . $key)
+                        ->label("Date d'expiration")
+                        ->native(false),
+                ];
             }
 
-            $fieldsSchema = [
-                SpatieMediaLibraryFileUpload::make($key)
-                    ->label('Documents (PDF / Image)')
-                    ->collection($key)
-                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                    ->multiple()
-                    ->maxSize(10240)
-                    ->visibility('private')
-                    ->model($record)
-                    ->columnSpanFull(),
-            ];
+            return Section::make($label)
+                ->icon($icon)
+                ->iconColor($color)
+                ->description($description)
+                ->collapsible()
+                ->collapsed(true)
+                ->compact()
+                ->columns(2)
+                ->schema($fieldsSchema);
+        };
 
-        } else {
-            $media = $record->getFirstMedia($key);
-            $isUploaded = $media !== null;
-
-            $dateExpiration = $isUploaded
-                ? $media->getCustomProperty('date_expiration')
-                : null;
-
-            $isExpired = $isUploaded
-                && $dateExpiration
-                && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
-
-            if (!$isUploaded) {
-                $icon = 'heroicon-o-exclamation-triangle';
-                $color = 'warning';
-                $description = 'Document manquant';
-            } elseif ($isExpired) {
-                $icon = 'heroicon-o-x-circle';
-                $color = 'danger';
-                $description = 'Document expiré';
-            } else {
-                $icon = 'heroicon-o-check-circle';
-                $color = 'success';
-                $description = 'Document fourni';
-            }
-
-            if ($isUploaded) {
-                $description .= ' • Ajouté le ' . $media->created_at->format('d/m/Y');
-            }
-
-            $fieldsSchema = [
-                SpatieMediaLibraryFileUpload::make($key)
-                    ->label('Document (PDF / Image)')
-                    ->collection($key)
-                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                    ->maxSize(10240)
-                    ->visibility('private')
-                    ->model($record),
-
-                DatePicker::make('date_expiration_' . $key)
-                    ->label("Date d'expiration")
-                    ->native(false),
-            ];
+        // Génération dynamique — uniquement les 3 pièces de cette page
+        foreach (self::piecesJointesPage() as $key => $config) {
+            $piecesJointesFields[] = $makeSection($key, $config['label'], $config['multiple']);
         }
 
-        $piecesJointesFields[] = Section::make($label)
-            ->icon($icon)
-            ->iconColor($color)
-            ->description($description)
-            ->collapsible()
-            ->collapsed(true)
-            ->compact()
-            ->columns(2)
-            ->schema($fieldsSchema);
-    }
         return $schema
             ->components([
                 Grid::make(3)
@@ -184,8 +192,8 @@ class ManageSettings extends Page implements HasForms
                 Section::make('Identifiants Fiscaux & Coordonnées')
                     ->schema([
                         Grid::make(4)->schema([
-                            TextInput::make('ice')->label('ICE')->required(),
-                            TextInput::make('rc')->label('RC')->required(),
+                            TextInput::make('ice')->label('ICE'),
+                            TextInput::make('rc')->label('RC'),
                             TextInput::make('if')->label('N° IF'),
                             TextInput::make('patente')->label('Patente'),
                         ]),
@@ -208,7 +216,6 @@ class ManageSettings extends Page implements HasForms
                         TagsInput::make('moyens_pedagogiques')
                             ->label('Moyens Pédagogiques')
                             ->placeholder('Ajouter un moyen...'),
-
                     ]),
                 Section::make('Ressources Humaines (Effectifs)')
                     ->description("Le détail \"dont étrangers\" alimente les fiches G3 (GIAC) et Formulaire F3 (OFPPT).")
@@ -231,31 +238,31 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('nb_autres_employes_etrangers')->label('Dont étrangers')->numeric()->minValue(0)->default(0),
                             ]),
                         ]),
-             Grid::make(2)->schema([
-                TextInput::make('effectif_total')
-                    ->label('Effectif Total')
-                    ->numeric()
-                    ->minValue(0)
-                    ->default(0),
+                        Grid::make(2)->schema([
+                            TextInput::make('effectif_total')
+                                ->label('Effectif Total')
+                                ->numeric()
+                                ->minValue(0)
+                                ->default(0),
 
-                Toggle::make('appartient_groupe_etranger')
-                    ->label("L'organisme appartient à un groupe étranger")
-                    ->inline(false)
-                    ->live(),
-            ]),
+                            Toggle::make('appartient_groupe_etranger')
+                                ->label("L'organisme appartient à un groupe étranger")
+                                ->inline(false)
+                                ->live(),
+                        ]),
 
-                TextInput::make('nom_groupe_etranger')
-                    ->label('Si oui lequel')
-                    ->placeholder('Préciser le nom du groupe...')
-                    ->visible(fn (callable $get) => $get('appartient_groupe_etranger') === true)
-                    ->columnSpanFull(),
+                        TextInput::make('nom_groupe_etranger')
+                            ->label('Si oui lequel')
+                            ->placeholder('Préciser le nom du groupe...')
+                            ->visible(fn (callable $get) => $get('appartient_groupe_etranger') === true)
+                            ->columnSpanFull(),
 
-                Textarea::make('references')
-                    ->label('Références')
-                    ->placeholder('Saisir les références ici...')
-                    ->rows(3)
-                    ->columnSpanFull(),
-                                    ]),
+                        Textarea::make('references')
+                            ->label('Références')
+                            ->placeholder('Saisir les références ici...')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
                 Section::make('Représentant Légal')
                     ->schema([
                         Grid::make(2)->schema([
@@ -263,7 +270,6 @@ class ManageSettings extends Page implements HasForms
                             TextInput::make('representant_fonction')->label('Fonction du Représentant'),
                         ]),
                     ]),
-
 
                 Section::make('Pièces Jointes de l\'organisme')
                     ->description('Veuillez glisser-déposer vos documents administratifs requis.')
@@ -278,51 +284,57 @@ class ManageSettings extends Page implements HasForms
                         ->color('primary')
                         ->keyBindings(['mod+s']),
                 ])
-    ->alignEnd(),
+                    ->alignEnd(),
             ])
             ->statePath('data');
     }
 
-
     public function save(): void
-{
-    $record = EntrepriseFormation::current();
-    $state = $this->form->getState();
-    try {
-        $record->update($state);
+    {
+        $record = EntrepriseFormation::current();
+        $state = $this->form->getState();
 
-        foreach (array_keys(EntrepriseFormation::PIECES_JOINTES) as $collection) {
-            if ($collection === 'cv_consultants') {
-                continue;
-            }
-
-            $media = $record->getFirstMedia($collection);
-            if ($media) {
-                $expirationDate = $state['date_expiration_' . $collection] ?? null;
-                $media->setCustomProperty('date_expiration', $expirationDate);
-                $media->save();
+        foreach ($state as $key => $value) {
+            if ($value === '') {
+                $state[$key] = null;
             }
         }
 
-        Notification::make()
-            ->title('Paramètres enregistrés avec succès !')
-            ->success()
-            ->send();
+        try {
+            $record->update($state);
 
-    } catch (\Illuminate\Database\QueryException $e) {
-        Notification::make()
-            ->title('Erreur de base de données')
-            ->body('Une contrainte a empêché l\'enregistrement. Vérifiez les champs uniques (ICE, RC...).')
-            ->danger()
-            ->send();
-        report($e);
-    } catch (\Throwable $e) {
-        Notification::make()
-            ->title('Une erreur est survenue')
-            ->body('L\'enregistrement a échoué.')
-            ->danger()
-            ->send();
-        report($e);
+            foreach (self::piecesJointesPage() as $collection => $config) {
+                if ($config['multiple']) {
+                    continue; // les collections multiples n'ont pas de date d'expiration
+                }
+
+                $media = $record->getFirstMedia($collection);
+                if ($media) {
+                    $expirationDate = $state['date_expiration_' . $collection] ?? null;
+                    $media->setCustomProperty('date_expiration', $expirationDate);
+                    $media->save();
+                }
+            }
+
+            Notification::make()
+                ->title('Paramètres enregistrés avec succès !')
+                ->success()
+                ->send();
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Notification::make()
+                ->title('Erreur de base de données')
+                ->body('Une contrainte a empêché l\'enregistrement. Vérifiez les champs uniques (ICE, RC...).')
+                ->danger()
+                ->send();
+            report($e);
+        } catch (\Throwable $e) {
+            Notification::make()
+                ->title('Une erreur est survenue')
+                ->body('L\'enregistrement a échoué.')
+                ->danger()
+                ->send();
+            report($e);
+        }
     }
-}
 }
