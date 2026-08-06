@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\gerantGender;
+use App\Enums\GerantGender;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Gerant extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'nom',
         'prenom',
@@ -18,7 +21,7 @@ class Gerant extends Model
     ];
 
     protected $casts = [
-      'genre' => gerantGender::class,
+      'genre' => GerantGender::class,
     ];
 
     public function entrepriseCliente()

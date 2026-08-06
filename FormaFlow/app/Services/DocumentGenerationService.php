@@ -184,6 +184,23 @@ class DocumentGenerationService
         return $dompdf->output();
     }
 
+
+    /**
+     * Encode en Base64 le logo GIAC (asset statique de l'application),
+     * pour respecter la contrainte Dompdf isRemoteEnabled => false
+     * (cf. config/documents.php).
+     */
+    protected function giacLogoBase64(): string
+    {
+        $path = public_path('images/giac/logo-giac.png');
+
+        if (! is_file($path)) {
+            return '';
+        }
+
+        return 'data:image/png;base64,' . base64_encode(file_get_contents($path));
+    }
+
     /**
      * Génère la "Fiche d'évaluation synthétique par groupe".
      *
@@ -314,10 +331,16 @@ class DocumentGenerationService
         ];
     }
 
+
     public function generateB2BulletinReadhesion(EntrepriseCliente $entreprise): array
     {
+        $annee = $entreprise->anneesFormations()[0] ?? now()->year;
+
         $content = $this->renderFromView('documents.giac.b2_bulletin_readhesion', [
             'entreprise'  => $entreprise,
+            'gerant'      => $entreprise->gerant,
+            'annee'       => $annee,
+            'giacLogo'    => $this->giacLogoBase64(),
             'dateEdition' => now(),
         ]);
 
@@ -365,9 +388,19 @@ class DocumentGenerationService
 
     public function generateDFicheTechniqueDiagnostic(EntrepriseCliente $entreprise): array
     {
+        $etude = $entreprise->etudesDiagnosticStrategique()->latest()->first();
+
+        if (! $etude) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la fiche D : aucune étude de diagnostic stratégique n'est renseignée pour l'entreprise {$entreprise->raison_sociale}."
+            );
+        }
+
         $content = $this->renderFromView('documents.giac.d_fiche_technique_diagnostic', [
             'entreprise'  => $entreprise,
             'organisme'   => EntrepriseFormation::current(),
+            'etude'       => $etude,
+            'giacLogo'    => $this->giacLogoBase64(),
             'dateEdition' => now(),
         ]);
 
@@ -383,9 +416,19 @@ class DocumentGenerationService
 
     public function generateEFicheTechniqueIngenierie(EntrepriseCliente $entreprise): array
     {
+        $etude = $entreprise->etudesIngenierieFormation()->latest()->first();
+
+        if (! $etude) {
+            throw new DocumentGenerationException(
+                "Impossible de générer la fiche E : aucune étude d'ingénierie de formation n'est renseignée pour l'entreprise {$entreprise->raison_sociale}."
+            );
+        }
+
         $content = $this->renderFromView('documents.giac.e_fiche_technique_ingenierie', [
             'entreprise'  => $entreprise,
             'organisme'   => EntrepriseFormation::current(),
+            'etude'       => $etude,
+            'giacLogo'    => $this->giacLogoBase64(),
             'dateEdition' => now(),
         ]);
 
@@ -404,6 +447,7 @@ class DocumentGenerationService
         $content = $this->renderFromView('documents.giac.f_fiche_g3', [
             'entreprise'  => $entreprise,
             'organisme'   => EntrepriseFormation::current(),
+            'giacLogo'    => $this->giacLogoBase64(),
             'dateEdition' => now(),
         ]);
 
@@ -487,7 +531,8 @@ class DocumentGenerationService
             'content'  => $content,
         ];
     }
-        public function generateImpressionDossier(DossierGiac $dossier): array
+
+    public function generateImpressionDossier(DossierGiac $dossier): array
     {
         $entreprise = $dossier->entrepriseCliente;
         $entreprise->loadMissing('gerant', 'documentsGeneres');
@@ -508,6 +553,7 @@ class DocumentGenerationService
 
         return ['filename' => $filename, 'content' => $content];
     }
+
     public function generateFicheAccesClient(EntrepriseCliente $entreprise): array
     {
         $entreprise->loadMissing('gerant');

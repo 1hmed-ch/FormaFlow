@@ -64,6 +64,15 @@ class ArchiveZipService
             }
         }
 
+        if (empty($fichiersAjoutes)) {
+            $zip->close();
+            @unlink($zipPath);
+
+            throw new \RuntimeException(
+                "Aucun document ne correspond aux critères sélectionnés : l'archive serait vide."
+            );
+        }
+
         $zip->close();
 
         return $zipPath;
