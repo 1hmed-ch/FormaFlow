@@ -309,6 +309,7 @@ class ArchiveInfolist
                                 TableColumn::make('Ajouté le'),
                                 TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
+                                TableColumn::make('')->hiddenHeaderLabel(),
                             ])
                             ->schema([
                                 TextEntry::make('intitule')
@@ -340,6 +341,24 @@ class ArchiveInfolist
                                     ->color('primary')
                                     ->url(fn ($record) => route('media.stream', $record))
                                     ->openUrlInNewTab(),
+                            // Bouton Supprimer 
+                                TextEntry::make('supprimer')
+                                    ->label('')
+                                    ->state('Supprimer')
+                                    ->icon('heroicon-o-trash')
+                                    ->color('danger')
+                                    ->action(
+                                        Action::make('supprimerAutreDoc')
+                                            ->color('danger')
+                                            ->requiresConfirmation()
+                                            ->modalHeading('Supprimer le document')
+                                            ->modalDescription('Cette action est irréversible.')
+                                            ->action(function ($record, $livewire) {
+                                                $record->delete();
+                                                Notification::make()->success()->title('Document supprimé')->send();
+                                                $livewire->dispatch('$refresh');
+                                            })
+                                    ),
                             ])
                             ->placeholder('Aucun document complémentaire ajouté.'),
 
@@ -455,6 +474,7 @@ class ArchiveInfolist
                                 TableColumn::make('Ajouté le'),
                                 TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
+                                TableColumn::make('')->hiddenHeaderLabel(),
                             ])
                             ->schema([
                                 TextEntry::make('intitule')
@@ -486,6 +506,23 @@ class ArchiveInfolist
                                     ->color('primary')
                                     ->url(fn ($record) => route('media.stream', $record))
                                     ->openUrlInNewTab(),
+                            TextEntry::make('supprimer')
+                                    ->label('')
+                                    ->state('Supprimer')
+                                    ->icon('heroicon-o-trash')
+                                    ->color('danger')
+                                    ->action(
+                                        Action::make('supprimerAutreDocOfppt')
+                                            ->color('danger')
+                                            ->requiresConfirmation()
+                                            ->modalHeading('Supprimer le document')
+                                            ->modalDescription('Cette action est irréversible.')
+                                            ->action(function ($record, $livewire) {
+                                                $record->delete();
+                                                Notification::make()->success()->title('Document supprimé')->send();
+                                                $livewire->dispatch('$refresh');
+                                            })
+                                    ),
                             ])
                             ->placeholder('Aucun document de financement complémentaire.'),
 
@@ -615,7 +652,24 @@ class ArchiveInfolist
                                 Notification::make()->success()->title("Pièce '{$label}' enregistrée avec succès")->send();
                                 $livewire->dispatch('$refresh');
                             }),
+                   Action::make('supprimer_checklist_' . $key)
+                            ->label('Supprimer')
+                            ->icon('heroicon-o-trash')
+                            ->color('danger')
+                            ->visible(fn (DossierGiac $record) => (bool) $getStatut($record)['media'])
+                            ->requiresConfirmation()
+                            ->modalHeading('Supprimer la pièce : ' . $label)
+                            ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
+                            ->action(function (DossierGiac $record, $livewire) use ($getStatut) {
+                                $media = $getStatut($record)['media'];
+                                if ($media) {
+                                    $media->delete();
+                                    Notification::make()->success()->title('Document supprimé avec succès')->send();
+                                    $livewire->dispatch('$refresh');
+                                }
+                            }),
                     ]),
+                
                 ]);
         }
 
@@ -711,6 +765,22 @@ class ArchiveInfolist
                                 Notification::make()->success()->title("Pièce '{$label}' enregistrée avec succès")->send();
                                 $livewire->dispatch('$refresh');
                             }),
+                   Action::make('supprimer_cabinet_' . $key)
+                            ->label('Supprimer')
+                            ->icon('heroicon-o-trash')
+                            ->color('danger')
+                            ->visible((bool) $statut['media'])
+                            ->requiresConfirmation()
+                            ->modalHeading('Supprimer la pièce : ' . $label)
+                            ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
+                            ->action(function ($livewire) use ($key) {
+                                $media = \App\Models\EntrepriseFormation::current()->getFirstMedia($key);
+                                if ($media) {
+                                    $media->delete();
+                                    Notification::make()->success()->title('Document supprimé avec succès')->send();
+                                    $livewire->dispatch('$refresh');
+                                }
+                            }),
                     ]),
                 ]);
         }
@@ -796,6 +866,24 @@ class ArchiveInfolist
                                 Notification::make()->success()->title("Pièce '{$label}' enregistrée avec succès")->send();
                                 $livewire->dispatch('$refresh');
                             }),
+                 Action::make('supprimer_ofppt_' . $key)
+                            ->label('Supprimer')
+                            ->icon('heroicon-o-trash')
+                            ->color('danger')
+                            ->visible($hasMedia)
+                            ->requiresConfirmation()
+                            ->modalHeading('Supprimer la pièce : ' . $label)
+                            ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
+                            ->action(function (DossierGiac $record, $livewire) use ($key) {
+                                $media = $record->entrepriseCliente?->getFirstMedia($key);
+                                if ($media) {
+                                    $media->delete();
+                                    $record->entrepriseCliente->unsetRelation('media');
+                                    $record->unsetRelation('entrepriseCliente');
+                                    Notification::make()->success()->title('Document supprimé avec succès')->send();
+                                    $livewire->dispatch('$refresh');
+                                }
+                            }),
                     ]),
                 ]);
         }
@@ -806,8 +894,12 @@ class ArchiveInfolist
     protected static function piecesJointesCards(): array
     {
         $cards = [];
+        $pieces = collect(EntrepriseCliente::PIECES_JOINTES)->except([
+            'entete_page', 
+            'pied_page',
+        ]);
 
-        foreach (EntrepriseCliente::PIECES_JOINTES as $key => $label) {
+        foreach ($pieces as $key => $label) {
             $hasMedia = fn (DossierGiac $record) => $record->entrepriseCliente?->hasMedia($key);
 
             $cards[] = Section::make($label)
@@ -879,6 +971,24 @@ class ArchiveInfolist
 
                                 Notification::make()->success()->title("Pièce '{$label}' enregistrée avec succès")->send();
                                 $livewire->dispatch('$refresh');
+                            }),
+                   Action::make('supprimer_' . $key)
+                            ->label('Supprimer')
+                            ->icon('heroicon-o-trash')
+                            ->color('danger')
+                            ->visible($hasMedia)
+                            ->requiresConfirmation()
+                            ->modalHeading('Supprimer la pièce : ' . $label)
+                            ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
+                            ->action(function (DossierGiac $record, $livewire) use ($key) {
+                                $media = $record->entrepriseCliente?->getFirstMedia($key);
+                                if ($media) {
+                                    $media->delete();
+                                    $record->entrepriseCliente->unsetRelation('media');
+                                    $record->unsetRelation('entrepriseCliente');
+                                    Notification::make()->success()->title('Document supprimé avec succès')->send();
+                                    $livewire->dispatch('$refresh');
+                                }
                             }),
                     ]),
                 ]);

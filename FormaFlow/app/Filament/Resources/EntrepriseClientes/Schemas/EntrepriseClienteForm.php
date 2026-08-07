@@ -301,42 +301,32 @@ class EntrepriseClienteForm
                             ->maxLength(20),
                     ])->columnSpanFull(),
 
-                /*Section::make('Documents administratifs à joindre')
-                            ->description('Pièces requises pour la constitution des dossiers de l\'entreprise cliente (GIAC, OFPPT...)')
-                            ->icon('heroicon-o-paper-clip')
-                            ->columns(2)
-                            ->collapsible()
-                            ->schema(self::piecesJointesFields())
-                            ->columnSpanFull(),
-                Section::make('Autres documents')
-                            ->description('Documents complémentaires avec intitulé libre')
-                            ->icon('heroicon-o-document-duplicate')
-                            ->collapsible()
-                            ->columnSpanFull()
-                            ->schema([
-                                Repeater::make('autres_documents_repeater')
-                                    ->label('Nouveaux documents à ajouter')
-                                    ->default([])
-                                    ->schema([
-                                        TextInput::make('intitule')
-                                            ->label('Intitulé du document')
-                                            ->required()
-                                            ->maxLength(255),
+              Section::make('Visuels pour les documents générés')
+                    ->description('Ajouter ou modifier l\'en-tête et le pied de page de l\'entreprise')
+                    ->icon('heroicon-o-photo')
+                    ->columns(2)
+                    ->collapsible()
+                    ->columnSpanFull()
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('entete_page')
+                            ->label('Entête de page')
+                            ->collection('entete_page')
+                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->maxSize(10240)
+                            ->disk('local')
+                            ->directory('tmp-archives-upload')
+                            ->visibility('private'),
 
-                                        FileUpload::make('fichier')
-                                            ->label('Fichier')
-                                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                                            ->maxSize(10240)
-                                            ->disk('local')
-                                            ->directory('tmp-autres-documents')
-                                            ->visibility('private')
-                                            ->required(),
-                                    ])
-                                    ->columns(2)
-                                    ->addActionLabel('Ajouter un document')
-                                    ->reorderable(false),
-                            ]),*/
-        ]);
+                        SpatieMediaLibraryFileUpload::make('pied_page')
+                            ->label('Pied de page')
+                            ->collection('pied_page')
+                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->maxSize(10240)
+                            ->disk('local')
+                            ->directory('tmp-archives-upload')
+                            ->visibility('private'),
+                    ]),
+            ]);
     }
 
     /*protected static function piecesJointesFields(): array
