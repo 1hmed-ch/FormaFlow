@@ -43,7 +43,7 @@
     </ul>
 
     <div class="signature-block clearfix">
-        <strong>{{ $gerant->prenom }} {{ $gerant->nom }}</strong><br>
+        <strong> {{$gerant->genre == gerantGender::Homme ? "M." : "Mme"}} {{ $gerant->prenom }} {{ $gerant->nom }}</strong><br>
         <strong>{{$gerant->genre == gerantGender::Homme ? "Gérant" : "Gérante"}}</strong>
     </div>
 @endsection
