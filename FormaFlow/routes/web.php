@@ -18,3 +18,14 @@ Route::middleware(['auth'])
 Route::get('/documents-generes/{documentGenere}/stream', [DocumentGenereDownloadController::class, 'stream'])
     ->middleware('auth')
     ->name('documents-generes.stream');
+Route::get('/entreprises-clientes/{record}/stream-entete', function ($record) {
+    $entreprise = \App\Models\EntrepriseCliente::findOrFail($record);
+    $content = base64_decode($entreprise->getEnteteImageBase64());
+    return response($content, 200, ['Content-Type' => 'image/png']);
+})->middleware('auth')->name('entreprise.stream-entete');
+
+Route::get('/entreprises-clientes/{record}/stream-pied-page', function ($record) {
+    $entreprise = \App\Models\EntrepriseCliente::findOrFail($record);
+    $content = base64_decode($entreprise->getPiedPageImageBase64());
+    return response($content, 200, ['Content-Type' => 'image/png']);
+})->middleware('auth')->name('entreprise.stream-pied-page');
