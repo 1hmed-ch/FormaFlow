@@ -10,7 +10,7 @@
 
         body {
             font-family: 'Times New Roman',Times, serif;
-            font-size: 12px;
+            font-size: 17px;
             color: #1a1a1a;
             line-height: 1.5;
         }
@@ -22,7 +22,7 @@
             right: 0;
             height: 60px;
             padding-bottom: 8px;
-            border-bottom: 1px solid #ccc;
+            /*border-bottom: 1px solid #ccc;*/
             font-size: 10px;
             color: #555;
             text-align: center;
@@ -50,7 +50,7 @@
             left: 0;
             right: 0;
             height: 40px;
-            border-top: 1px solid #ccc;
+            /*border-top: 1px solid #ccc;*/
             padding-top: 6px;
             font-size: 9px;
             color: #777;
@@ -59,7 +59,7 @@
 
         .document-subtitle {
             text-align: center;
-            font-size: 13px;
+            font-size: 17px;
             font-weight: bold;
             margin-top: 76px;
         }
@@ -67,7 +67,7 @@
         .document-title {
 
             text-align: center;
-            font-size: 15px;
+            font-size: 17px;
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 24px;

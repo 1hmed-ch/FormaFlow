@@ -181,7 +181,7 @@ class EntrepriseClienteInfolist
                             ->placeholder('Aucune image fournie'),
                     ]),
 
-                Section::make('Checklist GIAC — Dossier complet')
+                /*Section::make('Checklist GIAC — Dossier complet')
                     ->description("Pièces à joindre au dossier GIAC : les 7 pièces de l'entreprise sont à téléverser ici, les 5 pièces du cabinet proviennent de la fiche Organisme de Formation.")
                     ->icon('heroicon-o-clipboard-document-check')
                     ->collapsible()
@@ -465,7 +465,7 @@ class EntrepriseClienteInfolist
                             )
                                 ? 'Aucun document ne correspond aux critères sélectionnés.'
                                 : 'Aucun document généré pour le moment.'),
-                    ]),
+                    ]),*/
 
                 Actions::make([
                     ActionGroup::make(actions: [
@@ -586,7 +586,7 @@ class EntrepriseClienteInfolist
                             }),
 
                         Action::make('genererF3')
-                            ->label('Fiche d\'identification de l\'organisme')
+                            ->label('Fiche ID de l\'organisme')
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
                             ->action(function (EntrepriseCliente $record, Action $action) {

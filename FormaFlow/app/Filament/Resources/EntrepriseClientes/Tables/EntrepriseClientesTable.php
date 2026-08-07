@@ -19,6 +19,7 @@ class EntrepriseClientesTable
         return $table
             ->columns([
                 TextColumn::make('raison_sociale')
+                    ->label('Raison sociale')
                     ->searchable(),
                 TextColumn::make('gerant.nom')
                     ->label('Gérant')
@@ -31,13 +32,16 @@ class EntrepriseClientesTable
                             ->orWhere('prenom', 'like', "%{$search}%")
                     )),
                 TextColumn::make('siege_social')
+                    ->label('Siège social')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_creation')
+                    ->label('Date de création')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('statut_juridique')
+                    ->label('Statut juridique')
                     ->color(fn (string $state): string => match ($state) {
                         'SARL', 'SARL' => 'info',
                         'SARL AU', 'SARL AU'   => 'warning',
@@ -48,43 +52,55 @@ class EntrepriseClientesTable
                     ->badge()
                     ->searchable(),
                 TextColumn::make('ice')
+                    ->label('ICE')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('if')
+                    ->label('IF')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('num_cnss')
+                    ->label('Numéro CNSS')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('rc')
+                    ->label('RC')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('patente')
+                    ->label('Patente')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('secteur_activite')
+                    ->label('Secteur d\'activité')
                     ->limit(20)
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('activite')
+                    ->label('Activité')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('region_affiliation_cnss')
+                    ->label('Région d\'affiliation CNSS')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('effectif_total')
+                    ->label('Effectif total')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('telephone')
+                    ->label('Téléphone')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fax')
+                    ->label('Fax')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Adresse Email')
                     ->searchable(),
                 TextColumn::make('contact_ref')
+                    ->label('Contact de référence')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
@@ -112,9 +128,6 @@ class EntrepriseClientesTable
                 ActionGroup::make(actions: [
                     ViewAction::make(),
                     EditAction::make(),
-                    // Modèle 6 se génère désormais depuis la table des
-                    // Formations (une attestation par formation), voir
-                    // FormationsTable::configure().
                     DeleteAction::make()
                 ])->icon('heroicon-m-ellipsis-vertical')->tooltip('Actions')
             ])

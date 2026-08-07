@@ -24,12 +24,12 @@ class ThemesTable
                     ->limit(40)
                     ->searchable(),
                 TextColumn::make('date_debut')
-                    ->label('Début')
+                    ->label('Date de début')
                     ->date('d/m/Y')
                     ->sortable(),
 
                 TextColumn::make('date_fin')
-                    ->label('Fin')
+                    ->label('Date de fin')
                     ->date('d/m/Y')
                     ->sortable(),
                 TextColumn::make('formation.intitule')

@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Notifications\Notification;
@@ -26,11 +27,22 @@ class ParticipantsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('nom')
             ->columns([
-                Tables\Columns\TextColumn::make('nom')->searchable(),
-                Tables\Columns\TextColumn::make('prenom')->searchable(),
-                Tables\Columns\TextColumn::make('cin'),
-                Tables\Columns\TextColumn::make('numero_cnss')->label("N° CNSS"),
-                Tables\Columns\TextColumn::make('email'),
+                TextColumn::make('nom')
+                    ->label('Nom')
+                    ->searchable(),
+
+                TextColumn::make('prenom')
+                    ->label('Prénom')
+                    ->searchable(),
+
+                TextColumn::make('cin')
+                    ->label('CIN'),
+
+                TextColumn::make('numero_cnss')
+                    ->label('N° CNSS'),
+
+                TextColumn::make('email')
+                    ->label('Email'),
             ])
             ->filters([
                 //

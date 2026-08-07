@@ -18,21 +18,26 @@ class ParticipantsTable
         return $table
             ->columns([
                 TextColumn::make('nom')
+                    ->label('Nom')
                     ->searchable(),
                 TextColumn::make('prenom')
+                    ->label('Prénom')
                     ->searchable(),
                 TextColumn::make('cin')
+                    ->label('CIN')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    /*->toggleable(isToggledHiddenByDefault: true)*/,
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Adresse Email')
                     ->limit(30)
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('numero_cnss')
+                    ->label('N° CNSS')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('telephone')
+                    ->label('Téléphone')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fonction_occupee')
@@ -42,7 +47,7 @@ class ParticipantsTable
                 TextColumn::make('categorie_sp')
                     ->label('Catégorie')
                     ->color(fn ($state): string => match ($state->value ?? $state) {
-                        'Ouvrier', 'O' => 'info',
+                        'Ouvrier', 'O' => 'indigo',
                         'Cadre', 'C'   => 'warning',
                         'Employe', 'E'   => 'success',
                         default                  => 'gray',

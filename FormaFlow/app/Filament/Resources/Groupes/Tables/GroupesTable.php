@@ -27,17 +27,20 @@ class GroupesTable
         return $table
             ->columns([
                 TextColumn::make('libelle')
+                    ->label('Libellé du groupe')
                     ->searchable(),
                 TextColumn::make('theme.intitule')
                     ->label('Thème')
                     ->searchable(),
                 TextColumn::make('effectif_max')
+                    ->label('Effectif maximum')
                     ->numeric()
                     ->badge()
                     ->color('indigo')
                     ->icon('heroicon-o-users')
                     ->sortable(),
                 TextColumn::make('lieu')
+                    ->label('Lieu')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')

@@ -36,7 +36,7 @@ class ArchiveInfolist
                     ->columnSpanFull()
                     ->schema([
                         TextEntry::make('entrepriseCliente.raison_sociale')
-                            ->label('Entreprise')
+                            ->label('Entreprise :')
                             ->weight(FontWeight::Bold)
                             ->columnSpanFull(),
 
@@ -127,11 +127,27 @@ class ArchiveInfolist
                                 'genere_au' => $livewire->archiveDocumentsDateFin,
                             ])
                             ->form([
-                                Select::make('categorie')
+                                /*Select::make('categorie')
                                     ->label('Catégorie')
                                     ->options(CategorieDocumentGenere::class)
                                     ->native(false)
-                                    ->placeholder('Toutes les catégories'),
+                                    ->placeholder('Toutes les catégories'),*/
+                                ToggleButtons::make('categorie')
+                                    ->label('Catégorie')
+                                    ->options(CategorieDocumentGenere::class)
+                                    ->colors([
+                                        CategorieDocumentGenere::Remboursement->value => 'indigo',
+                                        CategorieDocumentGenere::Giac->value => 'orange',
+                                        CategorieDocumentGenere::Ofppt->value => 'success',
+                                        CategorieDocumentGenere::Entreprise->value => 'yellow',
+                                    ])
+                                    ->icons([
+                                        CategorieDocumentGenere::Remboursement->value => 'heroicon-o-document-text',
+                                        CategorieDocumentGenere::Giac->value => 'heroicon-o-document-check',
+                                        CategorieDocumentGenere::Ofppt->value => 'heroicon-o-document-magnifying-glass',
+                                        CategorieDocumentGenere::Entreprise->value => 'heroicon-o-document-plus',
+                                    ])
+                                    ->inline(),
 
                                 DatePicker::make('genere_du')
                                     ->label('Généré à partir du')
@@ -195,7 +211,7 @@ class ArchiveInfolist
                                 TableColumn::make('Version'),
                                 TableColumn::make('Statut'),
                                 TableColumn::make('Généré le'),
-                                TableColumn::make('Taille'),
+                                /*TableColumn::make('Taille'),*/
                                 TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
@@ -209,10 +225,10 @@ class ArchiveInfolist
                                     ->badge(),
                                 TextEntry::make('statut')->badge(),
                                 TextEntry::make('genere_le')->dateTime('d/m/Y H:i'),
-                                TextEntry::make('taille')
+                                /*TextEntry::make('taille')
                                     ->formatStateUsing(fn ($record): string => $record->tailleLisible())
                                     ->color('teal')
-                                    ->badge(),
+                                    ->badge(),*/
 
 
                                 // Bouton "Télécharger"
@@ -220,6 +236,7 @@ class ArchiveInfolist
                                     ->label('')
                                     ->icon('heroicon-o-arrow-down-tray')
                                     ->color('primary')
+                                    ->tooltip('Télécharger le Document')
                                     ->url(fn ($record): string => route('documents-generes.telecharger', $record))
                                     ->openUrlInNewTab(),
                                  // Bouton "Voir"
@@ -246,6 +263,7 @@ class ArchiveInfolist
                                         ->icon('heroicon-o-trash')
                                         ->color('danger')
                                         ->size('sm')
+                                        ->tooltip('supprimer')
                                         ->requiresConfirmation()
                                         ->modalHeading('Supprimer le document')
                                         ->modalDescription('Cette action est irréversible.')
