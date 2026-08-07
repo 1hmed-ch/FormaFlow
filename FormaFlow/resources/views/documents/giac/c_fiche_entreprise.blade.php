@@ -166,19 +166,19 @@
             <table class="inner-table">
                 <tr>
                     <td class="label" style="width: 20%;"><i><strong>Raison Sociale :</strong></i></td>
-                    <td colspan="3">{{ !empty($entreprise->raison_sociale) ? $entreprise->raison_sociale : '....................................................................................................' }}</td>
+                    <td colspan="3">{{ !empty($entreprise->raison_sociale) ? $entreprise->raison_sociale : '..............................................' }}</td>
                 </tr>
                 <tr>
                     <td class="label"><i><strong>Activités Principales :</strong></i></td>
-                    <td colspan="3">{{ !empty($entreprise->activite) ? $entreprise->activite : (!empty($entreprise->secteur_activite) ? $entreprise->secteur_activite : '....................................................................................................') }}</td>
+                    <td colspan="3">{{ !empty($entreprise->activite) ? $entreprise->activite : (!empty($entreprise->secteur_activite) ? $entreprise->secteur_activite : '.........................................') }}</td>
                 </tr>
                 <tr>
                     <td class="label"><i><strong>Date de Création :</strong></i></td>
-                    <td colspan="3">{{ !empty($entreprise->date_creation) ? \Carbon\Carbon::parse($entreprise->date_creation)->format('d/m/Y') : '....................................................................................................' }}</td>
+                    <td colspan="3">{{ !empty($entreprise->date_creation) ? \Carbon\Carbon::parse($entreprise->date_creation)->format('d/m/Y') : '...................................................' }}</td>
                 </tr>
                 <tr>
                     <td class="label"><i><strong>Adresse :</strong></i></td>
-                    <td colspan="3">{{ !empty($entreprise->siege_social) ? $entreprise->siege_social : '....................................................................................................' }}</td>
+                    <td colspan="3">{{ !empty($entreprise->siege_social) ? $entreprise->siege_social : '........................................' }}</td>
                 </tr>
                 <tr>
                     <td class="label" style="width: 16%;"><i><strong>Téléphone :</strong></i></td>
@@ -188,7 +188,7 @@
                 </tr>
                 <tr>
                     <td class="label"><i><strong>Mail de l'Entreprise :</strong></i></td>
-                    <td colspan="3">{{ !empty($entreprise->email) ? $entreprise->email : '....................................................................................................' }}</td>
+                    <td colspan="3">{{ !empty($entreprise->email) ? $entreprise->email : '.........................................' }}</td>
                 </tr>
                 <tr>
                     <td colspan="4" style="white-space: nowrap;">
@@ -198,7 +198,7 @@
                         @elseif(!empty($gerant))
                             {{ $gerant->prenom }} {{ $gerant->nom }} {{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : '' }}
                         @else
-                            ....................................................................................................
+                            .......................................
                         @endif
                     </td>
                 </tr>
@@ -236,7 +236,7 @@
                 </tr>
                 <tr>
                     <td colspan="8" style="text-align: center; padding-top: 4px;">
-                        <i><strong>Total Effectif : &nbsp;&nbsp;&nbsp; {{ $entreprise->effectif_total ?? '........................' }}</strong></i>
+                        <i><strong>Total Effectif : &nbsp;&nbsp;&nbsp; {{ $entreprise->effectif_total ?? '....................' }}</strong></i>
                     </td>
                 </tr>
             </table>

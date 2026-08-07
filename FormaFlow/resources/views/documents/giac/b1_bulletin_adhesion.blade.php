@@ -185,13 +185,13 @@
     <tr>
         <td>
             <span class="field-label">L'Entreprise</span> :
-            <span>{{ $entreprise->raison_sociale ?? '.........................................................................' }}</span>
+            <span>{{ $entreprise->raison_sociale ?? '........................' }}</span>
         </td>
     </tr>
     <tr>
         <td>
             <span class="field-label">Adresse</span> :
-            <span>{{ $entreprise->siege_social ?? '.........................................................................' }}</span>
+            <span>{{ $entreprise->siege_social ?? '............................' }}</span>
         </td>
     </tr>
     <tr>
@@ -224,13 +224,13 @@
 <div class="field-line" style="margin-left: 95px;">
     &bull; Sur la Banque : 
     <span style="width: 350px">
-        {{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '....................................................................................................' }}
+        {{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '....................................................................................' }}
     </span>
 </div>
 <div  style="margin-left: 95px;">
     &bull; De N° : 
     <span  style="width: 400px">
-        {{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '........................................................................................................................' }}
+        {{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '.....................................................................................................' }}
     </span>
 </div>
 <div style="margin-left: 95px;">
@@ -249,11 +249,17 @@
 
     <div class="field-line">
         <strong>- Nom et Qualité du Signataire :</strong>
-        <span>{{ $gerant->prenom ?? '' }} {{ $gerant->nom ?? '' }}{{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : ' ................................................................' }}</span>
+       <span>
+            @if(!empty($gerant->prenom) || !empty($gerant->nom))
+                {{ trim(($gerant->prenom ?? '') . ' ' . ($gerant->nom ?? '')) }}{{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : '' }}
+            @else
+                ......................................
+            @endif
+        </span>
     </div>
     <div class="field-line" style="font-size: 11px;">(habilité à signer au sein de l'Entreprise)</div>
 
-    <div class="field-line"><strong>- Mail ( du signataire ) :</strong> {{ $gerant->email ?? '..................................................' }}</div>
+    <div class="field-line"><strong>- Mail ( du signataire ) :</strong> {{ $gerant->email ?? '.................................' }}</div>
 
     <div class="field-line"><strong>- Cachet de l'Entreprise :</strong></div>
 </div>

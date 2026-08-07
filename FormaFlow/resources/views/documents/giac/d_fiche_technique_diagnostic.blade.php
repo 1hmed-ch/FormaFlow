@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 16px;
+            font-size: 14px;
             font-style: italic;
             color: #1a1a1a;
             line-height: 1.45;
@@ -156,7 +156,7 @@
 
 <div class="field-line">
     <span class="field-label" style="text-decoration: underline; margin-left: 50px;">ENTREPRISE BENEFICIAIRE</span> :
-    <span class="dotted-fill wide">{{ $entreprise->raison_sociale ?: '.........................................................................................' }}</span>
+    <span class="dotted-fill wide">{{ $entreprise->raison_sociale ?: '.............................................' }}</span>
 </div>
 
 <div class="g-box">
@@ -172,14 +172,14 @@
         <strong>- Mise aux Normes : </strong>
         <span class="dotted-fill">{{ $etude->projet_mise_aux_normes ? 'Oui' : '............' }}</span>
         <strong style="margin-left: 100px;">- Autres a préciser : </strong>
-        <span class="dotted-fill wide">{{ $etude->projet_autre ? ($etude->projet_autre_precision ?: '....................................') : '....................................' }}</span>
+        <span class="dotted-fill wide">{{ $etude->projet_autre ? ($etude->projet_autre_precision ?: '..............................') : '..............................' }}</span>
     </div>
-    <span>{{ $etude->projet_autre_precision ?? '....................................................................................................................................................' }}</span>
+    <span>{{ $etude->projet_autre_precision ?? '..................................................' }}</span>
 </div>
 
 <div class="g-box">
     <div class="g-box-title">OBJECTIFS et RESULTATS ATTENDUS du DIAGNOSTIC :</div>
-    <div class="field-line">{{ $etude->objectifs_resultats_attendus ?: '....................................................................................................................' }}</div>
+    <div class="field-line">{{ $etude->objectifs_resultats_attendus ?: '......................................................................' }}</div>
 </div>
 
 <div class="g-box">
@@ -190,7 +190,7 @@
 
     <div class="field-line">
         <strong>- Prestations Envisagées :</strong>
-        {{ $etude->prestations_envisagees ?: '............................................................................................................' }}
+        {{ $etude->prestations_envisagees ?: '..................................................................' }}
     </div>
     <div class="field-line">
         <strong>- En vue de leur application durant l'année :</strong>
@@ -213,11 +213,11 @@
 
     <div class="field-line">
         <strong>- Raison Sociale :</strong>
-        <span class="dotted-fill wide">{{ $organisme->raison_sociale ?: '.........................................................................................' }}</span>
+        <span class="dotted-fill wide">{{ $organisme->raison_sociale ?: '............................................................................' }}</span>
     </div>
     <div class="field-line">
         <strong>- Adresse :</strong>
-        <span class="dotted-fill wide">{{ $organisme->siege_social ?: '.........................................................................................' }}</span>
+        <span class="dotted-fill wide">{{ $organisme->siege_social ?: '.............................................................' }}</span>
     </div>
     <div class="field-line">
         <strong>- N° de CNSS :</strong>
@@ -235,7 +235,7 @@
     </div>
     <div class="field-line">
         <strong>- Responsable Principal à contacter :</strong>
-        <span class="dotted-fill wide">{{ $organisme->representant_nom ?: '.........................................................................................' }}</span>
+        <span class="dotted-fill wide">{{ $organisme->representant_nom ?: '..................................................' }}</span>
     </div>
 </div>
 
