@@ -16,4 +16,5 @@ Route::middleware(['auth'])
     ->get('/admin/media/{media}/stream', [MediaStreamController::class, 'stream'])
     ->name('media.stream');
 Route::get('/documents-generes/{documentGenere}/stream', [DocumentGenereDownloadController::class, 'stream'])
+    ->middleware('auth')
     ->name('documents-generes.stream');
