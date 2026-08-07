@@ -166,22 +166,22 @@
     <tr>
         <td>
             <span class="field-label" style="text-decoration: underline;">L'Entreprise</span> :
-            <span >{{ $entreprise->raison_sociale }}</span>
+            <span>{{ $entreprise->raison_sociale ?? '.................................' }}</span>
         </td>
     </tr>
     <tr>
         <td>
             <span class="field-label" style="text-decoration: underline;">Adresse</span> :
-            <span >{{ $entreprise->siege_social }}</span>
+            <span>{{ $entreprise->siege_social ?? '.................................' }}</span>
         </td>
     </tr>
     <tr>
         <td>
             <span class="field-label" style="text-decoration: underline;">Tel.</span> :
-            <span>{{ $entreprise->telephone }}</span>
+            <span>{{ $entreprise->telephone ?? '......................' }}</span>
             <span style="margin-left: 10px;">;</span>
             <span class="field-label" style="text-decoration: underline; margin-left: 40px;">Fax</span> :
-            <span>{{ $entreprise->fax }}</span>
+            <span>{{ $entreprise->fax ?? '......................' }}</span>
         </td>
     </tr>
 </table>
@@ -212,22 +212,30 @@
 <div class="signature-zone">
     <div class="field-line">
         <strong>- Lieu &amp; Date </strong>(de cette demande) :
-        <span>{{ $entreprise->ville }}; le {{ $dateEdition->format('d/m/Y') }}</span>
+        <span>{{ $entreprise->ville ?? '....................' }}; le {{ ($dateEdition ?? now())->format('d/m/Y') }}</span>
     </div>
 
     <div class="field-line" style="margin-bottom: 30px;"><strong>- Signature :</strong></div>
 
     <div class="field-line">
         <strong>- Nom et Qualité du Signataire :</strong>
-        <span>{{ $gerant->prenom }} {{ $gerant->nom }}; {{ $gerant->fonction }}</span>
+        <span>
+            @if(!empty($gerant->prenom) || !empty($gerant->nom))
+                {{ trim(($gerant->prenom ?? '') . ' ' . ($gerant->nom ?? '')) }}{{ !empty($gerant->fonction) ? ' ; ' . $gerant->fonction : '' }}
+            @else
+                ......................................................................
+            @endif
+        </span>
     </div>
     <div class="field-line" style="font-size: 11px;">(habilité à signer au sein de l'Entreprise)</div>
 
-    <div class="field-line"><strong>- Mail ( du signataire ) :</strong></div>
+    <div class="field-line">
+        <strong>- Mail ( du signataire ) :</strong> 
+        <span>{{ $gerant->email ?? '..................................................' }}</span>
+    </div>
 
     <div class="field-line"><strong>- Cachet de l'Entreprise :</strong></div>
 </div>
-
 {{--<div class="giac-footer">
     <div class="field-line">
         <span class="handwritten-text">GIAC Technologies</span>

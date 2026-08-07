@@ -275,7 +275,7 @@
 
     <div class="field-line">
         Si oui lequel :
-        <span class="dotted-fill wide">{{ $organisme->nom_groupe_etranger ?? '.........................................................................................................................................................' }}</span>
+        <span class="dotted-fill wide">{{ $organisme->nom_groupe_etranger ?? '..............................................................................................' }}</span>
     </div>
 
     <div class="gbb-box" style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px 10px; margin: 4px -10px;">

@@ -15,7 +15,7 @@ return new class extends Migration
                 ->constrained('entreprise_clientes')
                 ->cascadeOnDelete();
 
-            $table->string('nature_action')->default("Ingénierie de Formation");
+            $table->string('nature_action')->default("Ingénierie de Formation")->nullable();
 
             $table->text('diagnostic_besoins')->nullable();
 

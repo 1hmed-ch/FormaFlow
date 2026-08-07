@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('entreprise_formations', function (Blueprint $table) {
-            $table->unsignedSmallInteger('nb_experts_permanents_etrangers')->default(0)->after('nb_experts_permanents');
-            $table->unsignedSmallInteger('nb_experts_vacataires_etrangers')->default(0)->after('nb_experts_vacataires');
-            $table->unsignedSmallInteger('nb_animateurs_formateurs_etrangers')->default(0)->after('nb_animateurs_formateurs');
-            $table->unsignedSmallInteger('nb_autres_employes_etrangers')->default(0)->after('nb_autres_employes');
+            $table->unsignedSmallInteger('nb_experts_permanents_etrangers')->default(0)->after('nb_experts_permanents')->nullable();
+            $table->unsignedSmallInteger('nb_experts_vacataires_etrangers')->default(0)->after('nb_experts_vacataires')->nullable();
+            $table->unsignedSmallInteger('nb_animateurs_formateurs_etrangers')->default(0)->after('nb_animateurs_formateurs')->nullable();
+            $table->unsignedSmallInteger('nb_autres_employes_etrangers')->default(0)->after('nb_autres_employes')->nullable();
             $table->boolean('appartient_groupe_etranger')->default(false)->after('effectif_total');
         });
     }
