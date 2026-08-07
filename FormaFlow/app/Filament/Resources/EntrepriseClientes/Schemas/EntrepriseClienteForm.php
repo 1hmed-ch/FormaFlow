@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
@@ -52,7 +53,7 @@ class EntrepriseClienteForm
                        TextInput::make('ville')
                             ->label('Ville')
                             ->required(),
-                            
+
                         DatePicker::make('date_creation')
                             ->label('Date de Création')
                             ->displayFormat('d/m/Y')
@@ -116,7 +117,7 @@ class EntrepriseClienteForm
                         ->icon('heroicon-o-user')
                         ->relationship('gerant')
                         ->schema([
-                           
+
                             TextInput::make('nom')
                                 ->label('Nom')
                                 ->required()
@@ -139,18 +140,27 @@ class EntrepriseClienteForm
                                 ->maxLength(20)
                                 ->unique(table: 'gerants', column: 'cin', ignoreRecord: true),
 
-                            
+
                             TextInput::make('email')
                                 ->label('Adresse E-mail')
                                 ->email()
                                 ->placeholder('ex: gerant@entreprise.ma')
                                 ->maxLength(255),
 
-                            Select::make('genre')
+                            /*Select::make('genre')
                                 ->label('Genre')
                                 ->options(gerantGender::class)
                                 ->required()
-                                ->native(false),
+                                ->native(false),*/
+                            ToggleButtons::make('genre')
+                                ->label('Genre')
+                                ->options(GerantGender::class)
+                                ->colors([
+                                    GerantGender::Homme->value => 'primary',
+                                    GerantGender::Femme->value => 'pink',
+                                ])
+                                ->required()
+                                ->inline(),
                             TextInput::make('telephone')
                             ->label('Téléphone')
                             ->tel()
@@ -231,7 +241,7 @@ class EntrepriseClienteForm
                             ->maxLength(100),
                     ])->columnSpanFull(),
                 Section::make('Informations Financières & Historique GIAC')
-                    ->description('Renseignements complémentaires nécessaires pour la Fiche C du dossier GIAC')
+                    ->description('Renseignements complémentaires nécessaires pour la Fiche d’Information sur l’entreprise du dossier GIAC')
                     ->icon('heroicon-o-currency-dollar')
                     ->collapsible()
                     ->columnSpanFull()

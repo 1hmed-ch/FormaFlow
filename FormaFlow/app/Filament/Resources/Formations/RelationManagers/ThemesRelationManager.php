@@ -59,12 +59,12 @@ class ThemesRelationManager extends RelationManager
                     ->limit(40)
                     ->searchable(),
                 TextColumn::make('date_debut')
-                    ->label('Début')
+                    ->label('Date de début')
                     ->date('d/m/Y')
                     ->sortable(),
 
                 TextColumn::make('date_fin')
-                    ->label('Fin')
+                    ->label('Date de fin')
                     ->date('d/m/Y')
                     ->sortable(),
                 TextColumn::make('formateur.full_name')
@@ -81,16 +81,10 @@ class ThemesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make(),
-                // "formation_id" is NOT NULL, so Associate here reassigns an
-                // existing theme from another formation rather than linking
-                // an "orphan" one (themes can never be unassigned).
                 AssociateAction::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                // No DissociateAction: themes.formation_id is NOT NULL, so
-                // dissociating would attempt to null it and fail at the DB
-                // level. Removing a theme from a formation means deleting it.
                 DeleteAction::make(),
             ])
             ->toolbarActions([

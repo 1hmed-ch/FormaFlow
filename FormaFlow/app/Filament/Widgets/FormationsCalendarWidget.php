@@ -20,6 +20,7 @@ class FormationsCalendarWidget extends FullCalendarWidget
     {
         return [
             'firstDay' => 1,
+            'displayEventTime' => false,
             'headerToolbar' => [
                 'left' => 'prev,next today',
                 'center' => 'title',
@@ -40,10 +41,12 @@ class FormationsCalendarWidget extends FullCalendarWidget
                     Grid::make(2)->schema([
                         DatePicker::make('periode_debut')
                             ->label('Du')
+                            ->placeholder('Date de début')
                             ->native(false)
                             ->default($this->periodeDebut),
                         DatePicker::make('periode_fin')
                             ->label('Au')
+                            ->placeholder('Date de fin')
                             ->native(false)
                             ->default($this->periodeFin)
                             ->afterOrEqual('periode_debut'),
@@ -76,7 +79,7 @@ class FormationsCalendarWidget extends FullCalendarWidget
     public function fetchEvents(array $info): array
     {
         return Formation::query()
-            ->terminees()
+            /*->terminees()*/
             ->dansPeriode($this->periodeDebut, $this->periodeFin)
             ->where('date_debut', '<=', $info['end'])
             ->where('date_fin', '>=', $info['start'])
@@ -86,14 +89,16 @@ class FormationsCalendarWidget extends FullCalendarWidget
             ->map(function (Formation $formation) {
                 $fin = ($formation->date_fin ?? $formation->date_debut)->copy()->addDay();
 
+                $entrepriseName = $formation->entrepriseCliente ? $formation->entrepriseCliente->raison_sociale : 'Sans Entreprise';
+
                 return EventData::make()
                     ->id($formation->id)
-                    ->title($formation->intitule)
+                    ->title($formation->intitule.' ( '.$entrepriseName.' ) ')
                     ->start($formation->date_debut)
                     ->end($fin)
                     ->textColor('#FFFFFF')
-                    ->backgroundColor('#4B5694')
-                    ->borderColor('#4B5694')
+                    ->backgroundColor('#19526E') //#4B5694
+                    ->borderColor('#19526E')
                     ->url(FormationResource::getUrl('edit', ['record' => $formation]), shouldOpenUrlInNewTab: true);
             })
             ->toArray();

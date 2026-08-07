@@ -29,12 +29,11 @@
 
 @section('content')
     <p class="certification-text">
-        Je {{$gerant->genre == gerantGender::Homme ? "soussigné M." : "soussignée Mme"}} {{ $gerant->prenom }}, en qualité de
+        Je {{$gerant->genre == gerantGender::Homme ? "soussigné M." : "soussignée Mme"}} {{ $gerant->prenom }}, en Qualité de
         {{$gerant->genre == gerantGender::Homme ? "Gérant" : "Gérante"}}, certifie par la présente que l'entreprise
         {{ $entreprise->raison_sociale }} a réalisé, au titre de l'exercice
-        {{ $annee }}, dans le cadre de la formation « {{ $formation->intitule }} », les actions de formation
-        citées ci-après relevant des Contrats Spéciaux de Formation, et a procédé à la liquidation des dépenses
-        relatives aux dites actions.
+        {{ $annee }}, les actions de formation citées ci-après dans le cadre des Contrats Spéciaux de Formation et a procédé à la liquidation des dépenses
+        relatives des dites actions.
     </p>
 
     <ul class="themes-list">

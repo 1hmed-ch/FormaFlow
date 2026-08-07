@@ -38,10 +38,10 @@ class EntrepriseClienteFormationsChart extends ChartWidget
                     'label' => 'Formations',
                     'data' => array_values($counts),
                     'backgroundColor' => [
-                        '#3b82f6', // Planifiee - info
-                        '#f59e0b', // En cours - warning
-                        '#22c55e', // Terminee - success
-                        '#ef4444', // Annulee - danger
+                        '#525EA7', // Planifiee - info
+                        '#FED24F', // En cours - warning
+                        '#45A9A9', // Terminee - success
+                        '#D90000', // Annulee - danger
                     ],
                 ],
             ],

@@ -52,6 +52,7 @@ class FormateurForm
                                 FormateurStatus::EXTERNE->value => 'warning',
                             ])
                             ->required()
+                            ->inline()
                             ->columnSpanFull(),
                         TextInput::make('email')
                             ->label('Adresse Email')

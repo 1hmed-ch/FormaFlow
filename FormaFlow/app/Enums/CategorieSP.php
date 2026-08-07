@@ -13,9 +13,9 @@ enum CategorieSP: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Cadre   => 'C',
-            self::Employe => 'E',
-            self::Ouvrier => 'O',
+            self::Cadre   => 'Cadre',
+            self::Employe => 'Employé',
+            self::Ouvrier => 'Ouvrier',
         };
     }
 }

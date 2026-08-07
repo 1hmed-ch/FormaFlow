@@ -25,7 +25,7 @@
             </div>
 
             <p class="text-sm text-white/50">
-                &copy; {{ date('Y') }} FormaFlow — Tous droits réservés.
+                &copy; {{ date('Y') }} FormaFlow - Tous droits réservés.
             </p>
         </div>
         <div
