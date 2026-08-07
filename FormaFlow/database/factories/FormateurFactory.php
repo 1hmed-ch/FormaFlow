@@ -23,7 +23,7 @@ class FormateurFactory extends Factory
             'nom' => fake()->lastName(),
             'prenom' => fake()->firstName(),
             'email' => fake()->unique()->safeEmail(),
-            'telephone' => fake()->phoneNumber(),
+           'telephone' => fake()->numerify('06########'),
             'specialite' => fake()->jobTitle(),
             'statut' => fake()->randomElement(FormateurStatus::cases()),
         ];

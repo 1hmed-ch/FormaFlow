@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\EntrepriseCliente;
+use App\Models\Gerant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class EntrepriseClienteFactory extends Factory
     public function definition(): array
     {
         return [
+            'gerant_id' => Gerant::factory(),
             'raison_sociale' => fake()->company(),
             'siege_social' => fake()->address(),
             'date_creation' => fake()->date(),
@@ -30,8 +32,8 @@ class EntrepriseClienteFactory extends Factory
             'secteur_activite' => fake()->word(),
             'activite' => fake()->sentence(3),
             'effectif_total' => fake()->numberBetween(10, 500),
-            'telephone' => fake()->phoneNumber(),
-            'fax' => fake()->phoneNumber(),
+            'telephone' => fake()->numerify('06########'),
+            'fax' => fake()->numerify('05########'),
             'email' => fake()->unique()->safeEmail(),
             'contact_ref' => fake()->name(),
         ];
