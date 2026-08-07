@@ -70,15 +70,25 @@ class ArchiveInfolist
                                 ->label('Dossier complet (ZIP)')
                                 ->icon('heroicon-o-archive-box-arrow-down')
                                 ->color('success')
-                                ->action(function (DossierGiac $record, ViewArchive $livewire) {
-                                    $zipPath = app(ArchiveZipService::class)->build(
-                                        $record,
-                                        $livewire->archiveDocumentsCategorie,
-                                        $livewire->archiveDocumentsDateDebut,
-                                        $livewire->archiveDocumentsDateFin
-                                    );
+                                ->action(function (DossierGiac $record, ViewArchive $livewire, Action $action) {
+                                    try {
+                                        $zipPath = app(ArchiveZipService::class)->build(
+                                            $record,
+                                            $livewire->archiveDocumentsCategorie,
+                                            $livewire->archiveDocumentsDateDebut,
+                                            $livewire->archiveDocumentsDateFin
+                                        );
 
-                                    return response()->download($zipPath)->deleteFileAfterSend(true);
+                                        return response()->download($zipPath)->deleteFileAfterSend(true);
+                                    } catch (\RuntimeException $e) {
+                                        Notification::make()
+                                            ->warning()
+                                            ->title('Archive vide')
+                                            ->body($e->getMessage())
+                                            ->send();
+
+                                        $action->halt();
+                                    }
                                 }),
 
                             Action::make('imprimerDossier')
@@ -188,7 +198,7 @@ class ArchiveInfolist
                                 TableColumn::make('Taille'),
                                 TableColumn::make('')->hiddenHeaderLabel(),
                                 TableColumn::make('')->hiddenHeaderLabel(),
-                                TableColumn::make('')->hiddenHeaderLabel(), 
+                                TableColumn::make('')->hiddenHeaderLabel(),
                             ])
                             ->schema([
                                 TextEntry::make('type_document'),
@@ -204,7 +214,7 @@ class ArchiveInfolist
                                     ->color('teal')
                                     ->badge(),
 
-                               
+
                                 // Bouton "Télécharger"
                                 TextEntry::make('nom_fichier')
                                     ->label('')
@@ -212,7 +222,7 @@ class ArchiveInfolist
                                     ->color('primary')
                                     ->url(fn ($record): string => route('documents-generes.telecharger', $record))
                                     ->openUrlInNewTab(),
-                                 // Bouton "Voir" 
+                                 // Bouton "Voir"
                                 Actions::make([
                                     Action::make('voirDocumentGenere')
                                         ->label('')
@@ -279,7 +289,7 @@ class ArchiveInfolist
                             ->compact(),
                     ]),
 
-                // Bloc 3 : Documents à joindre 
+                // Bloc 3 : Documents à joindre
                 Section::make('Documents à joindre')
                     ->description('Pièces fournies par l\'entreprise')
                     ->icon('heroicon-o-paper-clip')

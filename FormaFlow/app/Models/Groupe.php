@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Groupe extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'libelle',
         'lieu',
@@ -15,7 +18,7 @@ class Groupe extends Model
         'theme_id',
     ];
 
-   
+
 
     public function theme(): BelongsTo
     {

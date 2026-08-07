@@ -6,7 +6,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
-use App\Enums\GerantGender; 
+use App\Enums\GerantGender;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use App\Enums\DemandeFinancementStatus;
 
@@ -32,7 +33,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'ville'                   => 'required|string|max:255',
             'date_creation'           => 'nullable|date',
             'statut_juridique'        => 'nullable|string|max:100',
-            'ice'                     => 'required|string|size:15|unique:entreprise_clientes,ice', // Required & Unique 
+            'ice'                     => 'required|string|size:15|unique:entreprise_clientes,ice', // Required & Unique
             'num_cnss'                => 'nullable|string|max:50|unique:entreprise_clientes,num_cnss',
             'montant_tfp'             => 'nullable|numeric|min:0',
             'deja_depose_giac'        => 'nullable|boolean',
@@ -56,7 +57,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'contact_ref'             => 'nullable|string|max:255',
             'gerant_nom'              => 'required|string|max:255',
             'gerant_prenom'           => 'required|string|max:255',
-            'gerant_fonction'         => 'required|string|max:255', 
+            'gerant_fonction'         => 'required|string|max:255',
             'gerant_cin'              => 'required|string|max:20|unique:gerants,cin',
             'gerant_email'            => 'required|email|max:255|unique:gerants,email',
             'gerant_genre'            => ['required', new Enum(GerantGender::class)],
@@ -69,7 +70,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'ofppt_mdp'               => ['nullable', 'string', 'max:255'],
             'statut_demande_financement' => ['nullable', Rule::enum(DemandeFinancementStatus::class)],
 
-            
+
 
 
         ];

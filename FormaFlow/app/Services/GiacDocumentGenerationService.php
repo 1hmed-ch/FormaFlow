@@ -77,10 +77,7 @@ class GiacDocumentGenerationService
      * @throws DocumentGenerationException si l'étude fournie ne concerne
      *         pas l'entreprise donnée.
      */
-    public function generateFicheIngenierieFormation(
-        EntrepriseCliente $entreprise,
-        EtudeIngenierieFormation $etude
-    ): array {
+    public function generateFicheIngenierieFormation(EntrepriseCliente $entreprise, EtudeIngenierieFormation $etude): array {
         $this->assertEtudeAppartientAEntreprise($etude->entreprise_id, $entreprise);
 
         $content = $this->renderFromView('documents.giac.e_fiche_technique_ingenierie', [
@@ -114,10 +111,7 @@ class GiacDocumentGenerationService
      * @throws DocumentGenerationException si l'étude fournie ne concerne
      *         pas l'entreprise donnée.
      */
-    public function generateFicheDiagnosticStrategique(
-        EntrepriseCliente $entreprise,
-        EtudeDiagnosticStrategique $etude
-    ): array {
+    public function generateFicheDiagnosticStrategique(EntrepriseCliente $entreprise, EtudeDiagnosticStrategique $etude): array {
         $this->assertEtudeAppartientAEntreprise($etude->entreprise_id, $entreprise);
 
         $content = $this->renderFromView('documents.giac.d_fiche_technique_diagnostic', [

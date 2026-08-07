@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatutDossierGiac;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
@@ -10,7 +11,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class DossierGiac extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use  HasFactory, InteractsWithMedia;
 
     public const PIECES_JOINTES = [
         'bulletin_adhesion'     => "Bulletin d'Adhésion",
@@ -36,7 +37,7 @@ class DossierGiac extends Model implements HasMedia
     protected $casts = [
         'statut' => StatutDossierGiac::class,
         'date_generation' => 'datetime',
-        
+
     ];
 
     public function entrepriseCliente(): BelongsTo
@@ -47,7 +48,7 @@ class DossierGiac extends Model implements HasMedia
     public function getProgressionArchive(): int
     {
         $totalPieces = count(self::PIECES_JOINTES);
-        
+
         if ($totalPieces === 0) {
             return 0;
         }
@@ -61,7 +62,7 @@ class DossierGiac extends Model implements HasMedia
 
         if ($progression >= 100 && $this->statut !== StatutDossierGiac::Signe) {
             $this->statut = StatutDossierGiac::Signe;
-            $this->saveQuietly(); 
+            $this->saveQuietly();
         } elseif ($progression < 100 && $this->statut === StatutDossierGiac::Signe) {
             $this->statut = StatutDossierGiac::EnCours;
             $this->saveQuietly();

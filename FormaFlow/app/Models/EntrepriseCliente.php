@@ -61,8 +61,6 @@ class EntrepriseCliente extends Model implements HasMedia
         'montant_tfp' => 'decimal:2',
         'cheque_date'=>'date:Y-m-d',
         'statut_demande_financement' => \App\Enums\DemandeFinancementStatus::class,
-    
-        
     ];
 
     public const PIECES_JOINTES = [
