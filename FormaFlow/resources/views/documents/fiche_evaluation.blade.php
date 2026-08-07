@@ -55,7 +55,7 @@
     }
 
     .doc-header-line {
-        font-size: 12px;
+        font-size: 13px;
         margin-bottom: 4px;
     }
 

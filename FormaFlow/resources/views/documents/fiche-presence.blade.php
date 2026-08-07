@@ -63,6 +63,7 @@
 
         .info-block .info-label {
             font-weight: bold;
+            font-size: 13px;
         }
 
         table.presence-table {
@@ -128,11 +129,13 @@
 <div class="title">Liste de présence par action et par groupe</div>
 
 <div class="info-block">
-    <p><span class="info-label">Entreprise :</span> {{ $entreprise->raison_sociale }}</p>
-    <p><span class="info-label">Thème de l'action :</span> {{ $theme->intitule }}</p>
+    <p><span class="info-label">Entreprise :</span> <span style="font-size: 13px;">{{ $entreprise->raison_sociale }}</span></p>
+    <p><span class="info-label">Thème de l'action :</span> <span style="font-size: 13px;">{{ $theme->intitule }}</span></p>
     <p>
         <span class="info-label">Jours de réalisation :</span>
-        Du {{ $theme?->date_debut?->format('d/m/Y') ?? '--' }} au {{ $theme?->date_fin?->format('d/m/Y') ?? '--' }}
+        <span style="font-size: 13px;">
+            Du {{ $theme?->date_debut?->format('d/m/Y') ?? '--' }} au {{ $theme?->date_fin?->format('d/m/Y') ?? '--' }}
+        </span>
     </p>
 </div>
 
