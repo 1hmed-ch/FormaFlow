@@ -18,23 +18,27 @@ class FormateursTable
         return $table
             ->columns([
                 TextColumn::make('nom')
+                    ->label('Nom')
                     ->searchable(),
                 TextColumn::make('prenom')
+                    ->label('Prénom')
                     ->searchable(),
                 TextColumn::make('specialite')
+                    ->label('Spécialité')
                     ->searchable(),
                 TextColumn::make('statut')
                     ->label('Statut')
                     ->badge()
                     ->color(fn ($state): string => match ($state->value ?? $state) {
-                        'INTERNE', 'INTERNE' => 'info',
-                        'EXTERNE', 'EXTERNE'   => 'success',
+                        'INTERNE', 'INTERNE' => 'indigo',
+                        'EXTERNE', 'EXTERNE'   => 'orange',
                         default                  => 'gray',
                     }),
                 TextColumn::make('telephone')
+                    ->label('Téléphone')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Adresse Email')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

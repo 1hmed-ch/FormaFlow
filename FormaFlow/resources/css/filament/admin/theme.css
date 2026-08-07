@@ -6,3 +6,138 @@
 
 
 @source '../../../../vendor/saade/filament-fullcalendar/resources/views/**/*.blade.php';
+
+
+/*!* 1. Sidebar Main Background *!
+.fi-sidebar {
+    background-color: #E3F2FD !important; !* Replace with your preferred hex color *!
+}
+
+.dark .fi-sidebar {
+    background-color: #0F3040 !important; !* Replace with your preferred hex color *!
+}
+
+!* 2. Sidebar Header Background (Where the logo sits) *!
+.fi-sidebar-header {
+    background-color: #E3F2FD !important;
+}
+
+!* 3. Unselected Menu Items Text and Icon Color *!
+.fi-sidebar-item-button {
+    color: #cbd5e1 !important;
+}
+
+!* 4. Active/Selected Menu Item Background and Text Color *!
+.fi-sidebar-item-active {
+    background-color: #accde6 !important;
+    color: #ffffff !important;
+}
+
+!* 5. Hover State for Menu Items *!
+.fi-sidebar-item-button:hover {
+    background-color: #accde6 !important;
+    color: #ffffff !important;
+}*/
+
+/* ============================================================
+   FILAMENT SIDEBAR THEME
+   Paste this BELOW your existing @import / @source lines
+   in resources/css/filament/<panel>/theme.css
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Color variables
+   Light mode : background #E3F2FD / text #0F3040
+   Dark mode  : background #0F3040 / text #E3F2FD
+   ------------------------------------------------------------ */
+@layer base {
+    :root {
+        --sidebar-bg: #E3F2FD;
+        --sidebar-header-bg: color-mix(in srgb, #E3F2FD 92%, #0F3040 8%);
+        --sidebar-text: #0F3040;
+        --sidebar-icon: #0F3040;
+        --sidebar-active-bg: #0F3040;
+        --sidebar-active-text: #E3F2FD;
+        --sidebar-hover-bg: color-mix(in srgb, #E3F2FD 85%, #0F3040 15%);
+        --sidebar-hover-text: #0F3040;
+    }
+
+    :root[class~="dark"] {
+        --sidebar-bg: /*#0F3040*/ #222831;
+        --sidebar-header-bg: color-mix(in srgb, #222831 85%, black 15%);
+        --sidebar-text: #E3F2FD;
+        --sidebar-icon: #E3F2FD;
+        --sidebar-active-bg: #E3F2FD;
+        --sidebar-active-text: #222831;
+        --sidebar-hover-bg: color-mix(in srgb, #222831 78%, #E3F2FD 22%);
+        --sidebar-hover-text: #E3F2FD;
+    }
+}
+
+/* ------------------------------------------------------------
+   2. Sidebar main background
+   ------------------------------------------------------------ */
+.fi-sidebar {
+    background-color: var(--sidebar-bg) !important;
+}
+
+/* ------------------------------------------------------------
+   3. Sidebar header background (logo / collapse toggle row)
+   ------------------------------------------------------------ */
+.fi-sidebar-header {
+    background-color: var(--sidebar-header-bg) !important;
+}
+
+.fi-sidebar-header .fi-icon-btn-icon {
+    color: var(--sidebar-icon) !important;
+}
+
+/* ------------------------------------------------------------
+   4. Unselected menu items — text & icon color
+   ------------------------------------------------------------ */
+.fi-sidebar-group-label {
+    color: var(--sidebar-text) !important;
+}
+
+.fi-sidebar-item:not(.fi-sidebar-item-active) .fi-sidebar-item-label {
+    color: var(--sidebar-text) !important;
+}
+
+.fi-sidebar-item:not(.fi-sidebar-item-active) .fi-sidebar-item-icon,
+.fi-sidebar-group-icon {
+    color: var(--sidebar-icon) !important;
+}
+
+/* ------------------------------------------------------------
+   5. Active / selected menu item — background & text
+   ------------------------------------------------------------ */
+.fi-sidebar-item-active .fi-sidebar-item-btn {
+    background-color: var(--sidebar-hover-bg) !important;
+    border-radius: 0.5rem;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-label,
+.fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: var(--sidebar-active-text) !important;
+}
+
+.fi-sidebar-item {
+    &.fi-active {
+        & > .fi-sidebar-item-btn {
+            background-color: var(--sidebar-hover-bg) !important;
+        }
+    }
+}
+
+/* ------------------------------------------------------------
+   6. Hover state (unselected items only)
+   ------------------------------------------------------------ */
+.fi-sidebar-item:not(.fi-sidebar-item-active) .fi-sidebar-item-btn:hover {
+    background-color: var(--sidebar-hover-bg) !important;
+    border-radius: 0.5rem;
+}
+
+.fi-sidebar-item:not(.fi-sidebar-item-active) .fi-sidebar-item-btn:hover .fi-sidebar-item-label,
+.fi-sidebar-item:not(.fi-sidebar-item-active) .fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
+    color: var(--sidebar-hover-text) !important;
+}

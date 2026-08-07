@@ -8,15 +8,15 @@
         margin: 40px 50px;
     }
 
-    .document-title-container, 
+    .document-title-container,
     .document-header,
-    header .document-title { 
-        display: none !important; 
+    header .document-title {
+        display: none !important;
     }
     .document-title-block div {
         display: none !important;
     }
-    
+
    body > .document-title-block {
         display: none !important;
         margin: 0 !important;
@@ -36,7 +36,7 @@
 
     .custom-header-wrapper {
         display: inline-block;
-        background-color: #000000; 
+        background-color: #000000;
         padding: 0;
     }
 
@@ -44,9 +44,9 @@
         border: 3px double #000000;
         background: #ffffff;
         padding: 10px 24px;
-        
-        margin: -5px 5px 5px -5px; 
-        text-transform: none; 
+
+        margin: -5px 5px 5px -5px;
+        text-transform: none;
         display: block;
         font-size: 16px;
         font-weight: bold;
@@ -70,7 +70,7 @@
     table.eval-info td {
         border: 1px solid #000;
         padding: 4px 8px;
-        font-size: 11px;
+        font-size: 13px;
         vertical-align: top;
         line-height: 1.6;
     }
@@ -91,7 +91,7 @@
     table.eval-criteres td {
         border: 1px solid #000;
         padding: 3px 6px;
-        font-size: 9.5px;
+        font-size: 14px;
         text-align: left;
     }
 
@@ -103,7 +103,7 @@
     table.eval-criteres td.pct,
     table.eval-criteres th.pct {
         text-align: right;
-        width: 45px;
+        /*width: 11%;*/
         padding: 3px 4px;
     }
 
@@ -118,7 +118,7 @@
     table.aspects td {
         border: 1px solid #000;
         padding: 4px 6px;
-        font-size: 11px;
+        font-size: 13px;
         width: 33.33%;
     }
 
@@ -140,13 +140,13 @@
 
     .eval-footer-row .signature {
         float: left;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: bold;
     }
 
     .eval-footer-row .cachet {
         float: right;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: bold;
     }
 </style>
@@ -212,11 +212,11 @@
         <table class="eval-criteres">
             <thead>
                 <tr>
-                    <th style="width: 55%; text-align: left;">{{ $section }}</th>
-                    <th class="pct">Pas du tout</th>
-                    <th class="pct">Peu</th>
-                    <th class="pct">Moyen</th>
-                    <th class="pct">Tout à fait</th>
+                    <th style="width: 56%; text-align: left;">{{ $section }}</th>
+                    <th style="width: 12%;" class="pct">Pas du tout</th>
+                    <th style="width: 10%;" class="pct">Peu</th>
+                    <th style="width: 11%;" class="pct">Moyen</th>
+                    <th style="width: 11%;" class="pct">Tout à fait</th>
                 </tr>
             </thead>
             <tbody>

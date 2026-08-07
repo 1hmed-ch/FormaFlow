@@ -25,7 +25,7 @@
 
         .entreprise-entete {
             position: absolute;
-            top: 20px;
+            top: -10px;
             left: 0;
             right: 0;
             text-align: center;
@@ -38,7 +38,18 @@
 
         .entreprise-pied-page {
             text-align: center;
-            margin-top: 300px;
+            /*margin-top: 300px;*/
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            padding-top: 6px;
+            font-size: 9px;
+            text-align: center;
         }
 
         .entreprise-pied-page img {
@@ -170,11 +181,13 @@
     </tr>
 </table>
 
-@if(!empty($piedPageImage ?? null))
-    <div class="entreprise-pied-page">
-        <img src="{{ $piedPageImage }}">
-    </div>
-@endif
+<footer>
+    @if(!empty($piedPageImage ?? null))
+        <div class="entreprise-pied-page">
+            <img src="{{ $piedPageImage }}">
+        </div>
+    @endif
+</footer>
 
 </body>
 </html>

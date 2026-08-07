@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -45,11 +46,31 @@ class ParticipantsRelationManager extends RelationManager
                     ->unique(table: 'participants', column: 'cin', ignoreRecord: true)
                     ->maxLength(20),
 
-                Select::make('categorie_sp')
+                /*Select::make('categorie_sp')
                     ->label('Catégorie Socio-Professionnelle')
                     ->options(CategorieSP::class)
                     ->native(false)
-                    ->required(),
+                    ->required(),*/
+
+                ToggleButtons::make('categorie_sp')
+                    ->label('Catégorie Socio-Professionnelle')
+                    ->options([
+                        CategorieSP::Cadre->value => 'Cadre',
+                        CategorieSP::Employe->value => 'Employé',
+                        CategorieSP::Ouvrier->value => 'Ouvrier',
+                    ])
+                    ->colors([
+                        CategorieSP::Cadre->value => 'primary',
+                        CategorieSP::Employe->value => 'teal',
+                        CategorieSP::Ouvrier->value => 'indigo',
+                    ])
+                    ->icons([
+                        CategorieSP::Cadre->value => 'heroicon-o-user-circle',
+                        CategorieSP::Employe->value => 'heroicon-o-user-group',
+                        CategorieSP::Ouvrier->value => 'heroicon-o-user',
+                    ])
+                    ->required()
+                    ->inline(),
 
                 TextInput::make('fonction_occupee')
                     ->label('Fonction occupée')
@@ -80,23 +101,35 @@ class ParticipantsRelationManager extends RelationManager
             ->recordTitleAttribute('nom')
             ->columns([
                 TextColumn::make('nom')
+                    ->label('Nom')
                     ->searchable(),
 
                 TextColumn::make('prenom')
+                    ->label('Prénom')
                     ->searchable(),
 
                 TextColumn::make('cin')
+                    ->label('CIN')
+                    ->searchable(),
+
+                TextColumn::make('numero_cnss')
+                    ->label('N° CNSS')
                     ->searchable(),
 
                 TextColumn::make('categorie_sp')
                     ->label('Catégorie')
                     ->badge()
                     ->color(fn ($state): string => match ($state->value ?? $state) {
-                        'Ouvrier', 'O' => 'info',
+                        'Ouvrier', 'O' => 'indigo',
                         'Cadre', 'C'   => 'warning',
                         'Employe', 'E' => 'success',
                         default        => 'gray',
                     }),
+
+                TextColumn::make('fonction_occupee')
+                    ->label('Fonction occupée')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('email')
                     ->searchable()
@@ -113,16 +146,10 @@ class ParticipantsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make(),
-                // "entreprise_id" is NOT NULL, so Associate reassigns an
-                // existing participant from another entreprise rather than
-                // linking an "orphan" one.
                 AssociateAction::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                // No DissociateAction: participants.entreprise_id is NOT
-                // NULL, so dissociating would attempt to null it and fail
-                // at the DB level.
                 DeleteAction::make(),
             ])
             ->toolbarActions([
