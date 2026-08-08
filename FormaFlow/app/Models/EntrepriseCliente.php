@@ -68,7 +68,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'entete_page'      => 'Entête de page',
         'pied_page'        => 'Pied de page',
         'logo'             => 'Logo',
-        'eligibilite_csf'    => 'Éligibilité CSF cabinet',
+        //'eligibilite_csf'    => 'Éligibilité CSF cabinet',
         'facture_pro_forma'  => 'Facture pro forma (originale)',
        // 'autres_documents' => 'Autres documents',
     ];

@@ -45,6 +45,7 @@ class ManageSettings extends Page implements HasForms
         'rc_modele_j',
         'cv_consultants',
         'proposition_intervention',
+        'eligibilite_csf',
     ];
 
     /**

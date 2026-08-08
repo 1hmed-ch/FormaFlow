@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('statut_juridique')->nullable();
             
             $table->string('ice', 15)->required()->unique(); 
-            $table->string('if', 50)->required()->unique();  
+            $table->string('if', 50)->nullable()->unique();  
             
             $table->string('num_cnss', 50)->required()->unique();
             $table->string('rc', 50)->nullable()->unique();
@@ -34,7 +34,7 @@ return new class extends Migration
 
             $table->string('telephone')->nullable();
             $table->string('fax')->nullable();
-            $table->string('email')->required()->unique(); 
+            $table->string('email')->nullable()->unique(); 
             
             $table->string('contact_ref')->nullable();
 

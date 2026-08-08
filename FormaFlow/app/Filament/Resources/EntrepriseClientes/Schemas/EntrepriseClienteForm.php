@@ -220,7 +220,7 @@ class EntrepriseClienteForm
                         TextInput::make('if')
                             ->label('Identifiant Fiscal (IF)')
                             ->placeholder('Ex: 23456789')
-                            ->required()
+                            //->required()
                             ->maxLength(20)
                             ->unique(ignoreRecord: true),
 
@@ -297,7 +297,7 @@ class EntrepriseClienteForm
                         TextInput::make('email')
                             ->label('Adresse Email')
                             ->email()
-                            ->required()
+                            //->required()
                             ->placeholder("EX: entreprise@example.com")
                             ->columnSpanFull()
                             ->unique(ignoreRecord: true)
