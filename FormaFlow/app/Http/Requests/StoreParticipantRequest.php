@@ -27,7 +27,7 @@ class StoreParticipantRequest extends FormRequest
             'prenom'           => 'required|string|max:255',
             'cin'              => 'required|string|max:20|unique:participants,cin',
             'email'            => 'nullable|string|email|max:255|unique:participants,email',
-            'numero_cnss'      => 'nullable|string|max:50',
+            'numero_cnss'      => 'nullable|string|max:50|unique:participants,numero_cnss',
             'fonction_occupee' => 'nullable|string|max:255',
             'telephone'        => 'nullable|string|max:20',
             'categorie_sp'     => 'required|in:C,E,O',

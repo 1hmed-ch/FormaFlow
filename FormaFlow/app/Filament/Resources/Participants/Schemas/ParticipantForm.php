@@ -85,6 +85,7 @@ class ParticipantForm
                         TextInput::make('email')
                             ->label('Adresse Email')
                             ->email()
+                            ->unique(ignoreRecord: true)
                             ->placeholder("saisissez l'adresse email")
                             ->maxLength(255),
 
