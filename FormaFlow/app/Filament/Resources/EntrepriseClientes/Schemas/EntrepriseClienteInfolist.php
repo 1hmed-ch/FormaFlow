@@ -168,17 +168,39 @@ class EntrepriseClienteInfolist
                     ->collapsible()
                     ->collapsed()
                     ->schema([
-                        ImageEntry::make('image_entete')
-                            ->label("Image d'en-tête")
-                            ->state(fn ($record) => $record->getEnteteImageBase64())
-                            ->height(100)
-                            ->placeholder('Aucune image fournie'),
+                        Actions::make([
+                            Action::make('voir_image_entete')
+                                ->label("Image d'en-tête")
+                                ->icon('heroicon-o-eye')
+                                ->color('info')
+                                ->outlined()
+                                ->size('sm')
+                                ->visible(fn ($record) => $record->hasMedia('entete_page'))
+                                ->modalHeading("Image d'en-tête")
+                                ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
+                                    'url' => route('media.stream', $record->getFirstMedia('entete_page')),
+                                    'mime' => $record->getFirstMedia('entete_page')?->mime_type ?? 'image/png',
+                                ]))
+                                ->modalSubmitAction(false)
+                                ->modalCancelAction(false)
+                                ->modalWidth('4xl'),
 
-                        ImageEntry::make('image_pied_page')
-                            ->label('Image de pied de page')
-                            ->state(fn ($record) => $record->getPiedPageImageBase64())
-                            ->height(100)
-                            ->placeholder('Aucune image fournie'),
+                            Action::make('voir_image_pied_page')
+                                ->label('Image de pied de page')
+                                ->icon('heroicon-o-eye')
+                                ->color('info')
+                                ->outlined()
+                                ->size('sm')
+                                ->visible(fn ($record) => $record->hasMedia('pied_page'))
+                                ->modalHeading('Image de pied de page')
+                                ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
+                                    'url' => route('media.stream', $record->getFirstMedia('pied_page')),
+                                    'mime' => $record->getFirstMedia('pied_page')?->mime_type ?? 'image/png',
+                                ]))
+                                ->modalSubmitAction(false)
+                                ->modalCancelAction(false)
+                                ->modalWidth('4xl'),
+                        ])->columnSpanFull(),
                     ]),
 
                 /*Section::make('Checklist GIAC — Dossier complet')
