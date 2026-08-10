@@ -22,6 +22,10 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Actions;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Forms\Components\TextInput as FormTextInput;
 
 class ManageSettings extends Page implements HasForms
 {
@@ -274,7 +278,104 @@ class ManageSettings extends Page implements HasForms
                 Section::make('Pièces Jointes de l\'organisme')
                     ->description('Veuillez glisser-déposer vos documents administratifs requis.')
                     ->schema([
-                        Grid::make(2)->schema($piecesJointesFields)
+                        Grid::make(2)->schema($piecesJointesFields),
+                   // PARTIE AJOUTÉE : Gestion de la collection "autres_documents" avec tableau et modal
+                        RepeatableEntry::make('autres_documents_display')
+                            ->label('Autres documents existants')
+                            ->state(fn () => EntrepriseFormation::current()->getMedia('autres_documents') ?? collect())
+                            ->columnSpanFull()
+                            ->table([
+                                TableColumn::make('Intitulé'),
+                                TableColumn::make('Ajouté le'),
+                                TableColumn::make('')->hiddenHeaderLabel(),
+                                TableColumn::make('')->hiddenHeaderLabel(),
+                                TableColumn::make('')->hiddenHeaderLabel(),
+                            ])
+                            ->schema([
+                                TextEntry::make('intitule')
+                                    ->state(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name),
+                                TextEntry::make('created_at')
+                                    ->dateTime('d/m/Y H:i'),
+
+                                TextEntry::make('voir')
+                                    ->label('')
+                                    ->state('Voir')
+                                    ->icon('heroicon-o-eye')
+                                    ->color('info')
+                                    ->action(
+                                        Action::make('voirAutreDocumentCabinet')
+                                            ->modalHeading(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name)
+                                            ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
+                                                'url' => route('media.stream', $record),
+                                                'mime' => $record->mime_type,
+                                            ]))
+                                            ->modalSubmitAction(false)
+                                            ->modalCancelAction(false)
+                                            ->modalWidth('4xl')
+                                    ),
+
+                                TextEntry::make('telecharger')
+                                    ->label('')
+                                    ->state('Télécharger')
+                                    ->icon('heroicon-o-arrow-down-tray')
+                                    ->color('primary')
+                                    ->url(fn ($record) => route('media.stream', $record))
+                                    ->openUrlInNewTab(),
+
+                                TextEntry::make('supprimer')
+                                    ->label('')
+                                    ->state('Supprimer')
+                                    ->icon('heroicon-o-trash')
+                                    ->color('danger')
+                                    ->action(
+                                        Action::make('supprimerAutreDocCabinet')
+                                            ->color('danger')
+                                            ->requiresConfirmation()
+                                            ->modalHeading('Supprimer le document')
+                                            ->modalDescription('Cette action est irréversible.')
+                                            ->action(function ($record, $livewire) {
+                                                $record->delete();
+                                                Notification::make()->success()->title('Document supprimé')->send();
+                                                $livewire->dispatch('$refresh');
+                                            })
+                                    ),
+                            ])
+                            ->placeholder('Aucun document complémentaire ajouté.'),
+
+                        Actions::make([
+                            Action::make('modalAjouterAutreDocumentCabinet')
+                                ->label('Ajouter un autre document')
+                                ->icon('heroicon-o-document-plus')
+                                ->color('primary')
+                                ->form([
+                                    FormTextInput::make('nouvel_intitule')
+                                        ->label('Intitulé du document')
+                                        ->required(),
+                                    FileUpload::make('upload_autre_document')
+                                        ->label('Fichier')
+                                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                        ->maxSize(10240)
+                                        ->disk('local')
+                                        ->directory('tmp-archives-upload')
+                                        ->visibility('private')
+                                        ->required(),
+                                ])
+                                ->action(function (array $data, $livewire) {
+                                    $record = EntrepriseFormation::current();
+
+                                    $record
+                                        ->addMediaFromDisk($data['upload_autre_document'], 'local')
+                                        ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
+                                        ->toMediaCollection('autres_documents');
+
+                                    $record->unsetRelation('media');
+
+                                    Notification::make()->success()->title('Document ajouté avec succès')->send();
+                                    $livewire->dispatch('$refresh');
+                                }),
+                        ])
+                        ->columnSpanFull()
+                        ->alignment('end'),
                     ]),
 
                 Actions::make([
