@@ -91,14 +91,22 @@ class FormationsCalendarWidget extends FullCalendarWidget
 
                 $entrepriseName = $formation->entrepriseCliente ? $formation->entrepriseCliente->raison_sociale : 'Sans Entreprise';
 
+                $eventColor = match (strtolower($formation->statut->value)) {
+                    'terminée' => '#90B800',
+                    'planifiée' => '#293681',
+                    'en cours' => '#FF8F00',
+                    'annulée' => '#D90000',
+                    default => '#4B5694',
+                };
+
                 return EventData::make()
                     ->id($formation->id)
                     ->title($formation->intitule.' ( '.$entrepriseName.' ) ')
                     ->start($formation->date_debut)
                     ->end($fin)
                     ->textColor('#FFFFFF')
-                    ->backgroundColor('#19526E') //#4B5694
-                    ->borderColor('#19526E')
+                    ->backgroundColor($eventColor) //#4B5694
+                    ->borderColor($eventColor)
                     ->url(FormationResource::getUrl('edit', ['record' => $formation]), shouldOpenUrlInNewTab: true);
             })
             ->toArray();
