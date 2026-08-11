@@ -61,19 +61,23 @@ class Formation extends Model
     }
 
     protected static function booted()
-    {
-        static::deleting(function ($formation) {
-            // On cherche s'il existe AU MOINS un groupe rattaché
-            // à AU MOINS un thème de cette formation
-            $aDesGroupesActifs = $formation->themes()
-                ->whereHas('groupes')
-                ->exists();
+{
+    static::created(function (Formation $formation) {
+        if ($formation->entrepriseCliente) {
+            DossierGiac::pourEntreprise($formation->entrepriseCliente);
+        }
+    });
 
-            if ($aDesGroupesActifs) {
-                throw new \App\Exceptions\SuppressionBloqueeException(
-                    "Suppression impossible : cette formation contient des thèmes ayant des groupes actifs."
-                );
-            }
-        });
-    }
+    static::deleting(function ($formation) {
+        $aDesGroupesActifs = $formation->themes()
+            ->whereHas('groupes')
+            ->exists();
+
+        if ($aDesGroupesActifs) {
+            throw new \App\Exceptions\SuppressionBloqueeException(
+                "Suppression impossible : cette formation contient des thèmes ayant des groupes actifs."
+            );
+        }
+    });
+}
 }
