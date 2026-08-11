@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Formations\Tables;
 
 use App\Enums\FormationStatus;
 use App\Exceptions\DocumentGenerationException;
+use App\Filament\Resources\Formations\Pages\DocumentsAJoindre;
 use App\Models\Formation;
 use App\Services\DocumentGenerationService;
 use Filament\Actions\Action;
@@ -78,6 +79,43 @@ class FormationsTable
             ->recordActions([
                 ActionGroup::make(actions: [
                     EditAction::make(),
+                    Action::make('documentsAJoindre')
+                        ->label('Documents à joindre')
+                        ->icon('heroicon-o-paper-clip')
+                        ->color('indigo')
+                        ->url(fn (Formation $record): string => DocumentsAJoindre::getUrl(['record' => $record])),
+
+                    Action::make('changerStatut')
+                        ->label('Changer le statut')
+                        ->icon('heroicon-o-arrow-path')
+                        ->color('orange')
+                        ->form([
+                            ToggleButtons::make('statut')
+                                ->label('État d\'avancement')
+                                ->options(FormationStatus::class)
+                                ->default(fn (Formation $record) => $record->statut)
+                                ->colors([
+                                    FormationStatus::PLANIFIEE->value => 'info',
+                                    FormationStatus::EN_COURS->value => 'yellow',
+                                    FormationStatus::TERMINEE->value => 'success',
+                                    FormationStatus::ANNULEE->value => 'danger',
+                                ])
+                                ->icons([
+                                    FormationStatus::PLANIFIEE->value => 'heroicon-o-calendar',
+                                    FormationStatus::EN_COURS->value => 'heroicon-o-clock',
+                                    FormationStatus::TERMINEE->value => 'heroicon-o-check-circle',
+                                    FormationStatus::ANNULEE->value => 'heroicon-o-x-circle',
+                                ])
+                                ->required()
+                                ->inline(),
+                        ])
+                        ->action(function (Formation $record, array $data): void {
+                            $record->update([
+                                'statut' => $data['statut']
+                            ]);
+                        })
+                        ->successNotificationTitle('Statut mis à jour avec succès.'),
+
                     Action::make('genererModele6')
                         ->label('Modèle 6')
                         ->icon('heroicon-o-document-arrow-down')
@@ -113,42 +151,6 @@ class FormationsTable
                                 $action->halt();
                             }
                         }),
-                    Action::make('changerStatut')
-                        ->label('Changer le statut')
-                        ->icon('heroicon-o-arrow-path')
-                        ->color('indigo')
-                        ->form([
-                            /*Select::make('statut')
-                                ->label('État d\'avancement')
-                                ->options(FormationStatus::class)
-                                ->native(false)
-                                ->default(fn (Formation $record) => $record->statut)
-                                ->required(),*/
-                            ToggleButtons::make('statut')
-                                ->label('État d\'avancement')
-                                ->options(FormationStatus::class)
-                                ->default(fn (Formation $record) => $record->statut)
-                                ->colors([
-                                    FormationStatus::PLANIFIEE->value => 'info',
-                                    FormationStatus::EN_COURS->value => 'yellow',
-                                    FormationStatus::TERMINEE->value => 'success',
-                                    FormationStatus::ANNULEE->value => 'danger',
-                                ])
-                                ->icons([
-                                    FormationStatus::PLANIFIEE->value => 'heroicon-o-calendar',
-                                    FormationStatus::EN_COURS->value => 'heroicon-o-clock',
-                                    FormationStatus::TERMINEE->value => 'heroicon-o-check-circle',
-                                    FormationStatus::ANNULEE->value => 'heroicon-o-x-circle',
-                                ])
-                                ->required()
-                                ->inline(),
-                        ])
-                        ->action(function (Formation $record, array $data): void {
-                            $record->update([
-                                'statut' => $data['statut']
-                            ]);
-                        })
-                        ->successNotificationTitle('Statut mis à jour avec succès.'),
                     DeleteAction::make(),
                 ])
             ])

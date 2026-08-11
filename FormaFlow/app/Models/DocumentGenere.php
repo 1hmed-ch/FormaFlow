@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Formation;
+use App\Models\Theme;
+use App\Models\Groupe;
 
 /**
  * Ligne d'archive pour un document PDF généré par la plateforme (Modèle 5,
@@ -54,6 +57,32 @@ class DocumentGenere extends Model
     public function documentable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Résout la Formation d'origine d'un document "remboursement" à partir
+     * des métadonnées conservées à la génération (formation_id pour le
+     * Modèle 6, theme_id/groupe_id pour le Modèle 5 et la fiche
+     * d'évaluation, générés par groupe). Retourne null pour les documents
+     * GIAC/OFPPT, qui ne sont pas rattachés à une formation précise.
+     */
+    public function formationLiee(): ?Formation
+    {
+        $meta = $this->metadonnees ?? [];
+
+        if (! empty($meta['formation_id'])) {
+            return Formation::find($meta['formation_id']);
+        }
+
+        if (! empty($meta['theme_id'])) {
+            return Theme::find($meta['theme_id'])?->formation;
+        }
+
+        if (! empty($meta['groupe_id'])) {
+            return Groupe::find($meta['groupe_id'])?->theme?->formation;
+        }
+
+        return null;
     }
 
     public function generePar(): BelongsTo

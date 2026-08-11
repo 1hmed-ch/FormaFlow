@@ -29,6 +29,7 @@ class DossierGiac extends Model implements HasMedia
 
     protected $fillable = [
         'entreprise_cliente_id',
+        'formation_id',
         'statut',
         'date_generation',
         'chemin_stockage',
@@ -43,6 +44,11 @@ class DossierGiac extends Model implements HasMedia
     public function entrepriseCliente(): BelongsTo
     {
         return $this->belongsTo(EntrepriseCliente::class, 'entreprise_cliente_id');
+    }
+
+    public function formation(): BelongsTo
+    {
+        return $this->belongsTo(Formation::class, 'formation_id');
     }
 
     public function getProgressionArchive(): int
@@ -79,6 +85,24 @@ class DossierGiac extends Model implements HasMedia
                 ->singleFile()
                 ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png']);
         }
+
+        foreach (array_keys(EntrepriseCliente::PIECES_JOINTES_OFPPT) as $collection) {
+            $this->addMediaCollection($collection)
+                ->singleFile()
+                ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                ->useDisk('local');
+        }
+
+        foreach (['eligibilite_csf', 'facture_pro_forma'] as $collection) {
+            $this->addMediaCollection($collection)
+                ->singleFile()
+                ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                ->useDisk('local');
+        }
+
+        $this->addMediaCollection('autres_documents_ofppt')
+            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+            ->useDisk('local');
     }
 
     public function getPieceJointeStatut(string $collection): array
@@ -107,8 +131,25 @@ class DossierGiac extends Model implements HasMedia
     public static function pourEntreprise(EntrepriseCliente $entreprise): self
     {
         return static::firstOrCreate(
-            ['entreprise_cliente_id' => $entreprise->id],
+            ['entreprise_cliente_id' => $entreprise->id, 'formation_id' => null],
             ['statut' => StatutDossierGiac::EnCours]
+        );
+    }
+
+    /**
+     * Dossier de pièces jointes propre à une Formation : chaque formation
+     * d'une même entreprise obtient sa propre ligne (et donc ses propres
+     * médias), au lieu de partager le dossier "entreprise" utilisé pour le
+     * bundle GIAC global.
+     */
+    public static function pourFormation(Formation $formation): self
+    {
+        return static::firstOrCreate(
+            ['formation_id' => $formation->id],
+            [
+                'entreprise_cliente_id' => $formation->entreprise_id,
+                'statut' => StatutDossierGiac::EnCours,
+            ]
         );
     }
 }
