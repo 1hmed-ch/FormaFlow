@@ -293,6 +293,100 @@ class ArchiveInfolist
                                 Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
                                     ->schema(self::checklistGiacCards())
                                     ->columnSpanFull(),
+                                    RepeatableEntry::make('autres_documents_signes_entreprise_display')
+                                    ->label('Autres documents de l\'entreprise')
+                                    ->state(fn (DossierGiac $record) => $record->entrepriseCliente?->getMedia('autres_documents_signes_entreprise') ?? collect())
+                                    ->columnSpanFull()
+                                    ->table([
+                                        TableColumn::make('Intitulé'),
+                                        TableColumn::make('Ajouté le'),
+                                        TableColumn::make('')->hiddenHeaderLabel(),
+                                        TableColumn::make('')->hiddenHeaderLabel(),
+                                        TableColumn::make('')->hiddenHeaderLabel(),
+                                    ])
+                                    ->schema([
+                                        TextEntry::make('intitule')
+                                            ->state(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name),
+                                        TextEntry::make('created_at')
+                                            ->dateTime('d/m/Y H:i'),
+                                        TextEntry::make('voir')
+                                            ->label('')
+                                            ->state('Voir')
+                                            ->icon('heroicon-o-eye')
+                                            ->color('info')
+                                            ->action(
+                                                Action::make('voirAutreDocSigneEnt')
+                                                    ->modalHeading(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name)
+                                                    ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
+                                                        'url' => route('media.stream', $record),
+                                                        'mime' => $record->mime_type,
+                                                    ]))
+                                                    ->modalSubmitAction(false)
+                                                    ->modalCancelAction(false)
+                                                    ->modalWidth('4xl')
+                                            ),
+                                        TextEntry::make('telecharger')
+                                            ->label('')
+                                            ->state('Télécharger')
+                                            ->icon('heroicon-o-arrow-down-tray')
+                                            ->color('primary')
+                                            ->url(fn ($record) => route('media.stream', $record))
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('supprimer')
+                                            ->label('')
+                                            ->state('Supprimer')
+                                            ->icon('heroicon-o-trash')
+                                            ->color('danger')
+                                            ->action(
+                                                Action::make('supprimerAutreDocSigneEnt')
+                                                    ->color('danger')
+                                                    ->requiresConfirmation()
+                                                    ->modalHeading('Supprimer le document')
+                                                    ->modalDescription('Cette action est irréversible.')
+                                                    ->action(function ($record, $livewire) {
+                                                        $record->delete();
+                                                        Notification::make()->success()->title('Document supprimé')->send();
+                                                        $livewire->dispatch('$refresh');
+                                                    })
+                                            ),
+                                    ])
+                                    ->placeholder('Aucun document complémentaire d\'entreprise ajouté.'),
+
+                                Actions::make([
+                                    Action::make('modalAjouterAutreDocSigneEnt')
+                                        ->label('Ajouter un document d\'entreprise')
+                                        ->icon('heroicon-o-document-plus')
+                                        ->color('primary')
+                                        ->form([
+                                            FormTextInput::make('nouvel_intitule')->label('Intitulé du document')->required(),
+                                            FileUpload::make('upload_doc_ent')
+                                                ->label('Fichier')
+                                                ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                                ->maxSize(10240)
+                                                ->disk('local')
+                                                ->directory('tmp-archives-upload')
+                                                ->visibility('private')
+                                                ->required(),
+                                        ])
+                                        ->action(function (DossierGiac $record, array $data, $livewire) {
+                                            $entreprise = $record->entrepriseCliente;
+                                            if (! $entreprise) return;
+
+                                            $entreprise
+                                                ->addMediaFromDisk($data['upload_doc_ent'], 'local')
+                                                ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
+                                                ->toMediaCollection('autres_documents_signes_entreprise');
+
+                                            $entreprise->unsetRelation('media');
+                                            $record->unsetRelation('entrepriseCliente');
+
+                                            Notification::make()->success()->title('Document ajouté avec succès')->send();
+                                            $livewire->dispatch('$refresh');
+                                        }),
+                                ])
+                                ->columnSpanFull()
+                                ->alignment('end'),
+                            
                             ])
                             ->compact(),
 
@@ -303,6 +397,98 @@ class ArchiveInfolist
                                 Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
                                     ->schema(self::piecesJointesCabinetCards())
                                     ->columnSpanFull(),
+                           RepeatableEntry::make('autres_documents_signes_cabinet_display')
+                                    ->label('Autres documents du cabinet')
+                                    ->state(fn () => \App\Models\EntrepriseFormation::current()?->getMedia('autres_documents_signes_cabinet') ?? collect())
+                                    ->columnSpanFull()
+                                    ->table([
+                                        TableColumn::make('Intitulé'),
+                                        TableColumn::make('Ajouté le'),
+                                        TableColumn::make('')->hiddenHeaderLabel(),
+                                        TableColumn::make('')->hiddenHeaderLabel(),
+                                        TableColumn::make('')->hiddenHeaderLabel(),
+                                    ])
+                                    ->schema([
+                                        TextEntry::make('intitule')
+                                            ->state(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name),
+                                        TextEntry::make('created_at')
+                                            ->dateTime('d/m/Y H:i'),
+                                        TextEntry::make('voir')
+                                            ->label('')
+                                            ->state('Voir')
+                                            ->icon('heroicon-o-eye')
+                                            ->color('info')
+                                            ->action(
+                                                Action::make('voirAutreDocSigneCab')
+                                                    ->modalHeading(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name)
+                                                    ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
+                                                        'url' => route('media.stream', $record),
+                                                        'mime' => $record->mime_type,
+                                                    ]))
+                                                    ->modalSubmitAction(false)
+                                                    ->modalCancelAction(false)
+                                                    ->modalWidth('4xl')
+                                            ),
+                                        TextEntry::make('telecharger')
+                                            ->label('')
+                                            ->state('Télécharger')
+                                            ->icon('heroicon-o-arrow-down-tray')
+                                            ->color('primary')
+                                            ->url(fn ($record) => route('media.stream', $record))
+                                            ->openUrlInNewTab(),
+                                        TextEntry::make('supprimer')
+                                            ->label('')
+                                            ->state('Supprimer')
+                                            ->icon('heroicon-o-trash')
+                                            ->color('danger')
+                                            ->action(
+                                                Action::make('supprimerAutreDocSigneCab')
+                                                    ->color('danger')
+                                                    ->requiresConfirmation()
+                                                    ->modalHeading('Supprimer le document')
+                                                    ->modalDescription('Cette action est irréversible.')
+                                                    ->action(function ($record, $livewire) {
+                                                        $record->delete();
+                                                        Notification::make()->success()->title('Document supprimé')->send();
+                                                        $livewire->dispatch('$refresh');
+                                                    })
+                                            ),
+                                    ])
+                                    ->placeholder('Aucun document complémentaire de cabinet ajouté.'),
+
+                                Actions::make([
+                                    Action::make('modalAjouterAutreDocSigneCab')
+                                        ->label('Ajouter un document du cabinet')
+                                        ->icon('heroicon-o-document-plus')
+                                        ->color('primary')
+                                        ->form([
+                                            FormTextInput::make('nouvel_intitule')->label('Intitulé du document')->required(),
+                                            FileUpload::make('upload_doc_cab')
+                                                ->label('Fichier')
+                                                ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                                ->maxSize(10240)
+                                                ->disk('local')
+                                                ->directory('tmp-archives-upload')
+                                                ->visibility('private')
+                                                ->required(),
+                                        ])
+                                        ->action(function (array $data, $livewire) {
+                                            $cabinet = \App\Models\EntrepriseFormation::current();
+                                            if (! $cabinet) return;
+
+                                            $cabinet
+                                                ->addMediaFromDisk($data['upload_doc_cab'], 'local')
+                                                ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
+                                                ->toMediaCollection('autres_documents_signes_cabinet');
+
+                                            $cabinet->unsetRelation('media');
+
+                                            Notification::make()->success()->title('Document ajouté avec succès')->send();
+                                            $livewire->dispatch('$refresh');
+                                        }),
+                                ])
+                                ->columnSpanFull()
+                                ->alignment('end'),
                             ])
                             ->compact(),
                     ]),
