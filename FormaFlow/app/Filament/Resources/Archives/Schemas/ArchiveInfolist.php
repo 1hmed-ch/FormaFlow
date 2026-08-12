@@ -112,7 +112,7 @@ class ArchiveInfolist
                             ->alignment('end'),
                     ]),
 
-                // Bloc 2 : GIAC Technologies & Checklist Signée
+                // Bloc 2 : GIAC Technologies 
                 Section::make('Documents du cabinet et Checklist signée')
                     ->description('Documents générés par le cabinet et pièces signées')
                     ->icon('heroicon-o-building-office')

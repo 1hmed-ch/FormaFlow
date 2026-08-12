@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Enums\DemandeFinancementStatus;
+use App\Enums\FormationStatus;
 
 
 class EntrepriseCliente extends Model implements HasMedia
@@ -194,4 +195,19 @@ class EntrepriseCliente extends Model implements HasMedia
             ->values()
             ->all();
     }
+    public function anneeArchive(): ?int
+    {
+        $date = $this->formations()
+            ->orderBy('date_debut')
+            ->value('date_debut');
+
+        return $date ? (int) $date->format('Y') : null;
+    }
+
+   public function statutDerniereFormation(): ?FormationStatus
+{
+    return $this->formations()
+        ->orderByDesc('date_debut')
+        ->value('statut');
+}
 }

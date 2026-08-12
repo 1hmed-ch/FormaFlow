@@ -51,7 +51,7 @@ class DossierGiac extends Model implements HasMedia
         return $this->belongsTo(Formation::class, 'formation_id');
     }
 
-    public function getProgressionArchive(): int
+   /* public function getProgressionArchive(): int
     {
         $totalPieces = count(self::PIECES_JOINTES);
 
@@ -75,7 +75,7 @@ class DossierGiac extends Model implements HasMedia
         }
 
         return $progression;
-    }
+    }*/
 
 
     public function registerMediaCollections(): void
