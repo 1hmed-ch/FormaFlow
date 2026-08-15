@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Enums\TypeFormation;
 
+
 class Formation extends Model
 {
     use HasFactory;
@@ -30,7 +31,7 @@ class Formation extends Model
         'date_debut' => 'date:Y-m-d',
         'date_fin' => 'date:Y-m-d',
     ];
-
+    
     public function entrepriseCliente(): BelongsTo
     {
         return $this->belongsTo(EntrepriseCliente::class, 'entreprise_id');

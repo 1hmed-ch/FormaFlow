@@ -184,10 +184,8 @@ class EntrepriseCliente extends Model implements HasMedia
     public function anneesFormations(): array
     {
         return $this->formations()
-            ->with('themes')
             ->get()
-            ->flatMap(fn ($formation) => $formation->themes)
-            ->pluck('date_fin')
+            ->pluck('date_debut')
             ->filter()
             ->map(fn ($date) => (int) $date->format('Y'))
             ->unique()

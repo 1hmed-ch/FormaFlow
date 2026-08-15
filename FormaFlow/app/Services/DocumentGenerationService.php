@@ -464,7 +464,7 @@ class DocumentGenerationService
     protected function determinerTypeFormation(EntrepriseCliente $entreprise, int $annee): TypeFormation
     {
         $types = $entreprise->formations()
-            ->whereHas('themes', fn ($q) => $q->whereYear('date_fin', $annee))
+            ->whereYear('date_debut', $annee)
             ->pluck('type_formation')
             ->unique();
 
