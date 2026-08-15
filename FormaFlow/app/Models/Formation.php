@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Enums\TypeFormation;
 
 class Formation extends Model
@@ -41,6 +42,16 @@ class Formation extends Model
         return $this->hasMany(Theme::class, 'formation_id');
     }
 
+    public function etudeIngenierieFormation(): HasOne
+    {
+        return $this->hasOne(EtudeIngenierieFormation::class, 'formation_id');
+    }
+
+    public function etudeDiagnosticStrategique(): HasOne
+    {
+        return $this->hasOne(EtudeDiagnosticStrategique::class, 'formation_id');
+    }
+
     /**
      * Ne garde que les formations au statut "Terminée".
      */
@@ -60,8 +71,7 @@ class Formation extends Model
             ->when($fin, fn (Builder $q, string $date) => $q->where('date_debut', '<=', $date));
     }
 
-    protected static function booted()
-{
+    protected static function booted(){
     static::created(function (Formation $formation) {
         if ($formation->entrepriseCliente) {
             DossierGiac::pourEntreprise($formation->entrepriseCliente);
@@ -73,11 +83,11 @@ class Formation extends Model
             ->whereHas('groupes')
             ->exists();
 
-        if ($aDesGroupesActifs) {
-            throw new \App\Exceptions\SuppressionBloqueeException(
-                "Suppression impossible : cette formation contient des thèmes ayant des groupes actifs."
-            );
-        }
-    });
-}
+            if ($aDesGroupesActifs) {
+                throw new \App\Exceptions\SuppressionBloqueeException(
+                    "Suppression impossible : cette formation contient des thèmes ayant des groupes actifs."
+                );
+            }
+        });
+    }
 }

@@ -12,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -30,12 +31,28 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
 {
     protected static string $relationship = 'etudesIngenierieFormation';
 
-    protected static ?string $title = "Etudes d'Ingénierie de Formation";
+    protected static ?string $title = "Études d'Ingénierie de Formation";
+
+    protected static ?string $label = "Études d'Ingénierie de Formation";
+
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
+                Select::make('formation_id')
+                    ->label('Formation liée')
+                    ->relationship(
+                        name: 'formation',
+                        titleAttribute: 'intitule',
+                        modifyQueryUsing: fn ($query) => $query->where('entreprise_id', $this->getOwnerRecord()->id),
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->unique(ignoreRecord: true)
+                    ->helperText("Une formation ne peut avoir qu'une seule Étude d'Ingénierie de Formation.")
+                    ->columnSpanFull(),
+
                 TextInput::make('nature_action')
                     ->label("Nature de l'Action")
                     ->required()
@@ -111,6 +128,13 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('nature_action')
             ->columns([
+                TextColumn::make('formation.intitule')
+                    ->label('Formation liée')
+                    ->limit(30)
+                    ->placeholder('—')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('nature_action')
                     ->label('Nature de l\'Action')
                     ->limit(40)
@@ -121,10 +145,10 @@ class EtudesIngenierieFormationRelationManager extends RelationManager
                     ->date('d/m/Y')
                     ->sortable(),
 
-                TextColumn::make('periode_fin')
+                /*TextColumn::make('periode_fin')
                     ->label('Fin')
                     ->date('d/m/Y')
-                    ->sortable(),
+                    ->sortable(),*/
 
                 TextColumn::make('nb_jours_intervention')
                     ->label('Jours')
