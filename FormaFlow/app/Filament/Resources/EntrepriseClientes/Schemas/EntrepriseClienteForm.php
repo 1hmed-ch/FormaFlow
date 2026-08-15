@@ -145,7 +145,8 @@ class EntrepriseClienteForm
                                 ->label('Adresse E-mail')
                                 ->email()
                                 ->placeholder('ex: gerant@entreprise.ma')
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                ->unique(table: 'gerants', column: 'email', ignoreRecord: true),
 
                             /*Select::make('genre')
                                 ->label('Genre')
@@ -213,28 +214,32 @@ class EntrepriseClienteForm
                             ->label('ICE')
                             ->required()
                             ->length(15)
-                            ->placeholder('Ex: 123456789012345'),
+                            ->placeholder('Ex: 123456789012345')
+                            ->unique(ignoreRecord: true),
 
                         TextInput::make('if')
                             ->label('Identifiant Fiscal (IF)')
                             ->placeholder('Ex: 23456789')
-                            ->required()
-                            ->numeric()
-                            ->maxLength(20),
+                            //->required()
+                            ->maxLength(20)
+                            ->unique(ignoreRecord: true),
 
                         TextInput::make('rc')
                             ->label('Registre de Commerce (RC)')
-                            ->maxLength(50),
+                            ->maxLength(50)
+                             ->unique(ignoreRecord: true),
 
                         TextInput::make('patente')
                             ->label('Patente')
-                            ->maxLength(50),
+                            ->maxLength(50)
+                             ->unique(ignoreRecord: true),
 
                         TextInput::make('num_cnss')
                             ->label('N° CNSS')
                             ->placeholder('Ex: 8253792')
                             ->numeric()
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->unique(ignoreRecord: true),
 
                         TextInput::make('region_affiliation_cnss')
                             ->label('Région d\'affiliation CNSS')
@@ -292,7 +297,7 @@ class EntrepriseClienteForm
                         TextInput::make('email')
                             ->label('Adresse Email')
                             ->email()
-                            ->required()
+                            //->required()
                             ->placeholder("EX: entreprise@example.com")
                             ->columnSpanFull()
                             ->unique(ignoreRecord: true)

@@ -11,6 +11,7 @@ class ViewArchive extends ViewRecord
 {
     protected static string $resource = ArchiveResource::class;
     public ?string $archiveDocumentsCategorie = null;
+    public ?string $archiveDocumentsFormationId = null;
     public ?string $archiveDocumentsDateDebut = null;
     public ?string $archiveDocumentsDateFin = null;
 

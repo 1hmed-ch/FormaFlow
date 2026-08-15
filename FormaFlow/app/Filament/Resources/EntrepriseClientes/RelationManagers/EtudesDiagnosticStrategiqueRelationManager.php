@@ -12,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -30,12 +31,26 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
 {
     protected static string $relationship = 'etudesDiagnosticStrategique';
 
-    protected static ?string $title = 'Etudes de Diagnostic Stratégique';
+    protected static ?string $title = 'Études de Diagnostic Stratégique';
+    protected static ?string $label = 'Études de Diagnostic Stratégique';
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
+                Select::make('formation_id')
+                    ->label('Formation liée')
+                    ->relationship(
+                        name: 'formation',
+                        titleAttribute: 'intitule',
+                        modifyQueryUsing: fn ($query) => $query->where('entreprise_id', $this->getOwnerRecord()->id),
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->unique(ignoreRecord: true)
+                    ->helperText("Une formation ne peut avoir qu'une seule Étude de Diagnostic Stratégique.")
+                    ->columnSpanFull(),
+
                 Grid::make(2)->schema([
                     Toggle::make('projet_marche_export')
                         ->label("Marché d'Exportation"),
@@ -100,6 +115,13 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('objectifs_resultats_attendus')
             ->columns([
+                TextColumn::make('formation.intitule')
+                    ->label('Formation liée')
+                    ->limit(30)
+                    ->placeholder('—')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('objectifs_resultats_attendus')
                     ->label('Objectifs')
                     ->limit(40)
@@ -114,10 +136,10 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
                     ->numeric()
                     ->sortable(),
 
-                TextColumn::make('date_demarrage')
+                /*TextColumn::make('date_demarrage')
                     ->label('Démarrage')
                     ->date('d/m/Y')
-                    ->sortable(),
+                    ->sortable(),*/
 
                 TextColumn::make('cout_previsionnel')
                     ->label('Coût (DH)')

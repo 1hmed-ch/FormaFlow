@@ -40,7 +40,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'nom_ancien_giac'         => 'nullable|string|max:255',
             'date_depot_ancien_giac'  => 'nullable|date:Y-m-d',
             'rc'                      => 'nullable|string|max:50|unique:entreprise_clientes,rc',
-            'if'                      => 'required|string|max:50|unique:entreprise_clientes,if',   // Required & Unique Strict fiscal
+            'if'                      => 'nullable|string|max:50|unique:entreprise_clientes,if',   // Required & Unique Strict fiscal
             'patente'                 => 'nullable|string|max:50|unique:entreprise_clientes,patente',
             'secteur_activite'        => 'required|string|max:255',
             'activite'                => 'nullable|string|max:255',
@@ -53,7 +53,7 @@ class StoreEntrepriseClienteRequest extends FormRequest
             'effectif_agent_occasionnel' => 'nullable|integer|min:0',
             'telephone'               => 'nullable|string|max:50',
             'fax'                     => 'nullable|string|max:50',
-            'email'                   => 'required|email|max:255|unique:entreprise_clientes,email', // Required & Unique pour la communication
+            'email'                   => 'nullable|email|max:255|unique:entreprise_clientes,email', // Required & Unique pour la communication
             'contact_ref'             => 'nullable|string|max:255',
             'gerant_nom'              => 'required|string|max:255',
             'gerant_prenom'           => 'required|string|max:255',

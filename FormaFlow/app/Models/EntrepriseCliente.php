@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Enums\DemandeFinancementStatus;
+use App\Enums\FormationStatus;
 
 
 class EntrepriseCliente extends Model implements HasMedia
@@ -68,7 +69,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'entete_page'      => 'Entête de page',
         'pied_page'        => 'Pied de page',
         'logo'             => 'Logo',
-        'eligibilite_csf'    => 'Éligibilité CSF cabinet',
+        //'eligibilite_csf'    => 'Éligibilité CSF cabinet',
         'facture_pro_forma'  => 'Facture pro forma (originale)',
        // 'autres_documents' => 'Autres documents',
     ];
@@ -194,4 +195,19 @@ class EntrepriseCliente extends Model implements HasMedia
             ->values()
             ->all();
     }
+    public function anneeArchive(): ?int
+    {
+        $date = $this->formations()
+            ->orderBy('date_debut')
+            ->value('date_debut');
+
+        return $date ? (int) $date->format('Y') : null;
+    }
+
+   public function statutDerniereFormation(): ?FormationStatus
+{
+    return $this->formations()
+        ->orderByDesc('date_debut')
+        ->value('statut');
+}
 }

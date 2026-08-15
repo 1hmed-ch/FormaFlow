@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Formations;
 
 use App\Filament\Resources\Formations\Pages\CreateFormation;
+use App\Filament\Resources\Formations\Pages\DocumentsAJoindre;
 use App\Filament\Resources\Formations\Pages\EditFormation;
 use App\Filament\Resources\Formations\Pages\ListFormations;
 use App\Filament\Resources\Formations\Schemas\FormationForm;
@@ -52,6 +53,7 @@ class FormationResource extends Resource
             'index' => ListFormations::route('/'),
             'create' => CreateFormation::route('/create'),
             'edit' => EditFormation::route('/{record}/edit'),
+            'documents-a-joindre' => DocumentsAJoindre::route('/{record}/documents-a-joindre'),
         ];
     }
 }

@@ -222,21 +222,21 @@
 
 <div class="field-line" style="margin-top: 10px;">sont réglés par le <strong>Chèque</strong> ci-joint :</div>
 <div class="field-line" style="margin-left: 95px;">
-    &bull; Sur la Banque : 
+    &bull; Sur la Banque :
     <span style="width: 350px">
-        {{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '....................................................................................' }}
+        {{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '............................................................................................' }}
     </span>
 </div>
 <div  style="margin-left: 95px;">
-    &bull; De N° : 
+    &bull; De N° :
     <span  style="width: 400px">
-        {{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '.....................................................................................................' }}
+        {{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '.........................................................................................................' }}
     </span>
 </div>
 <div style="margin-left: 95px;">
-    &bull; Daté du : 
+    &bull; Daté du :
     <span  style="width: 390px">
-        {{ !empty($entreprise->cheque_date) ? \Carbon\Carbon::parse($entreprise->cheque_date)->format('d/m/Y') : '....................................................................................................' }}
+        {{ !empty($entreprise->cheque_date) ? \Carbon\Carbon::parse($entreprise->cheque_date)->format('d/m/Y') : '......................................................................................................' }}
     </span>
 </div>
 <div class="signature-zone">

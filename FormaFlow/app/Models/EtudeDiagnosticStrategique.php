@@ -19,6 +19,7 @@ class EtudeDiagnosticStrategique extends Model
 
     protected $fillable = [
         'entreprise_id',
+        'formation_id',
         'projet_marche_export',
         'projet_investissement_techno',
         'projet_mise_aux_normes',
@@ -55,5 +56,10 @@ class EtudeDiagnosticStrategique extends Model
     public function entrepriseCliente(): BelongsTo
     {
         return $this->belongsTo(EntrepriseCliente::class, 'entreprise_id');
+    }
+
+    public function formation(): BelongsTo
+    {
+        return $this->belongsTo(Formation::class, 'formation_id');
     }
 }

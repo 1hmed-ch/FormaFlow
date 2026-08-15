@@ -19,12 +19,12 @@ return new class extends Migration
             $table->date('date_creation')->nullable();
             $table->string('statut_juridique')->nullable();
             
-            $table->string('ice', 15)->unique(); 
-            $table->string('if', 50)->unique();  
+            $table->string('ice', 15)->required()->unique(); 
+            $table->string('if', 50)->nullable()->unique();  
             
-            $table->string('num_cnss', 50)->nullable();
-            $table->string('rc', 50)->nullable();
-            $table->string('patente', 50)->nullable();
+            $table->string('num_cnss', 50)->required()->unique();
+            $table->string('rc', 50)->nullable()->unique();
+            $table->string('patente', 50)->nullable()->unique();
             
             $table->string('secteur_activite')->nullable();
             $table->string('activite')->nullable();
@@ -34,7 +34,7 @@ return new class extends Migration
 
             $table->string('telephone')->nullable();
             $table->string('fax')->nullable();
-            $table->string('email')->unique(); 
+            $table->string('email')->nullable()->unique(); 
             
             $table->string('contact_ref')->nullable();
 

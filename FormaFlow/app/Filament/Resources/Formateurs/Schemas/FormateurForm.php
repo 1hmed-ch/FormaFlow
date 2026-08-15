@@ -59,7 +59,7 @@ class FormateurForm
                             ->email()
                             ->placeholder("saisissez l'adresse email")
                             ->unique(ignoreRecord: true)
-                            ->required()
+                            //->required()
                             ->maxLength(255),
 
                         TextInput::make('telephone')

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Enums\TypeFormation;
 
 class Formation extends Model
@@ -41,6 +42,16 @@ class Formation extends Model
         return $this->hasMany(Theme::class, 'formation_id');
     }
 
+    public function etudeIngenierieFormation(): HasOne
+    {
+        return $this->hasOne(EtudeIngenierieFormation::class, 'formation_id');
+    }
+
+    public function etudeDiagnosticStrategique(): HasOne
+    {
+        return $this->hasOne(EtudeDiagnosticStrategique::class, 'formation_id');
+    }
+
     /**
      * Ne garde que les formations au statut "Terminée".
      */
@@ -60,14 +71,17 @@ class Formation extends Model
             ->when($fin, fn (Builder $q, string $date) => $q->where('date_debut', '<=', $date));
     }
 
-    protected static function booted()
-    {
-        static::deleting(function ($formation) {
-            // On cherche s'il existe AU MOINS un groupe rattaché
-            // à AU MOINS un thème de cette formation
-            $aDesGroupesActifs = $formation->themes()
-                ->whereHas('groupes')
-                ->exists();
+    protected static function booted(){
+    static::created(function (Formation $formation) {
+        if ($formation->entrepriseCliente) {
+            DossierGiac::pourEntreprise($formation->entrepriseCliente);
+        }
+    });
+
+    static::deleting(function ($formation) {
+        $aDesGroupesActifs = $formation->themes()
+            ->whereHas('groupes')
+            ->exists();
 
             if ($aDesGroupesActifs) {
                 throw new \App\Exceptions\SuppressionBloqueeException(

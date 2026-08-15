@@ -167,10 +167,29 @@ class EntrepriseClienteInfolist
                     ->columnSpanFull()
                     ->collapsible()
                     ->collapsed()
+                    ->columns(2)
                     ->schema([
+                        TextEntry::make('entete_page_statut')
+                            ->label("Image d'en-tête")
+                            ->state(fn ($record) => $record->hasMedia('entete_page') ? 'Disponible' : 'Non disponible')
+                            ->badge()
+                            ->color(fn ($record) => $record->hasMedia('entete_page') ? 'success' : 'orange')
+                            ->icon(fn ($record) => $record->hasMedia('entete_page')
+                                ? 'heroicon-o-check-circle'
+                                : 'heroicon-o-exclamation-triangle'),
+
+                        TextEntry::make('pied_page_statut')
+                            ->label('Image de pied de page')
+                            ->state(fn ($record) => $record->hasMedia('pied_page') ? 'Disponible' : 'Non disponible')
+                            ->badge()
+                            ->color(fn ($record) => $record->hasMedia('pied_page') ? 'success' : 'orange')
+                            ->icon(fn ($record) => $record->hasMedia('pied_page')
+                                ? 'heroicon-o-check-circle'
+                                : 'heroicon-o-exclamation-triangle'),
+
                         Actions::make([
                             Action::make('voir_image_entete')
-                                ->label("Image d'en-tête")
+                                ->label("Voir l'en-tête")
                                 ->icon('heroicon-o-eye')
                                 ->color('info')
                                 ->outlined()
@@ -186,7 +205,7 @@ class EntrepriseClienteInfolist
                                 ->modalWidth('4xl'),
 
                             Action::make('voir_image_pied_page')
-                                ->label('Image de pied de page')
+                                ->label('Voir le pied de page')
                                 ->icon('heroicon-o-eye')
                                 ->color('info')
                                 ->outlined()
@@ -554,7 +573,7 @@ class EntrepriseClienteInfolist
                                 }
                             }),
                         Action::make('genererC')
-                            ->label('Fiche Entreprise (C)')
+                            ->label('Fiche d\'Entreprise')
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
                             ->action(function (EntrepriseCliente $record, Action $action) {
@@ -668,7 +687,13 @@ class EntrepriseClienteInfolist
     {
         $entries = [];
 
-        foreach (EntrepriseCliente::PIECES_JOINTES as $key => $label) {
+            $pieces = array_filter(
+            EntrepriseCliente::PIECES_JOINTES,
+            fn ($key) => $key !== 'facture_pro_forma',
+            ARRAY_FILTER_USE_KEY
+        );
+
+        foreach ($pieces as $key => $label) {
             $entries[] = TextEntry::make($key . '_statut')
                 ->label($label)
                 ->state(fn (EntrepriseCliente $record) => $record->getPieceJointeStatut($key))

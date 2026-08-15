@@ -18,6 +18,7 @@ class EntrepriseFormation extends Model implements HasMedia
     'fiche_renseignement'      => ['label' => 'Fiche de renseignement de l’organisme de conseil', 'multiple' => false],
     'proposition_intervention' => ['label' => "Proposition d'intervention", 'multiple' => false],
     'rc_modele_j'              => ['label' => 'RC Modèle J', 'multiple' => false],
+    'eligibilite_csf'          => ['label' => 'Éligibilité CSF cabinet', 'multiple' => false]
 ];
     protected $fillable = [
         'raison_sociale',
