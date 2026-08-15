@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use Carbon\Carbon; @endphp
+    <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -205,9 +206,15 @@
 </div>
 
 <div class="field-line" style="margin-top: 10px;">sont réglés par le <strong>Chèque</strong> ci-joint :</div>
-<div class="field-line" style="margin-left: 95px;">&bull; Sur la Banque : <span class="dotted-fill" style="width: 350px">&nbsp;</span></div>
-<div class="field-line" style="margin-left: 95px;">&bull; De N° : <span class="dotted-fill" style="width: 400px">&nbsp;</span></div>
-<div class="field-line" style="margin-left: 95px;">&bull; Daté du : <span class="dotted-fill" style="width: 390px">&nbsp;</span></div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; Sur la Banque : <span style="width: 350px">{{ !empty($entreprise->cheque_banque) ? $entreprise->cheque_banque : '............................................................................................' }}</span>
+</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; De N° : <span style="width: 400px">{{ !empty($entreprise->cheque_numero) ? $entreprise->cheque_numero : '.........................................................................................................' }}</span>
+</div>
+<div class="field-line" style="margin-left: 95px;">
+    &bull; Daté du : <span style="width: 390px">{{ !empty($entreprise->cheque_date) ? Carbon::parse($entreprise->cheque_date)->format('d/m/Y') : '......................................................................................................' }}</span>
+</div>
 
 <div class="signature-zone">
     <div class="field-line">
@@ -230,7 +237,7 @@
     <div class="field-line" style="font-size: 11px;">(habilité à signer au sein de l'Entreprise)</div>
 
     <div class="field-line">
-        <strong>- Mail ( du signataire ) :</strong> 
+        <strong>- Mail ( du signataire ) :</strong>
         <span>{{ $gerant->email ?? '..................................................' }}</span>
     </div>
 
@@ -248,7 +255,7 @@
     </div>
 </div>--}}
 
-<x-giac-footer />
+<x-giac-footer/>
 
 </body>
 </html>

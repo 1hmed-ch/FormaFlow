@@ -141,3 +141,9 @@
 .fi-sidebar-item:not(.fi-sidebar-item-active) .fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
     color: var(--sidebar-hover-text) !important;
 }
+
+.fc-event-title {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
