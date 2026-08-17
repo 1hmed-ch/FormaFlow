@@ -8,6 +8,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -34,6 +35,17 @@ class ThemesRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+                DatePicker::make('date_debut')
+                    ->label('Date de début')
+                    ->displayFormat('d/m/Y')
+                    ->native(false),
+
+                DatePicker::make('date_fin')
+                    ->label('Date de fin')
+                    ->displayFormat('d/m/Y')
+                    ->native(false)
+                    ->afterOrEqual('date_debut'),
+
                 Select::make('formateur_id')
                     ->label('Formateur assigné')
                     ->relationship('formateur','nom')
@@ -57,6 +69,7 @@ class ThemesRelationManager extends RelationManager
                 TextColumn::make('intitule')
                     ->label('Thème')
                     ->limit(40)
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('date_debut')
                     ->label('Date de début')
