@@ -164,17 +164,17 @@
 
     <div class="field-line">
         <strong>- Marché d'Exportation : </strong>
-        <span class="dotted-fill">{{ $etude->projet_marche_export ? 'Oui' : '............' }}</span>
+        <span class="dotted-fill">{{ $etude->projet_marche_export ? 'Oui' : '..............' }}</span>
         <strong style="margin-left: 80px;">- Investissement Technologique : </strong>
-        <span class="dotted-fill">{{ $etude->projet_investissement_techno ? 'Oui' : '............' }}</span>
+        <span class="dotted-fill">{{ $etude->projet_investissement_techno ? 'Oui' : '..............' }}</span>
     </div>
     <div class="field-line">
         <strong>- Mise aux Normes : </strong>
-        <span class="dotted-fill">{{ $etude->projet_mise_aux_normes ? 'Oui' : '............' }}</span>
+        <span class="dotted-fill">{{ $etude->projet_mise_aux_normes ? 'Oui' : '..............' }}</span>
         <strong style="margin-left: 100px;">- Autres a préciser : </strong>
         <span class="dotted-fill wide">{{ $etude->projet_autre ? ($etude->projet_autre_precision ?: '..............................') : '..............................' }}</span>
     </div>
-    <span>{{ $etude->projet_autre_precision ?? '..................................................' }}</span>
+    <span>{{ $etude->projet_autre_precision ?? '.......................................................................................................................................................................' }}</span>
 </div>
 
 <div class="g-box">
@@ -221,11 +221,11 @@
     </div>
     <div class="field-line">
         <strong>- N° de CNSS :</strong>
-        <span class="dotted-fill">{{ $organisme->cnss ?: '......................................' }}</span>
+        <span class="dotted-fill">{{ $organisme->cnss ?: '.......................' }}</span>
         <strong style="margin-left: 35px;">- Téléphone :</strong>
-        <span class="dotted-fill">{{ $organisme->telephone ?: '......................................' }}</span>
+        <span class="dotted-fill">{{ $organisme->telephone ?: '.......................' }}</span>
         <strong style="margin-left: 35px;">- Fax :</strong>
-        <span class="dotted-fill">{{ $organisme->fax ?: '......................................' }}</span>
+        <span class="dotted-fill">{{ $organisme->fax ?: '.......................' }}</span>
     </div>
     <div class="field-line">
         <strong>- N° R.C. :</strong>
@@ -244,17 +244,6 @@
     <div class="field-line"><strong>- Cachet et Signature :</strong></div>
 </div>
 
-{{--<div class="giac-footer">
-    <div class="field-line">
-        <span class="footer-brand">GIAC Technologies</span>
-        <span class="footer-line2">- 2 Rue Abou Said Assoussi, Résidence El Fariss, 1<sup>er</sup> étage, Appartement n° 9, Casablanca</span>
-    </div>
-    <div class="field-line footer-line2">
-        Tél. : 0522 27 24 93 &ndash; Fax : 0522 27 57 65 &ndash; CNSS : 7365514 &ndash; e-mail :
-        <a href="mailto:giactechnologies@gmail.com">giactechnologies@gmail.com</a>
-        &ndash; web : <a href="http://www.giactechnologies.com">www.giactechnologies.com</a>
-    </div>
-</div>--}}
 
 <x-giac-footer />
 

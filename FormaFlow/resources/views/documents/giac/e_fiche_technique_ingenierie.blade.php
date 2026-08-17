@@ -191,11 +191,11 @@
     </div>
     <div class="field-line" style="margin-left: 45px"><strong>* Adresse :</strong> {{ $organisme->siege_social ?: '...........................................................' }}</div>
     <div class="field-line" style="margin-left: 45px">
-        <strong>* N° de CNSS :</strong> {{ $organisme->cnss ?: '......................................' }}
+        <strong>* N° de CNSS :</strong> {{ $organisme->cnss ?: '.......................' }}
         &nbsp;&nbsp; <strong style="margin-left: 80px">Mail :</strong> {{ $organisme->email ?: '......................................' }}
     </div>
     <div class="field-line" style="margin-left: 45px">
-        <strong>* Tel. :</strong> {{ $organisme->telephone ?: '......................................' }}
+        <strong>* Tel. :</strong> {{ $organisme->telephone ?: '.......................' }}
         &nbsp;&nbsp; <strong style="margin-left: 145px">Fax :</strong> {{ $organisme->fax ?: '......................................' }}
     </div>
     <div class="field-line" style="margin-left: 45px"><strong>* R.C. :</strong> {{ $organisme->rc ?: '......................................' }}</div>

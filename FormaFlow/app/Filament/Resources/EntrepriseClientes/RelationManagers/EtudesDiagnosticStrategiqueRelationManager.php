@@ -118,13 +118,12 @@ class EtudesDiagnosticStrategiqueRelationManager extends RelationManager
                 TextColumn::make('formation.intitule')
                     ->label('Formation liée')
                     ->limit(30)
-                    ->placeholder('—')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('objectifs_resultats_attendus')
                     ->label('Objectifs')
-                    ->limit(40)
+                    ->limit(25)
                     ->searchable(),
 
                 TextColumn::make('annee_application')
