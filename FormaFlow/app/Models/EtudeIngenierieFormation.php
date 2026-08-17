@@ -12,6 +12,7 @@ class EtudeIngenierieFormation extends Model
 
     protected $fillable = [
         'entreprise_id',
+        'formation_id',
         'nature_action',
         'diagnostic_besoins',
         'plan_formation',
@@ -37,5 +38,10 @@ class EtudeIngenierieFormation extends Model
     public function entrepriseCliente(): BelongsTo
     {
         return $this->belongsTo(EntrepriseCliente::class, 'entreprise_id');
+    }
+
+    public function formation(): BelongsTo
+    {
+        return $this->belongsTo(Formation::class, 'formation_id');
     }
 }

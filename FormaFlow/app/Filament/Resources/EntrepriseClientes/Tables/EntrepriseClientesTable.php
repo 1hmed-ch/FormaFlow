@@ -20,6 +20,7 @@ class EntrepriseClientesTable
             ->columns([
                 TextColumn::make('raison_sociale')
                     ->label('Raison sociale')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('gerant.nom')
                     ->label('Gérant')

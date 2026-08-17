@@ -573,7 +573,7 @@ class EntrepriseClienteInfolist
                                 }
                             }),
                         Action::make('genererC')
-                            ->label('Fiche Entreprise (C)')
+                            ->label('Fiche d\'Entreprise')
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
                             ->action(function (EntrepriseCliente $record, Action $action) {
