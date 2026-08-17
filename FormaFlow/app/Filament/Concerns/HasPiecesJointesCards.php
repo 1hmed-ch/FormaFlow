@@ -32,13 +32,17 @@ trait HasPiecesJointesCards
      * - si $record est déjà un DossierGiac (page Archive, niveau
      *   entreprise), on le renvoie tel quel.
      */
-    protected static function resolveDossierGiac(Model $record): ?DossierGiac
+    protected static function resolveMediaOwner(Model $record): ?Model
     {
         return match (true) {
-            $record instanceof Formation => DossierGiac::pourFormation($record),
+            $record instanceof Formation => $record, // les pièces vivent DIRECTEMENT sur la Formation
             $record instanceof DossierGiac => $record,
             default => $record->entrepriseCliente ? DossierGiac::pourEntreprise($record->entrepriseCliente) : null,
         };
+    }
+    protected static function resolveCabinetMediaOwner(Model $record): Model
+    {
+        return $record instanceof Formation ? $record : EntrepriseFormation::current();
     }
 
     protected static function checklistGiacCards(): array
@@ -46,7 +50,7 @@ trait HasPiecesJointesCards
         $cards = [];
 
         foreach (DossierGiac::PIECES_JOINTES as $key => $label) {
-            $getStatut = fn (Model $record) => self::resolveDossierGiac($record)
+            $getStatut = fn (Model $record) =>self::resolveMediaOwner($record)
                 ?->getPieceJointeStatut($key)
                 ?? ['etat' => 'Manquant', 'media' => null, 'nom_fichier' => null, 'date_ajout' => null];
 
@@ -113,7 +117,7 @@ trait HasPiecesJointesCards
                                     ->required(),
                             ])
                             ->action(function (array $data, Model $record, $livewire) use ($key, $label) {
-                                $dossier = self::resolveDossierGiac($record);
+                                $dossier = self::resolveMediaOwner($record);
                                 if (! $dossier) {
                                     return;
                                 }
@@ -159,95 +163,75 @@ trait HasPiecesJointesCards
         ];
 
         foreach ($piecesAAfficher as $key => $label) {
-            $organisme = EntrepriseFormation::current();
-            $statut = $organisme->getPieceJointeStatut($key);
+            $getStatut = fn (Model $record) => self::resolveCabinetMediaOwner($record)->getPieceJointeStatut($key);
 
             $cards[] = Section::make($label)
                 ->description('Pièce du cabinet')
-                ->icon($statut['media'] ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle')
-                ->iconColor($statut['media'] ? 'success' : 'warning')
-                ->compact()
-                ->collapsible()
-                ->collapsed()
+                ->icon(fn (Model $record) => $getStatut($record)['media'] ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle')
+                ->iconColor(fn (Model $record) => $getStatut($record)['media'] ? 'success' : 'warning')
+                ->compact()->collapsible()->collapsed()
                 ->schema([
                     TextEntry::make('cabinet_etat_' . $key)
                         ->label('État')
-                        ->state($statut['media'] ? 'Déposé' : 'Manquant')
+                        ->state(fn (Model $record) => $getStatut($record)['media'] ? 'Déposé' : 'Manquant')
                         ->badge()
-                        ->color($statut['media'] ? 'success' : 'danger'),
+                        ->color(fn (Model $record) => $getStatut($record)['media'] ? 'success' : 'danger'),
 
                     TextEntry::make('cabinet_date_ajout_' . $key)
                         ->label("Date d'ajout")
-                        ->state($statut['date_ajout']?->format('d/m/Y') ?? '—'),
+                        ->state(fn (Model $record) => $getStatut($record)['date_ajout']?->format('d/m/Y') ?? '—'),
 
                     Actions::make([
                         Action::make('voir_cabinet_' . $key)
-                            ->label('Voir')
-                            ->icon('heroicon-o-eye')
-                            ->color('info')
-                            ->visible((bool) $statut['media'])
+                            ->label('Voir')->icon('heroicon-o-eye')->color('info')
+                            ->visible(fn (Model $record) => (bool) $getStatut($record)['media'])
                             ->modalHeading($label)
-                            ->modalContent(function () use ($key) {
-                                $media = EntrepriseFormation::current()->getFirstMedia($key);
-                                if (! $media) {
-                                    return null;
-                                }
-                                return view('filament.modals.apercu-fichier', [
-                                    'url' => route('media.stream', $media),
-                                    'mime' => $media->mime_type,
-                                ]);
+                            ->modalContent(function (Model $record) use ($key) {
+                                $media = self::resolveCabinetMediaOwner($record)->getFirstMedia($key);
+                                if (! $media) return null;
+                                return view('filament.modals.apercu-fichier', ['url' => route('media.stream', $media), 'mime' => $media->mime_type]);
                             })
-                            ->modalSubmitAction(false)
-                            ->modalCancelAction(false)
-                            ->modalWidth('4xl'),
+                            ->modalSubmitAction(false)->modalCancelAction(false)->modalWidth('4xl'),
 
                         Action::make('telecharger_cabinet_' . $key)
-                            ->label('Télécharger')
-                            ->icon('heroicon-o-arrow-down-tray')
-                            ->color('success')
-                            ->visible((bool) $statut['media'])
-                            ->action(function () use ($key) {
-                                $media = EntrepriseFormation::current()->getFirstMedia($key);
+                            ->label('Télécharger')->icon('heroicon-o-arrow-down-tray')->color('success')
+                            ->visible(fn (Model $record) => (bool) $getStatut($record)['media'])
+                            ->action(function (Model $record) use ($key) {
+                                $media = self::resolveCabinetMediaOwner($record)->getFirstMedia($key);
                                 if (! $media || ! file_exists($media->getPath())) {
                                     Notification::make()->danger()->title('Fichier introuvable')->send();
                                     return;
                                 }
-
                                 return response()->download($media->getPath(), $media->file_name);
                             }),
 
                         Action::make('gerer_cabinet_' . $key)
-                            ->label($statut['media'] ? 'Remplacer' : 'Téléverser')
+                            ->label(fn (Model $record) => $getStatut($record)['media'] ? 'Remplacer' : 'Téléverser')
                             ->icon('heroicon-o-arrow-up-tray')
-                            ->color($statut['media'] ? 'gray' : 'primary')
+                            ->color(fn (Model $record) => $getStatut($record)['media'] ? 'gray' : 'primary')
                             ->modalHeading('Gestion de la pièce : ' . $label)
                             ->form([
-                                FileUpload::make('document')
-                                    ->label('Document (PDF / Image)')
+                                FileUpload::make('document')->label('Document (PDF / Image)')
                                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                                    ->maxSize(10240)
-                                    ->disk('local')
-                                    ->directory('cabinet-checklist-tmp')
-                                    ->required(),
+                                    ->maxSize(10240)->disk('local')->directory('cabinet-checklist-tmp')->required(),
                             ])
-                            ->action(function (array $data, $livewire) use ($key, $label) {
-                                EntrepriseFormation::current()
+                            ->action(function (array $data, Model $record, $livewire) use ($key, $label) {
+                                self::resolveCabinetMediaOwner($record)
                                     ->addMediaFromDisk($data['document'], 'local')
                                     ->toMediaCollection($key);
 
                                 Notification::make()->success()->title("Pièce '{$label}' enregistrée avec succès")->send();
                                 $livewire->dispatch('$refresh');
                             }),
+
                         Action::make('supprimer_cabinet_' . $key)
-                            ->label('Supprimer')
-                            ->icon('heroicon-o-trash')
-                            ->color('danger')
-                            ->visible((bool) $statut['media'])
+                            ->label('Supprimer')->icon('heroicon-o-trash')->color('danger')
+                            ->visible(fn (Model $record) => (bool) $getStatut($record)['media'])
                             ->requiresConfirmation()
                             ->modalHeading('Supprimer la pièce : ' . $label)
                             ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
-                            ->action(function ($livewire) use ($key) {
-                                $media = EntrepriseFormation::current()->getFirstMedia($key);
+                            ->action(function (Model $record, $livewire) use ($key) {
+                                $media = self::resolveCabinetMediaOwner($record)->getFirstMedia($key);
                                 if ($media) {
                                     $media->delete();
                                     Notification::make()->success()->title('Document supprimé avec succès')->send();
@@ -375,7 +359,7 @@ trait HasPiecesJointesCards
         $pieces = collect(EntrepriseCliente::PIECES_JOINTES)->only(['eligibilite_csf', 'facture_pro_forma']);
 
         foreach ($pieces as $key => $label) {
-            $hasMedia = fn (Model $record) => (bool) self::resolveDossierGiac($record)?->hasMedia($key);
+            $hasMedia = fn (Model $record) => (bool) self::resolveMediaOwner($record)?->hasMedia($key);
 
             $cards[] = Section::make($label)
                 ->icon(fn (Model $record) => $hasMedia($record) ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle')
@@ -393,7 +377,7 @@ trait HasPiecesJointesCards
                             ->visible($hasMedia)
                             ->modalHeading($label)
                             ->modalContent(function (Model $record) use ($key) {
-                                $media = self::resolveDossierGiac($record)?->getFirstMedia($key);
+                                $media = self::resolveMediaOwner($record)?->getFirstMedia($key);
                                 if (! $media) return null;
 
                                 return view('filament.modals.apercu-fichier', [
@@ -410,7 +394,7 @@ trait HasPiecesJointesCards
                             ->icon('heroicon-o-arrow-down-tray')
                             ->color('success')
                             ->visible($hasMedia)
-                            ->url(fn (Model $record) => route('media.stream', self::resolveDossierGiac($record)?->getFirstMedia($key)))
+                            ->url(fn (Model $record) => route('media.stream', self::resolveMediaOwner($record)?->getFirstMedia($key)))
                             ->openUrlInNewTab(),
 
                         Action::make('gerer_formation_' . $key)
@@ -429,7 +413,7 @@ trait HasPiecesJointesCards
                                     ->required(),
                             ])
                             ->action(function (Model $record, array $data, $livewire) use ($key, $label) {
-                                $dossier = self::resolveDossierGiac($record);
+                                $dossier = self::resolveMediaOwner($record);
                                 if (! $dossier) {
                                     return;
                                 }
@@ -451,7 +435,7 @@ trait HasPiecesJointesCards
                             ->modalHeading('Supprimer la pièce : ' . $label)
                             ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
                             ->action(function (Model $record, $livewire) use ($key) {
-                                $media = self::resolveDossierGiac($record)?->getFirstMedia($key);
+                                $media =self::resolveMediaOwner($record)?->getFirstMedia($key);
                                 if ($media) {
                                     $media->delete();
                                     Notification::make()->success()->title('Document supprimé avec succès')->send();
@@ -470,7 +454,7 @@ trait HasPiecesJointesCards
         $cards = [];
 
         foreach (EntrepriseCliente::PIECES_JOINTES_OFPPT as $key => $label) {
-            $hasMedia = fn (Model $record) => (bool) self::resolveDossierGiac($record)?->hasMedia($key);
+            $hasMedia = fn (Model $record) => (bool) self::resolveMediaOwner($record)?->hasMedia($key);
 
             $cards[] = Section::make($label)
                 ->icon(fn (Model $record) => $hasMedia($record) ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle')
@@ -482,7 +466,7 @@ trait HasPiecesJointesCards
                 ->schema([
                     TextEntry::make('date_ajout_' . $key)
                         ->label("Date d'ajout")
-                        ->state(fn (Model $record) => self::resolveDossierGiac($record)?->getFirstMedia($key)?->created_at)
+                        ->state(fn (Model $record) =>self::resolveMediaOwner($record)?->getFirstMedia($key)?->created_at)
                         ->dateTime('d/m/Y H:i')
                         ->placeholder('—'),
 
@@ -494,7 +478,7 @@ trait HasPiecesJointesCards
                             ->visible($hasMedia)
                             ->modalHeading($label)
                             ->modalContent(function (Model $record) use ($key) {
-                                $media = self::resolveDossierGiac($record)?->getFirstMedia($key);
+                                $media = self::resolveMediaOwner($record)?->getFirstMedia($key);
                                 if (! $media) return null;
 
                                 return view('filament.modals.apercu-fichier', [
@@ -511,7 +495,7 @@ trait HasPiecesJointesCards
                             ->icon('heroicon-o-arrow-down-tray')
                             ->color('success')
                             ->visible($hasMedia)
-                            ->url(fn (Model $record) => route('media.stream', self::resolveDossierGiac($record)?->getFirstMedia($key)))
+                            ->url(fn (Model $record) => route('media.stream', self::resolveMediaOwner($record)?->getFirstMedia($key)))
                             ->openUrlInNewTab(),
 
                         Action::make('gerer_ofppt_' . $key)
@@ -530,7 +514,7 @@ trait HasPiecesJointesCards
                                     ->required(),
                             ])
                             ->action(function (Model $record, array $data, $livewire) use ($key, $label) {
-                                $dossier = self::resolveDossierGiac($record);
+                                $dossier =self::resolveMediaOwner($record);
                                 if (! $dossier) return;
 
                                 $dossier
@@ -549,7 +533,7 @@ trait HasPiecesJointesCards
                             ->modalHeading('Supprimer la pièce : ' . $label)
                             ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
                             ->action(function (Model $record, $livewire) use ($key) {
-                                $media = self::resolveDossierGiac($record)?->getFirstMedia($key);
+                                $media = self::resolveMediaOwner($record)?->getFirstMedia($key);
                                 if ($media) {
                                     $media->delete();
                                     Notification::make()->success()->title('Document supprimé avec succès')->send();

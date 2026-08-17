@@ -59,7 +59,7 @@ class FormationDocumentsInfolist
                             ->columnSpanFull(),
                     RepeatableEntry::make('autres_documents_formation_display')
                             ->label('Autres documents complémentaires existants')
-                            ->state(fn (Formation $record) => $record->entrepriseCliente?->getMedia('autres_documents') ?? collect())
+                            ->state(fn (Formation $record) => self::resolveMediaOwner($record)?->getMedia('autres_documents_formation') ?? collect())
                             ->columnSpanFull()
                             ->table([
                                 TableColumn::make('Intitulé'),
@@ -138,18 +138,15 @@ class FormationDocumentsInfolist
                                         ->required(),
                                 ])
                                 ->action(function (Formation $record, array $data, $livewire) {
-                                    $entreprise = $record->entrepriseCliente;
-                                    if (! $entreprise) {
+                                    $dossier = self::resolveMediaOwner($record);
+                                    if (! $dossier) {
                                         return;
                                     }
 
-                                    $entreprise
+                                    $dossier
                                         ->addMediaFromDisk($data['upload_autre_document'], 'local')
                                         ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
-                                        ->toMediaCollection('autres_documents');
-
-                                    $entreprise->unsetRelation('media');
-                                    $record->unsetRelation('entrepriseCliente');
+                                        ->toMediaCollection('autres_documents_formation');
 
                                     Notification::make()->success()->title('Document ajouté avec succès')->send();
                                     $livewire->dispatch('$refresh');
@@ -172,7 +169,7 @@ class FormationDocumentsInfolist
                                     ->columnSpanFull(),
                            RepeatableEntry::make('autres_documents_signes_entreprise_display')
                                     ->label('Autres documents de l\'entreprise')
-                                    ->state(fn (Formation $record) => self::resolveDossierGiac($record)?->entrepriseCliente?->getMedia('autres_documents_signes_entreprise') ?? collect())
+                                    ->state(fn (Formation $record) => self::resolveMediaOwner($record)?->getMedia('autres_documents_signes_entreprise') ?? collect())
                                     ->columnSpanFull()
                                     ->table([
                                         TableColumn::make('Intitulé'),
@@ -246,20 +243,19 @@ class FormationDocumentsInfolist
                                                 ->required(),
                                         ])
                                         ->action(function (Formation $record, array $data, $livewire) {
-                                            $entreprise = $record->entrepriseCliente;
-                                            if (! $entreprise) return;
+                                        $dossier = self::resolveMediaOwner($record);
+                                        if (! $dossier) {
+                                            return;
+                                        }
 
-                                            $entreprise
-                                                ->addMediaFromDisk($data['upload_doc_ent'], 'local')
-                                                ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
-                                                ->toMediaCollection('autres_documents_signes_entreprise');
+                                        $dossier
+                                            ->addMediaFromDisk($data['upload_doc_ent'], 'local')
+                                            ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
+                                            ->toMediaCollection('autres_documents_signes_entreprise');
 
-                                            $entreprise->unsetRelation('media');
-                                            $record->unsetRelation('entrepriseCliente');
-
-                                            Notification::make()->success()->title('Document ajouté avec succès')->send();
-                                            $livewire->dispatch('$refresh');
-                                        }),
+                                        Notification::make()->success()->title('Document ajouté avec succès')->send();
+                                        $livewire->dispatch('$refresh');
+                                    }),
                                 ])
                                 ->columnSpanFull()
                                 ->alignment('end'),
@@ -275,7 +271,7 @@ class FormationDocumentsInfolist
                             // AJOUT : Autres documents signés (Cabinet)
                                 RepeatableEntry::make('autres_documents_signes_cabinet_display')
                                     ->label('Autres documents du cabinet')
-                                    ->state(fn () => \App\Models\EntrepriseFormation::current()?->getMedia('autres_documents_signes_cabinet') ?? collect())
+                                    ->state(fn (Formation $record) => self::resolveCabinetMediaOwner($record)->getMedia('autres_documents_signes_cabinet'))
                                     ->columnSpanFull()
                                     ->table([
                                         TableColumn::make('Intitulé'),
@@ -348,21 +344,16 @@ class FormationDocumentsInfolist
                                                 ->visibility('private')
                                                 ->required(),
                                         ])
-                                        ->action(function (array $data, $livewire) {
-                                            $cabinet = \App\Models\EntrepriseFormation::current();
-                                            if (! $cabinet) return;
+                                        ->action(function (Formation $record, array $data, $livewire) {
+                                        self::resolveCabinetMediaOwner($record)
+                                            ->addMediaFromDisk($data['upload_doc_cab'], 'local')
+                                            ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
+                                            ->toMediaCollection('autres_documents_signes_cabinet');
 
-                                            $cabinet
-                                                ->addMediaFromDisk($data['upload_doc_cab'], 'local')
-                                                ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
-                                                ->toMediaCollection('autres_documents_signes_cabinet');
-
-                                            $cabinet->unsetRelation('media');
-
-                                            Notification::make()->success()->title('Document ajouté avec succès')->send();
-                                            $livewire->dispatch('$refresh');
-                                        }),
-                                ])
+                                        Notification::make()->success()->title('Document ajouté avec succès')->send();
+                                        $livewire->dispatch('$refresh');
+                                    }),
+          ])
                                 ->columnSpanFull()
                                 ->alignment('end'),
                             ])
@@ -433,7 +424,7 @@ class FormationDocumentsInfolist
 
                         RepeatableEntry::make('autres_documents_ofppt_display')
                             ->label('Autres documents de financement')
-                            ->state(fn (Formation $record) => self::resolveDossierGiac($record)?->getMedia('autres_documents_ofppt') ?? collect())
+                            ->state(fn (Formation $record) => self::resolveMediaOwner($record)?->getMedia('autres_documents_ofppt') ?? collect())
                             ->columnSpanFull()
                             ->table([
                                 TableColumn::make('Intitulé'),
@@ -512,7 +503,7 @@ class FormationDocumentsInfolist
                                         ->required(),
                                 ])
                                 ->action(function (Formation $record, array $data, $livewire) {
-                                    $dossier = self::resolveDossierGiac($record);
+                                    $dossier = self::resolveMediaOwner($record);
                                     if (! $dossier) {
                                         return;
                                     }

@@ -19,7 +19,7 @@
     <h1>Dossier Archivé — {{ $entreprise->raison_sociale }}</h1>
     <div class="header-meta">
         Édité le {{ $dateEdition->format('d/m/Y à H:i') }} — Statut du dossier :
-        {{ $dossier->statut?->getLabel() ?? '—' }} — Progression : {{ $progression }}%
+        {{ $dossier->statut?->getLabel() ?? '—' }} 
     </div>
 
     <h2>Informations générales</h2>

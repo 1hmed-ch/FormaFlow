@@ -19,10 +19,10 @@ return new class extends Migration
             $table->date('date_creation')->nullable();
             $table->string('statut_juridique')->nullable();
             
-            $table->string('ice', 15)->required()->unique(); 
+            $table->string('ice', 15)->unique(); 
             $table->string('if', 50)->nullable()->unique();  
             
-            $table->string('num_cnss', 50)->required()->unique();
+            $table->string('num_cnss', 50)->nullable()->unique();
             $table->string('rc', 50)->nullable()->unique();
             $table->string('patente', 50)->nullable()->unique();
             
