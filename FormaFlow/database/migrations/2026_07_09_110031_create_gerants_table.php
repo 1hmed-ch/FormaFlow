@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('gerants', function (Blueprint $table) {
             $table->id();
-            $table->string('nom')->required();
-            $table->string('prenom')->required();
+            $table->string('nom');
+            $table->string('prenom');
             $table->string('fonction')->nullable();
-            $table->string('cin')->required()->unique();
+            $table->string('cin')->unique();
             $table->timestamps();
         });
     }

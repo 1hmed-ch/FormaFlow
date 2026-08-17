@@ -543,7 +543,7 @@ class DocumentGenerationService
             'documentsGeneres'      => $entreprise->documentsGeneres,
             'autresDocuments'       => $entreprise->getMedia('autres_documents'),
             'autresDocumentsOfppt'  => $entreprise->getMedia('autres_documents_ofppt'), // ⬅️ zdna hadi
-            'progression'           => $dossier->getProgressionArchive(),
+            //'progression'           => $dossier->getProgressionArchive(),
             'statutFinancement'     => $entreprise->statut_demande_financement,
             'piecesOfppt'           => EntrepriseCliente::PIECES_JOINTES_OFPPT,
             'dateEdition'           => now(),
