@@ -357,7 +357,6 @@ trait HasPiecesJointesCards
     {
         $cards = [];
         
-        // Nkhalliw ghir facture_pro_forma (wla ay pièce khassa b la formation)
         $pieces = [
             'facture_pro_forma' => 'Facture pro forma (originale)',
         ];
