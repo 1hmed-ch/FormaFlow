@@ -356,7 +356,11 @@ trait HasPiecesJointesCards
     protected static function piecesAJoindreFormationCards(): array
     {
         $cards = [];
-        $pieces = collect(EntrepriseCliente::PIECES_JOINTES)->only(['eligibilite_csf', 'facture_pro_forma']);
+        
+        // Nkhalliw ghir facture_pro_forma (wla ay pièce khassa b la formation)
+        $pieces = [
+            'facture_pro_forma' => 'Facture pro forma (originale)',
+        ];
 
         foreach ($pieces as $key => $label) {
             $hasMedia = fn (Model $record) => (bool) self::resolveMediaOwner($record)?->hasMedia($key);
@@ -435,7 +439,7 @@ trait HasPiecesJointesCards
                             ->modalHeading('Supprimer la pièce : ' . $label)
                             ->modalDescription('Êtes-vous sûr de vouloir supprimer ce document ?')
                             ->action(function (Model $record, $livewire) use ($key) {
-                                $media =self::resolveMediaOwner($record)?->getFirstMedia($key);
+                                $media = self::resolveMediaOwner($record)?->getFirstMedia($key);
                                 if ($media) {
                                     $media->delete();
                                     Notification::make()->success()->title('Document supprimé avec succès')->send();

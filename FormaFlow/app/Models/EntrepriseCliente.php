@@ -70,7 +70,7 @@ class EntrepriseCliente extends Model implements HasMedia
         'pied_page'        => 'Pied de page',
         'logo'             => 'Logo',
         //'eligibilite_csf'    => 'Éligibilité CSF cabinet',
-        'facture_pro_forma'  => 'Facture pro forma (originale)',
+        //'facture_pro_forma'  => 'Facture pro forma (originale)',
        // 'autres_documents' => 'Autres documents',
     ];
     public const PIECES_JOINTES_OFPPT = [

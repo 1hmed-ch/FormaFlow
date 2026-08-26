@@ -47,6 +47,19 @@
                     </td>
                 </tr>
             @endforeach
+            
+            {{-- Facture pro forma rattachée à la formation ila kant mawjouda --@@ -?? --}}
+            @if($formation)
+                @php $deposeFacture = $formation->hasMedia('facture_pro_forma'); @endphp
+                <tr>
+                    <td>Facture pro forma (originale)</td>
+                    <td>
+                        <span class="badge {{ $deposeFacture ? 'badge-success' : 'badge-danger' }}">
+                            {{ $deposeFacture ? 'Déposé' : 'Manquant' }}
+                        </span>
+                    </td>
+                </tr>
+            @endif
         </tbody>
     </table>
 
@@ -67,61 +80,65 @@
             @endforelse
         </tbody>
     </table>
+
     <h2>Autres documents</h2>
-<table>
-    <thead>
-        <tr><th>Intitulé</th><th>Ajouté le</th></tr>
-    </thead>
-    <tbody>
-        @forelse ($autresDocuments as $document)
-            <tr>
-                <td>{{ $document->getCustomProperty('intitule') ?: $document->file_name }}</td>
-                <td>{{ $document->created_at?->format('d/m/Y H:i') }}</td>
-            </tr>
-        @empty
-            <tr><td colspan="2">Aucun document complémentaire ajouté.</td></tr>
-        @endforelse
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr><th>Intitulé</th><th>Ajouté le</th></tr>
+        </thead>
+        <tbody>
+            @forelse ($autresDocuments as $document)
+                <tr>
+                    <td>{{ $document->getCustomProperty('intitule') ?: $document->file_name }}</td>
+                    <td>{{ $document->created_at?->format('d/m/Y H:i') }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="2">Aucun document complémentaire ajouté.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
 
-<h2>Demande de Financement (OFPPT)</h2>
-<div class="header-meta">
-    Statut : {{ $statutFinancement?->getLabel() ?? '—' }}
-</div>
-<table>
-    <thead>
-        <tr><th>Pièce</th><th>Statut</th></tr>
-    </thead>
-    <tbody>
-        @foreach ($piecesOfppt as $key => $label)
-            @php $depose = $entreprise->hasMedia($key); @endphp
-            <tr>
-                <td>{{ $label }}</td>
-                <td>
-                    <span class="badge {{ $depose ? 'badge-success' : 'badge-danger' }}">
-                        {{ $depose ? 'Déposé' : 'Manquant' }}
-                    </span>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
+    <h2>Demande de Financement (OFPPT)</h2>
+    <div class="header-meta">
+        Statut : {{ $statutFinancement?->getLabel() ?? '—' }}
+    </div>
+    <table>
+        <thead>
+            <tr><th>Pièce</th><th>Statut</th></tr>
+        </thead>
+        <tbody>
+            @foreach ($piecesOfppt as $key => $label)
+                {{-- N-qllabo 3la les pieces ofppt f la formation wla l-entreprise 3la 7ssab fin kaynin --}}
+                @php 
+                    $depose = $entreprise->hasMedia($key) || ($formation && $formation->hasMedia($key)); 
+                @endphp
+                <tr>
+                    <td>{{ $label }}</td>
+                    <td>
+                        <span class="badge {{ $depose ? 'badge-success' : 'badge-danger' }}">
+                            {{ $depose ? 'Déposé' : 'Manquant' }}
+                        </span>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-<h2>Autres documents (Financement OFPPT)</h2>
-<table>
-    <thead>
-        <tr><th>Intitulé</th><th>Ajouté le</th></tr>
-    </thead>
-    <tbody>
-        @forelse ($autresDocumentsOfppt as $document)
-            <tr>
-                <td>{{ $document->getCustomProperty('intitule') ?: $document->file_name }}</td>
-                <td>{{ $document->created_at?->format('d/m/Y H:i') }}</td>
-            </tr>
-        @empty
-            <tr><td colspan="2">Aucun document de financement complémentaire.</td></tr>
-        @endforelse
-    </tbody>
-</table>
+    <h2>Autres documents (Financement OFPPT)</h2>
+    <table>
+        <thead>
+            <tr><th>Intitulé</th><th>Ajouté le</th></tr>
+        </thead>
+        <tbody>
+            @forelse ($autresDocumentsOfppt as $document)
+                <tr>
+                    <td>{{ $document->getCustomProperty('intitule') ?: $document->file_name }}</td>
+                    <td>{{ $document->created_at?->format('d/m/Y H:i') }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="2">Aucun document de financement complémentaire.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
 </body>
 </html>
