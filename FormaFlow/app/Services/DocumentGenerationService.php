@@ -535,15 +535,16 @@ class DocumentGenerationService
     public function generateImpressionDossier(DossierGiac $dossier): array
     {
         $entreprise = $dossier->entrepriseCliente;
-        $entreprise->loadMissing('gerant', 'documentsGeneres');
+        $entreprise->loadMissing('gerant', 'documentsGeneres', 'formations');
+        $formation = $entreprise->formations()->latest()->first();
 
         $content = $this->renderFromView('documents.archive-dossier-impression', [
             'dossier'               => $dossier,
             'entreprise'            => $entreprise,
+            'formation'             => $formation,
             'documentsGeneres'      => $entreprise->documentsGeneres,
             'autresDocuments'       => $entreprise->getMedia('autres_documents'),
-            'autresDocumentsOfppt'  => $entreprise->getMedia('autres_documents_ofppt'), // ⬅️ zdna hadi
-            //'progression'           => $dossier->getProgressionArchive(),
+            'autresDocumentsOfppt'  => $formation ? $formation->getMedia('autres_documents_ofppt') : collect(),
             'statutFinancement'     => $entreprise->statut_demande_financement,
             'piecesOfppt'           => EntrepriseCliente::PIECES_JOINTES_OFPPT,
             'dateEdition'           => now(),
