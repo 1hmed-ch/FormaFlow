@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MediaStreamController;
 
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
-});
+});*/
 
 Route::get('/documents-generes/{documentGenere}/telecharger', DocumentGenereDownloadController::class)
     ->middleware('auth')

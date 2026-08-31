@@ -84,58 +84,66 @@ class ManageSettings extends Page implements HasForms
         $record = EntrepriseFormation::current();
 
         $makeSection = function (string $key, string $label, bool $isMultiple) use ($record) {
-            if ($isMultiple) {
-                $mediaCollection = $record->getMedia($key);
-                $isUploaded = $mediaCollection->isNotEmpty();
+            // Note: On force $isMultiple à false pour enlever le mode multiple sur les CVs (ou tout autre champ de cette page)
+            $media = $record->getFirstMedia($key);
+            $isUploaded = $media !== null;
+            $dateExpiration = $isUploaded ? $media->getCustomProperty('date_expiration') : null;
+            $isExpired = $isUploaded && $dateExpiration && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
 
-                $icon = $isUploaded ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle';
-                $color = $isUploaded ? 'success' : 'warning';
-                $description = $isUploaded ? $mediaCollection->count() . ' fichier(s) fourni(s)' : 'Document manquant';
-
-                $fieldsSchema = [
-                    SpatieMediaLibraryFileUpload::make($key)
-                        ->label('Documents (PDF / Image)')
-                        ->collection($key)
-                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                        ->multiple()
-                        ->maxSize(10240)
-                        ->visibility('private')
-                        ->model($record)
-                        ->columnSpanFull(),
-                ];
+            if (!$isUploaded) {
+                $icon = 'heroicon-o-exclamation-triangle';
+                $color = 'warning';
+                $description = 'Document manquant';
+            } elseif ($isExpired) {
+                $icon = 'heroicon-o-x-circle';
+                $color = 'danger';
+                $description = 'Document expiré';
             } else {
-                $media = $record->getFirstMedia($key);
-                $isUploaded = $media !== null;
-                $dateExpiration = $isUploaded ? $media->getCustomProperty('date_expiration') : null;
-                $isExpired = $isUploaded && $dateExpiration && \Illuminate\Support\Carbon::parse($dateExpiration)->isPast();
+                $icon = 'heroicon-o-check-circle';
+                $color = 'success';
+                $description = 'Document fourni • Ajouté le ' . $media->created_at->format('d/m/Y');
+            }
 
-                if (!$isUploaded) {
-                    $icon = 'heroicon-o-exclamation-triangle';
-                    $color = 'warning';
-                    $description = 'Document manquant';
-                } elseif ($isExpired) {
-                    $icon = 'heroicon-o-x-circle';
-                    $color = 'danger';
-                    $description = 'Document expiré';
-                } else {
-                    $icon = 'heroicon-o-check-circle';
-                    $color = 'success';
-                    $description = 'Document fourni • Ajouté le ' . $media->created_at->format('d/m/Y');
-                }
+            $fieldsSchema = [
+                SpatieMediaLibraryFileUpload::make($key)
+                    ->label('Document (PDF / Image)')
+                    ->collection($key)
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(10240)
+                    ->visibility('private')
+                    ->model($record),
 
-                $fieldsSchema = [
-                    SpatieMediaLibraryFileUpload::make($key)
-                        ->label('Document (PDF / Image)')
-                        ->collection($key)
-                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                        ->maxSize(10240)
-                        ->visibility('private')
-                        ->model($record),
+                DatePicker::make('date_expiration_' . $key)
+                    ->label("Date d'expiration")
+                    ->native(false),
+            ];
 
-                    DatePicker::make('date_expiration_' . $key)
-                        ->label("Date d'expiration")
-                        ->native(false),
-                ];
+            if ($isUploaded) {
+                $fieldsSchema[] = Actions::make([
+                    Action::make('voir_' . $key)
+                        ->label('Voir')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->size('sm')
+                        ->modalHeading($media->file_name)
+                        ->modalContent(view('filament.modals.apercu-fichier', [
+                            'url' => route('media.stream', $media),
+                            'mime' => $media->mime_type,
+                        ]))
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(false)
+                        ->modalWidth('4xl'),
+
+                    Action::make('telecharger_' . $key)
+                        ->label('Télécharger')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('primary')
+                        ->size('sm')
+                        ->url(route('media.stream', $media))
+                        ->openUrlInNewTab(),
+
+                  
+                ])->columnSpanFull();
             }
 
             return Section::make($label)
@@ -149,11 +157,10 @@ class ManageSettings extends Page implements HasForms
                 ->schema($fieldsSchema);
         };
 
-        // Génération dynamique — uniquement les 3 pièces de cette page
         foreach (self::piecesJointesPage() as $key => $config) {
-            $piecesJointesFields[] = $makeSection($key, $config['label'], $config['multiple']);
+    
+            $piecesJointesFields[] = $makeSection($key, $config['label'], false);
         }
-
         return $schema
             ->components([
                 Grid::make(3)
