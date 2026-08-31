@@ -32,6 +32,10 @@ class GroupesTable
                 TextColumn::make('theme.intitule')
                     ->label('Thème')
                     ->searchable(),
+                TextColumn::make('theme.formation.intitule')
+                    ->label('Formation')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('effectif_max')
                     ->label('Effectif maximum')
                     ->numeric()
@@ -57,6 +61,13 @@ class GroupesTable
                     ->label('Thème')
                     ->native(false)
                     ->relationship('theme', 'intitule')
+                    ->searchable()
+                    ->preload(),
+                
+                SelectFilter::make('formation_id')
+                    ->label('Formation')
+                    ->native(false)
+                    ->relationship('theme.formation', 'intitule')
                     ->searchable()
                     ->preload(),
             ])
