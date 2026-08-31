@@ -241,8 +241,8 @@
 </div>
 <div class="signature-zone">
     <div class="field-line">
-        <strong>- Lieu &amp; Date de cette demande :</strong>
-        <span>{{ $entreprise->ville ?? '....................' }} , le {{ ($dateEdition ?? now())->format('d/m/Y') }}</span>
+        <strong>- Lieu &amp; Date </strong>(de cette demande) :
+        <span>{{ $entreprise->ville ?? '....................' }} , le {{ now()->format('d/m/Y') }}</span>
     </div>
 
     <div class="field-line" style="margin-bottom: 30px;"><strong>- Signature :</strong></div>

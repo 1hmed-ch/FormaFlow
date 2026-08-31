@@ -35,18 +35,18 @@
         }
 
         .entete-image {
-            max-height: 60px;
+            max-height: 150px;
             max-width: 100%;
         }
 
         .pied-page-image {
-            max-height: 40px;
+            max-height: 80px;
             max-width: 100%;
         }
 
         footer {
             position: fixed;
-            bottom: -50px;
+            bottom: -20px;
             left: 0;
             right: 0;
             height: 40px;

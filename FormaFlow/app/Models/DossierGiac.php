@@ -14,15 +14,12 @@ class DossierGiac extends Model implements HasMedia
     use  HasFactory, InteractsWithMedia;
 
     public const PIECES_JOINTES = [
-        'bulletin_adhesion'     => "Bulletin d'Adhésion",
-        'fiche_information_sur_entreprise' => 'Fiche d’information sur l’entreprise',
-        'fiche_technique_ingenierie_formation' => 'Fiche technique de l’étude d’ingénierie de formation',
-        'declaration_honneur'   => "Déclaration sur l'Honneur",
         'attestation_rib'       => 'Attestation RIB (originale)',
         'statuts_legalises'     => 'Statuts légalisés récents',
-        'attestation_acces_csf' => "Attestation d'accès aux CSF (originale)",
         'rc_modele_j'           => 'Registre de Commerce – Modèle J récent',
         'cheque_frais_adhesion' => "Chèque - frais d'adhésion",
+        'attestation_acces_csf' => "Attestation d'accès aux CSF (originale)",
+        'formulaire_f1' => 'Formulaire F1',
     ];
 
     protected $table = 'dossiers_giac';

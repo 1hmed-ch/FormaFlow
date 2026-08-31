@@ -16,7 +16,7 @@ class EntrepriseFormation extends Model implements HasMedia
     'cv_consultants'           => ['label' => 'CV des consultants', 'multiple' => true],
     'fiche_identification'     => ['label' => 'Fiche d’identification de l’organisme de formation', 'multiple' => false],
     'fiche_renseignement'      => ['label' => 'Fiche de renseignement de l’organisme de conseil', 'multiple' => false],
-    'proposition_intervention' => ['label' => "Proposition d'intervention", 'multiple' => false],
+    //'proposition_intervention' => ['label' => "Proposition d'intervention", 'multiple' => false],
     'rc_modele_j'              => ['label' => 'RC Modèle J', 'multiple' => false],
     'eligibilite_csf'          => ['label' => 'Éligibilité CSF cabinet', 'multiple' => false]
 ];

@@ -158,15 +158,23 @@ trait HasPiecesJointesCards
         $cards = [];
 
         $piecesAAfficher = [
+            'bulletin_adhesion'     => "Bulletin d'Adhésion",
+            'bulletin_readhesion'     => "Bulletin de Ré-adhésion",
+            'fiche_information_sur_entreprise' => 'Fiche d’information sur l’entreprise',
+            'fiche_technique_ingenierie_formation' => 'Fiche technique de l’étude d’ingénierie de formation',
+            'fiche_technique_diagnostic_strategique' => 'Fiche Technique de l\'Etude du Diagnostic Stratégique',
+            'declaration_honneur'   => "Déclaration sur l'Honneur",
             'fiche_identification' => 'Fiche d’identification de l’organisme de formation',
             'fiche_renseignement'  => 'Fiche de renseignement de l’organisme de conseil',
+            'facture_pro_forma' => 'Facture pro forma (originale)',
+            'proposition_intervention' => "Proposition d'intervention",
         ];
 
         foreach ($piecesAAfficher as $key => $label) {
             $getStatut = fn (Model $record) => self::resolveCabinetMediaOwner($record)->getPieceJointeStatut($key);
 
             $cards[] = Section::make($label)
-                ->description('Pièce du cabinet')
+                ->description('Pièce GIAC')
                 ->icon(fn (Model $record) => $getStatut($record)['media'] ? 'heroicon-o-check-circle' : 'heroicon-o-exclamation-triangle')
                 ->iconColor(fn (Model $record) => $getStatut($record)['media'] ? 'success' : 'warning')
                 ->compact()->collapsible()->collapsed()
@@ -356,9 +364,9 @@ trait HasPiecesJointesCards
     protected static function piecesAJoindreFormationCards(): array
     {
         $cards = [];
-        
+
         $pieces = [
-            'facture_pro_forma' => 'Facture pro forma (originale)',
+            //'facture_pro_forma' => 'Facture pro forma (originale)',
         ];
 
         foreach ($pieces as $key => $label) {

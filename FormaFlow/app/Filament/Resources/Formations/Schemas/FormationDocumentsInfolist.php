@@ -48,123 +48,15 @@ class FormationDocumentsInfolist
                     ])
                     ->columns(2),
 
-                Section::make('Documents à joindre')
-                    ->description("Pièces spécifiques à cette formation")
-                    ->icon('heroicon-o-paper-clip')
-                    ->columnSpanFull()
-                    ->collapsible()
-                    ->schema([
-                        Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
-                            ->schema(self::piecesAJoindreFormationCards())
-                            ->columnSpanFull(),
-                    RepeatableEntry::make('autres_documents_formation_display')
-                            ->label('Autres documents complémentaires existants')
-                            ->state(fn (Formation $record) => self::resolveMediaOwner($record)?->getMedia('autres_documents_formation') ?? collect())
-                            ->columnSpanFull()
-                            ->table([
-                                TableColumn::make('Intitulé'),
-                                TableColumn::make('Ajouté le'),
-                                TableColumn::make('')->hiddenHeaderLabel(),
-                                TableColumn::make('')->hiddenHeaderLabel(),
-                                TableColumn::make('')->hiddenHeaderLabel(),
-                            ])
-                            ->schema([
-                                TextEntry::make('intitule')
-                                    ->state(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name),
-                                TextEntry::make('created_at')
-                                    ->dateTime('d/m/Y H:i'),
-
-                                TextEntry::make('voir')
-                                    ->label('')
-                                    ->state('Voir')
-                                    ->icon('heroicon-o-eye')
-                                    ->color('info')
-                                    ->action(
-                                        Action::make('voirAutreDocumentFormation')
-                                            ->modalHeading(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name)
-                                            ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
-                                                'url' => route('media.stream', $record),
-                                                'mime' => $record->mime_type,
-                                            ]))
-                                            ->modalSubmitAction(false)
-                                            ->modalCancelAction(false)
-                                            ->modalWidth('4xl')
-                                    ),
-
-                                TextEntry::make('telecharger')
-                                    ->label('')
-                                    ->state('Télécharger')
-                                    ->icon('heroicon-o-arrow-down-tray')
-                                    ->color('primary')
-                                    ->url(fn ($record) => route('media.stream', $record))
-                                    ->openUrlInNewTab(),
-
-                                TextEntry::make('supprimer')
-                                    ->label('')
-                                    ->state('Supprimer')
-                                    ->icon('heroicon-o-trash')
-                                    ->color('danger')
-                                    ->action(
-                                        Action::make('supprimerAutreDocFormation')
-                                            ->color('danger')
-                                            ->requiresConfirmation()
-                                            ->modalHeading('Supprimer le document')
-                                            ->modalDescription('Cette action est irréversible.')
-                                            ->action(function ($record, $livewire) {
-                                                $record->delete();
-                                                Notification::make()->success()->title('Document supprimé')->send();
-                                                $livewire->dispatch('$refresh');
-                                            })
-                                    ),
-                            ])
-                            ->placeholder('Aucun document complémentaire ajouté.'),
-
-                        Actions::make([
-                            Action::make('modalAjouterAutreDocumentFormation')
-                                ->label('Ajouter un autre document')
-                                ->icon('heroicon-o-document-plus')
-                                ->color('primary')
-                                ->form([
-                                    FormTextInput::make('nouvel_intitule')
-                                        ->label('Intitulé du document')
-                                        ->required(),
-                                    FileUpload::make('upload_autre_document')
-                                        ->label('Fichier')
-                                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
-                                        ->maxSize(10240)
-                                        ->disk('local')
-                                        ->directory('tmp-archives-upload')
-                                        ->visibility('private')
-                                        ->required(),
-                                ])
-                                ->action(function (Formation $record, array $data, $livewire) {
-                                    $dossier = self::resolveMediaOwner($record);
-                                    if (! $dossier) {
-                                        return;
-                                    }
-
-                                    $dossier
-                                        ->addMediaFromDisk($data['upload_autre_document'], 'local')
-                                        ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
-                                        ->toMediaCollection('autres_documents_formation');
-
-                                    Notification::make()->success()->title('Document ajouté avec succès')->send();
-                                    $livewire->dispatch('$refresh');
-                                }),
-                        ])
-                            ->columnSpanFull()
-                            ->alignment('end'),
-                    ]),
-
                 Section::make('Documents signés et Checklist')
                     ->description('Pièces signées par l\'entreprise et par le cabinet, rattachées au dossier de l\'entreprise')
                     ->icon('heroicon-o-building-office')
                     ->columnSpanFull()
                     ->schema([
-                        Section::make('Documents signés (Entreprise)')
+                        Section::make('Documents d\'entreprise')
                             ->description('Pièces de la checklist signées par l\'entreprise')
                             ->schema([
-                                Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                                Grid::make(['default' => 1, 'md' => 2, 'xl' => 2])
                                     ->schema(self::checklistGiacCards())
                                     ->columnSpanFull(),
                            RepeatableEntry::make('autres_documents_signes_entreprise_display')
@@ -262,10 +154,10 @@ class FormationDocumentsInfolist
                             ])
                             ->compact(),
 
-                        Section::make('Documents signés (Organisme de formation)')
-                            ->description('Pièces signées du cabinet')
+                        Section::make('Documents signés GIAC')
+                            ->description('Pièces GIAC générées')
                             ->schema([
-                                Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                                Grid::make(['default' => 1, 'md' => 2, 'xl' => 2])
                                     ->schema(self::piecesJointesCabinetCards())
                                     ->columnSpanFull(),
                             // AJOUT : Autres documents signés (Cabinet)
@@ -330,7 +222,7 @@ class FormationDocumentsInfolist
 
                                 Actions::make([
                                     Action::make('modalAjouterAutreDocSigneCabFormation')
-                                        ->label('Ajouter un document du cabinet')
+                                        ->label('Ajouter un document GIAC')
                                         ->icon('heroicon-o-document-plus')
                                         ->color('primary')
                                         ->form([
@@ -418,7 +310,7 @@ class FormationDocumentsInfolist
                                 }),
                         ])->columnSpanFull()->alignment('end'),
 
-                        Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                        Grid::make(['default' => 1, 'md' => 2, 'xl' => 2])
                             ->schema(self::piecesJointesOfpptCards())
                             ->columnSpanFull(),
 
@@ -512,6 +404,114 @@ class FormationDocumentsInfolist
                                         ->addMediaFromDisk($data['upload_autre_doc_ofppt'], 'local')
                                         ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
                                         ->toMediaCollection('autres_documents_ofppt');
+
+                                    Notification::make()->success()->title('Document ajouté avec succès')->send();
+                                    $livewire->dispatch('$refresh');
+                                }),
+                        ])
+                            ->columnSpanFull()
+                            ->alignment('end'),
+                    ]),
+
+                Section::make('Documents à joindre')
+                    ->description("Pièces spécifiques à cette formation")
+                    ->icon('heroicon-o-paper-clip')
+                    ->columnSpanFull()
+                    ->collapsible()
+                    ->schema([
+                        Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])
+                            ->schema(self::piecesAJoindreFormationCards())
+                            ->columnSpanFull(),
+                        RepeatableEntry::make('autres_documents_formation_display')
+                            ->label('Autres documents complémentaires existants')
+                            ->state(fn (Formation $record) => self::resolveMediaOwner($record)?->getMedia('autres_documents_formation') ?? collect())
+                            ->columnSpanFull()
+                            ->table([
+                                TableColumn::make('Intitulé'),
+                                TableColumn::make('Ajouté le'),
+                                TableColumn::make('')->hiddenHeaderLabel(),
+                                TableColumn::make('')->hiddenHeaderLabel(),
+                                TableColumn::make('')->hiddenHeaderLabel(),
+                            ])
+                            ->schema([
+                                TextEntry::make('intitule')
+                                    ->state(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name),
+                                TextEntry::make('created_at')
+                                    ->dateTime('d/m/Y H:i'),
+
+                                TextEntry::make('voir')
+                                    ->label('')
+                                    ->state('Voir')
+                                    ->icon('heroicon-o-eye')
+                                    ->color('info')
+                                    ->action(
+                                        Action::make('voirAutreDocumentFormation')
+                                            ->modalHeading(fn ($record) => $record->getCustomProperty('intitule') ?: $record->file_name)
+                                            ->modalContent(fn ($record) => view('filament.modals.apercu-fichier', [
+                                                'url' => route('media.stream', $record),
+                                                'mime' => $record->mime_type,
+                                            ]))
+                                            ->modalSubmitAction(false)
+                                            ->modalCancelAction(false)
+                                            ->modalWidth('4xl')
+                                    ),
+
+                                TextEntry::make('telecharger')
+                                    ->label('')
+                                    ->state('Télécharger')
+                                    ->icon('heroicon-o-arrow-down-tray')
+                                    ->color('primary')
+                                    ->url(fn ($record) => route('media.stream', $record))
+                                    ->openUrlInNewTab(),
+
+                                TextEntry::make('supprimer')
+                                    ->label('')
+                                    ->state('Supprimer')
+                                    ->icon('heroicon-o-trash')
+                                    ->color('danger')
+                                    ->action(
+                                        Action::make('supprimerAutreDocFormation')
+                                            ->color('danger')
+                                            ->requiresConfirmation()
+                                            ->modalHeading('Supprimer le document')
+                                            ->modalDescription('Cette action est irréversible.')
+                                            ->action(function ($record, $livewire) {
+                                                $record->delete();
+                                                Notification::make()->success()->title('Document supprimé')->send();
+                                                $livewire->dispatch('$refresh');
+                                            })
+                                    ),
+                            ])
+                            ->placeholder('Aucun document complémentaire ajouté.'),
+
+                        Actions::make([
+                            Action::make('modalAjouterAutreDocumentFormation')
+                                ->label('Ajouter un autre document')
+                                ->icon('heroicon-o-document-plus')
+                                ->color('primary')
+                                ->form([
+                                    FormTextInput::make('nouvel_intitule')
+                                        ->label('Intitulé du document')
+                                        ->required(),
+                                    FileUpload::make('upload_autre_document')
+                                        ->label('Fichier')
+                                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                                        ->maxSize(10240)
+                                        ->disk('local')
+                                        ->directory('tmp-archives-upload')
+                                        ->visibility('private')
+                                        ->required(),
+                                ])
+                                ->action(function (Formation $record, array $data, $livewire) {
+                                    $dossier = self::resolveMediaOwner($record);
+                                    if (! $dossier) {
+                                        return;
+                                    }
+
+                                    $dossier
+                                        ->addMediaFromDisk($data['upload_autre_document'], 'local')
+                                        ->withCustomProperties(['intitule' => $data['nouvel_intitule']])
+                                        ->toMediaCollection('autres_documents_formation');
 
                                     Notification::make()->success()->title('Document ajouté avec succès')->send();
                                     $livewire->dispatch('$refresh');

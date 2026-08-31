@@ -159,7 +159,7 @@ class ManageSettings extends Page implements HasForms
                 Grid::make(3)
                     ->schema([
                         Section::make('Informations Générales')
-                            ->columnSpan(2)
+                            ->columnSpanFull()
                             ->schema([
                                 TextInput::make('raison_sociale')->label('Raison Sociale')->required(),
                                 Grid::make(2)->schema([
@@ -183,18 +183,26 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('activite')->label('Activité'),
                                 TextInput::make('siege_social')->label('Siège Social'),
                                 TextInput::make('ville')->label('Ville'),
+                                Grid::make(2)->schema([
+                                    TextInput::make('telephone')->label('Téléphone'),
+                                    TextInput::make('fax')->label('Fax'),
+                                ]),
+                                Grid::make(2)->schema([
+                                    TextInput::make('email')->label('Email de Contact')->email(),
+                                    TextInput::make('site_web')->label('Site Web')->url(),
+                                ]),
                             ]),
-                        Section::make('Visuels')
-                            ->columnSpan(1)
-                            ->schema([
-                                FileUpload::make('logo')
-                                    ->label('Logo Organisme')
-                                    ->image()
-                                    ->directory('logos')
-                                    ->maxSize(5120),
-                            ]),
+
                     ]),
-                Section::make('Identifiants Fiscaux & Coordonnées')
+
+                Section::make('Représentant Légal')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('representant_nom')->label('Nom du Représentant'),
+                            TextInput::make('representant_fonction')->label('Fonction du Représentant'),
+                        ]),
+                    ]),
+                Section::make('Identifiants Fiscaux')
                     ->schema([
                         Grid::make(4)->schema([
                             TextInput::make('ice')->label('ICE'),
@@ -205,13 +213,9 @@ class ManageSettings extends Page implements HasForms
                         Grid::make(4)->schema([
                             TextInput::make('cnss')->label('N° CNSS'),
                             TextInput::make('capital_social')->label('Capital Social'),
-                            TextInput::make('telephone')->label('Téléphone'),
-                            TextInput::make('fax')->label('Fax'),
+
                         ]),
-                        Grid::make(2)->schema([
-                            TextInput::make('email')->label('Email de Contact')->email(),
-                            TextInput::make('site_web')->label('Site Web')->url(),
-                        ]),
+
                     ]),
                 Section::make('Compétences & Moyens')
                     ->schema([
@@ -223,7 +227,7 @@ class ManageSettings extends Page implements HasForms
                             ->placeholder('Ajouter un moyen...'),
                     ]),
                 Section::make('Ressources Humaines (Effectifs)')
-                    ->description("Le détail \"dont étrangers\" alimente les fiches G3 (GIAC) et Formulaire F3 (OFPPT).")
+                    ->description("Cette section alimente les fiches G3 (GIAC) et Formulaire F3 (OFPPT).")
                     ->schema([
                         Grid::make(2)->schema([
                             Fieldset::make('Experts Permanents')->schema([
@@ -268,12 +272,13 @@ class ManageSettings extends Page implements HasForms
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Section::make('Représentant Légal')
+                Section::make('Visuels')
                     ->schema([
-                        Grid::make(2)->schema([
-                            TextInput::make('representant_nom')->label('Nom du Représentant'),
-                            TextInput::make('representant_fonction')->label('Fonction du Représentant'),
-                        ]),
+                        FileUpload::make('logo')
+                            ->label('Logo Organisme')
+                            ->image()
+                            ->directory('logos')
+                            ->maxSize(5120),
                     ]),
 
                 Section::make('Pièces Jointes de l\'organisme')

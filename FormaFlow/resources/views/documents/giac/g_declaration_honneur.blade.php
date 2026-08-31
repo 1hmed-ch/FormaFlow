@@ -6,28 +6,28 @@
         top: -90px;
         height: 90px;
     }
-    .entete-image {
-        max-height: 90px;
+    /*.entete-image {
+        max-height: 140px;
         max-width: 65%;
         height: auto;
         width: auto;
-    }
+    }*/
 
     footer {
         bottom: 0;
         height: 55px;
     }
-    .pied-page-image {
+    /*.pied-page-image {
         max-height: 55px;
         max-width: 100%;
         height: auto;
         width: auto;
-    }
+    }*/
 
     @page {
         margin: 105px 40px 75px 40px;
     }
-     
+
 </style>
 @endpush
 
@@ -35,7 +35,7 @@
     <div style="font-family: 'Times New Roman', Times, serif; font-style: italic; font-size: 12pt; line-height: 1.8; padding: 0 35px;">
 
         <div style="text-align: center; margin-top: 10px; margin-bottom: 30px;">
-            <h2 style="text-decoration: underline; letter-spacing: 1px; font-size: 14pt; margin: 0; font-family: 'DejaVu Serif', 'Times New Roman', serif; font-style: italic;">
+            <h2 style="text-decoration: underline; letter-spacing: 1px; font-size: 14pt; margin: 40px 42px; font-family: 'DejaVu Serif', 'Times New Roman', serif; font-style: italic;">
                 DÉCLARATION SUR L'HONNEUR
             </h2>
         </div>
@@ -45,7 +45,7 @@
         <div style="padding-left: 20px; margin-bottom: 26px;">
             <p style="margin: 8px 0;">&bull; <strong>Raison sociale :</strong> {{ $entreprise->raison_sociale ?? '..................................................' }}</p>
             <p style="margin: 8px 0;">
-                &bull; <strong>Représentée par :</strong> 
+                &bull; <strong>Représentée par :</strong>
                 @if(!empty($gerant->prenom) || !empty($gerant->nom))
                     {{ trim(($gerant->prenom ?? '') . ' ' . ($gerant->nom ?? '')) }}
                 @else

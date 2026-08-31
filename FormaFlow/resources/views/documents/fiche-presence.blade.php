@@ -32,7 +32,7 @@
         }
 
         .entreprise-entete img {
-            max-height: 100px;
+            max-height: 130px;
             max-width: 100%;
         }
 

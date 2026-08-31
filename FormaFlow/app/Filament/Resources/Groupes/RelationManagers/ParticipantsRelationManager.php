@@ -41,8 +41,11 @@ class ParticipantsRelationManager extends RelationManager
                 TextColumn::make('numero_cnss')
                     ->label('N° CNSS'),
 
-                TextColumn::make('email')
-                    ->label('Email'),
+                TextColumn::make('fonction_occupee')
+                    ->label('Fonction Occupée'),
+
+                TextColumn::make('categorie_sp')
+                    ->label('Catégorie'),
             ])
             ->filters([
                 //

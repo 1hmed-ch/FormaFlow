@@ -7,6 +7,7 @@ use App\Filament\Resources\Archives\ArchiveResource;
 use App\Filament\Resources\Formations\FormationResource;
 use App\Filament\Resources\Groupes\GroupeResource;
 use App\Filament\Resources\Participants\ParticipantResource;
+use App\Models\DossierGiac;
 use App\Models\EntrepriseCliente;
 use App\Models\Groupe;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 class EntrepriseClienteOverview extends BaseWidget
 {
     public ?EntrepriseCliente $record = null;
+
+    public ?DossierGiac $resource = null;
     protected int|string|array $columnSpan = 1;
 
     protected int|array|null $columns = 2;
@@ -23,6 +26,8 @@ class EntrepriseClienteOverview extends BaseWidget
     protected function getStats(): array
     {
         $entreprise = $this->record;
+
+        $archiveId = DossierGiac::where('entreprise_cliente_id', $entreprise->id)->value('id');
 
         $formationsEnCours = $entreprise->formations()
             ->where('statut', FormationStatus::EN_COURS)
@@ -62,7 +67,7 @@ class EntrepriseClienteOverview extends BaseWidget
             Stat::make('Documents générés', $documentsCount)
                 ->description('Modèles 6 archivés')
                 ->icon('heroicon-o-document-arrow-down')
-                ->url(ArchiveResource::getUrl('view', ['record' => $this->record]))
+                ->url($archiveId ? ArchiveResource::getUrl('view', ['record' => $archiveId]) : null)
                 ->color('gray'),
         ];
     }

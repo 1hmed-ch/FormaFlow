@@ -89,7 +89,8 @@ class ThemesRelationManager extends RelationManager
                 SelectFilter::make('formateur_id')
                     ->label('Formateur')
                     ->relationship('formateur', 'nom')
-                    ->searchable()
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->nom} {$record->prenom}")
+                    ->searchable(['nom', 'prenom'])
                     ->preload(),
             ])
             ->headerActions([

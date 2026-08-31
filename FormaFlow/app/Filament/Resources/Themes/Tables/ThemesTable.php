@@ -62,7 +62,8 @@ class ThemesTable
                     ->label('Formateur')
                     ->native(false)
                     ->relationship('formateur', 'nom')
-                    ->searchable()
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->nom} {$record->prenom}")
+                    ->searchable(['nom', 'prenom'])
                     ->preload(),
                 Filter::make('date_debut')
                     ->schema([
